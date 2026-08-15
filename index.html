@@ -472,6 +472,24 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border: 2px solid var(--line-2); background: var(--card); box-shadow: 0 4px 0 var(--line-2);
 }
 .seg button.on { background: var(--brand); color: var(--on-brand); border-color: var(--brand-ink); box-shadow: 0 4px 0 var(--brand-ink); }
+/* 목소리 고르기 목록 */
+.voice-row {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; min-height: 58px; margin-top: 10px;
+  padding: 12px 16px; text-align: left;
+  border: 2px solid var(--line-2); border-radius: 14px;
+  background: var(--card); box-shadow: 0 4px 0 var(--line-2);
+  font-weight: 800; font-size: .88em;
+}
+.voice-row:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--line-2); }
+.voice-row .vn { flex: 1; min-width: 0; }
+.voice-row .vp { flex: none; color: var(--blue); font-size: 1.1em; }
+.voice-row.on {
+  border-color: var(--brand); background: var(--brand-soft);
+  box-shadow: 0 4px 0 var(--brand);
+}
+.voice-row.on .vp::after { content: " 사용 중"; font-size: .7em; color: var(--brand-text); }
+
 .set-row { padding: 16px 0; border-bottom: 2px solid var(--line); }
 .set-row:last-child { border-bottom: none; }
 .set-row h4 { margin: 0 0 2px; font-size: .98em; }
@@ -1654,7 +1672,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
     days: {},              // '2026-08-15': {min: 12, lessons: 2, xp: 40}
     prog: {},              // unitId -> 완료한 레슨 수
     srs: {},               // itemId -> {s:0~5, due:일수, seen:n, miss:n}
-    settings: { size: 'normal', rate: 0.82, theme: 'auto', goal: 20, autoPlay: true },
+    // rate 1 = 원어민이 말하는 속도. 느리게 늘이면 기계음처럼 들려서 기본은 자연 속도로 둡니다.
+    settings: { size: 'normal', rate: 1, theme: 'auto', goal: 20, autoPlay: true, voiceName: '', sfx: true },
     onboarded: false
   };
 
@@ -1667,6 +1686,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
     if (!P || P.v !== 1) P = JSON.parse(JSON.stringify(DEFAULT));
     for (var k in DEFAULT) if (!(k in P)) P[k] = JSON.parse(JSON.stringify(DEFAULT[k]));
     for (var s in DEFAULT.settings) if (!(s in P.settings)) P.settings[s] = DEFAULT.settings[s];
+    // 예전에 쓰던 느린 속도(0.65 / 0.82)는 기계음처럼 들려서 자연 속도로 올려 둡니다
+    if (P.settings.rate < 0.8) P.settings.rate = 1;
     return P;
   }
   /* 저장이 되는 환경인지 미리 확인해 둡니다.
@@ -1735,19 +1756,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
   G.unitTotal = function () { return G.LESSONS_PER_UNIT; };
   G.unitComplete = function (uid) { return (P.prog[uid] || 0) >= G.LESSONS_PER_UNIT; };
 
-  G.unitUnlocked = function (uid) {
-    var i = G.UNITS.findIndex(function (u) { return u.id === uid; });
-    if (i <= 0) return true;
-    var prev = G.UNITS[i - 1];
-    return (P.prog[prev.id] || 0) >= Math.ceil(G.LESSONS_PER_UNIT * 0.6); // 앞 유닛 60%면 다음 열림
-  };
-
-  G.stageUnlocked = function (stage) {
-    if (stage <= 1) return true;
-    var prevUnits = G.UNITS.filter(function (u) { return u.stage === stage - 1; });
-    var done = prevUnits.filter(function (u) { return G.unitComplete(u.id); }).length;
-    return done >= prevUnits.length - 1;   // 이전 단계 대부분 끝내면 열림
-  };
+  /* 모든 단계가 처음부터 열려 있습니다.
+     순서대로 하지 않아도 되고, 필요한 유닛(예: 병원, 여행)을 골라서 바로 할 수 있습니다. */
+  G.unitUnlocked = function () { return true; };
+  G.stageUnlocked = function () { return true; };
 
   G.nextLesson = function () {
     for (var i = 0; i < G.UNITS.length; i++) {
@@ -2090,40 +2102,64 @@ button { font: inherit; color: inherit; cursor: pointer; }
   /* ============================================================
      음성 (브라우저 내장 TTS — 인터넷 없이 동작)
      ============================================================ */
-  var voice = null, voicesReady = false;
+  var voice = null, voiceKo = null, voicesReady = false;
+
+  /* 사람 목소리에 가까운 순서.
+     Neural / Natural 계열이 훨씬 부드럽습니다. 옛 Zira·David 는 기계음이라 뒤로 뺐습니다. */
+  var PREFER_EN = [
+    'Ava', 'Emma', 'Jenny', 'Aria', 'Michelle', 'Ana',          // 마이크로소프트 자연 음성 (여성)
+    'Samantha', 'Karen', 'Moira',                                // 애플
+    'Google US English', 'Google UK English Female',             // 크롬
+    'Andrew', 'Brian', 'Guy',                                    // 남성 자연 음성
+    'Zira', 'David', 'Mark'                                      // 옛 음성 (마지막 수단)
+  ];
+
+  function score(v) {
+    var n = v.name, s = 0;
+    for (var i = 0; i < PREFER_EN.length; i++) {
+      if (n.indexOf(PREFER_EN[i]) >= 0) { s = PREFER_EN.length - i; break; }
+    }
+    if (/Natural|Neural/i.test(n)) s += 40;      // 자연 음성 크게 우대
+    if (/en-US/i.test(v.lang || '')) s += 12;
+    if (v.localService) s += 6;                  // 인터넷 없이도 나오면 가산
+    if (/Multilingual/i.test(n)) s -= 3;
+    return s;
+  }
+
+  G.englishVoices = function () {
+    if (!('speechSynthesis' in window)) return [];
+    return (window.speechSynthesis.getVoices() || [])
+      .filter(function (v) { return /^en(-|_)?/i.test(v.lang || ''); })
+      .sort(function (a, b) { return score(b) - score(a); });
+  };
 
   function pickVoice() {
-    if (!('speechSynthesis' in window)) return null;
-    var vs = window.speechSynthesis.getVoices() || [];
-    if (!vs.length) return null;
-    var en = vs.filter(function (v) { return /^en(-|_)?/i.test(v.lang || ''); });
+    var en = G.englishVoices();
     if (!en.length) return null;
-
-    function byName(list, names) {
-      for (var i = 0; i < names.length; i++) {
-        var m = list.filter(function (v) { return v.name.indexOf(names[i]) >= 0; })[0];
-        if (m) return m;
-      }
-      return null;
+    var want = (P.settings && P.settings.voiceName) || '';
+    if (want) {
+      var chosen = en.filter(function (v) { return v.name === want; })[0];
+      if (chosen) return chosen;
     }
-    var prefer = ['Samantha', 'Google US English', 'Microsoft Aria', 'Microsoft Ava',
-      'Microsoft Jenny', 'Microsoft Emma', 'Microsoft Michelle', 'Microsoft Zira', 'Karen', 'Daniel'];
-
-    // 기기에 내장된 음성을 먼저 씁니다 — 인터넷이 끊겨도 소리가 나야 하니까요.
-    var local = en.filter(function (v) { return v.localService; });
-    if (local.length) {
-      var lus = local.filter(function (v) { return /en-US/i.test(v.lang); });
-      return byName(lus, prefer) || lus[0] || byName(local, prefer) || local[0];
-    }
-    // 내장 음성이 없으면 온라인 음성이라도 (인터넷 있을 때만 소리가 납니다)
-    var us = en.filter(function (v) { return /en-US/i.test(v.lang); });
-    return byName(us, prefer) || us[0] || byName(en, prefer) || en[0];
+    return en[0];
   }
+
+  /* "정답입니다" 를 말해 줄 한국어 목소리 */
+  function pickKoVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    var ko = (window.speechSynthesis.getVoices() || [])
+      .filter(function (v) { return /^ko(-|_)?/i.test(v.lang || ''); });
+    if (!ko.length) return null;
+    var nat = ko.filter(function (v) { return /Natural|Neural/i.test(v.name); });
+    return nat[0] || ko[0];
+  }
+  G.koVoiceOK = function () { return !!voiceKo; };
 
   G.initVoice = function (cb) {
     if (!('speechSynthesis' in window)) { voicesReady = true; if (cb) cb(false); return; }
     function ready() {
       voice = pickVoice();
+      voiceKo = pickKoVoice();
       voicesReady = true;
       if (cb) cb(!!voice);
     }
@@ -2138,12 +2174,72 @@ button { font: inherit; color: inherit; cursor: pointer; }
   G.voiceName = function () { return voice ? voice.name : null; };
   /* 온라인 전용 음성이면 인터넷이 끊겼을 때 소리가 나지 않습니다 */
   G.voiceNeedsInternet = function () { return !!voice && !voice.localService; };
+  G.setVoice = function (name) {
+    P.settings.voiceName = name || '';
+    voice = pickVoice();
+    save();
+    return voice ? voice.name : null;
+  };
+
+  /* ---------- 효과음 (파일 없이 그때그때 만들어 냅니다) ---------- */
+  var actx = null;
+  function audio() {
+    if (actx) return actx;
+    try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { actx = null; }
+    return actx;
+  }
+  function tone(c, freq, at, dur, vol, type) {
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, at);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(vol, at + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(at); o.stop(at + dur + 0.05);
+  }
+  /* good: 도-미-솔 로 올라가는 밝은 소리 / bad: 부드럽게 내려가는 소리 (혼내는 느낌 없이) */
+  G.sfx = function (kind) {
+    if (!P.settings.sfx) return;
+    var c = audio(); if (!c) return;
+    if (c.state === 'suspended') { try { c.resume(); } catch (e) { } }
+    var t = c.currentTime + 0.01;
+    if (kind === 'good') {
+      [[784, 0], [988, 0.085], [1319, 0.17]].forEach(function (n) {
+        tone(c, n[0], t + n[1], 0.28, 0.16);
+        tone(c, n[0] * 2, t + n[1], 0.2, 0.05, 'triangle');   // 살짝 반짝이는 배음
+      });
+    } else if (kind === 'bad') {
+      tone(c, 392, t, 0.22, 0.10, 'sine');
+      tone(c, 330, t + 0.13, 0.3, 0.09, 'sine');
+    } else if (kind === 'finish') {
+      [[523, 0], [659, 0.12], [784, 0.24], [1047, 0.36]].forEach(function (n) {
+        tone(c, n[0], t + n[1], 0.45, 0.15);
+        tone(c, n[0] * 2, t + n[1], 0.3, 0.04, 'triangle');
+      });
+    }
+  };
 
   /* 영어 음성이 없는 기기에서는 소리를 내지 않습니다.
      기기 기본 음성(예: 한국어)이 영어 문장을 읽으면 발음이 크게 틀리는데,
      초보 학습자는 그게 틀린 줄 모르고 따라 하게 됩니다. 차라리 안 내는 편이 낫습니다. */
   G.onNoVoice = null;
-  var speaking = false;
+  var seq = 0;                     // 새 말이 시작되면 이전 순서는 버립니다
+
+  function utter(v, text, rate, onEnd) {
+    try {
+      var u = new SpeechSynthesisUtterance(String(text).replace(/____/g, '   '));
+      u.voice = v; u.lang = v.lang;
+      u.rate = rate; u.pitch = 1;
+      var done = false;
+      u.onend = u.onerror = function () { if (!done) { done = true; if (onEnd) onEnd(); } };
+      window.speechSynthesis.speak(u);
+      // 브라우저가 onend 를 안 주는 경우가 있어 넉넉한 예비 타이머를 둡니다
+      setTimeout(function () { if (!done) { done = true; if (onEnd) onEnd(); } },
+        1200 + String(text).length * 90);
+    } catch (e) { if (onEnd) onEnd(); }
+  }
+
   G.speak = function (text, slow, onEnd) {
     if (!text || !('speechSynthesis' in window)) { if (onEnd) onEnd(); return; }
     if (!voice) voice = pickVoice();
@@ -2152,21 +2248,57 @@ button { font: inherit; color: inherit; cursor: pointer; }
       if (onEnd) onEnd();
       return;
     }
-    try {
-      window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(String(text).replace(/____/g, '   '));
-      u.voice = voice; u.lang = voice.lang;
-      var base = (G.P().settings.rate || 0.82);
-      u.rate = slow ? Math.max(0.4, base - 0.32) : base;
-      u.pitch = 1;
-      speaking = true;
-      u.onend = u.onerror = function () { speaking = false; if (onEnd) onEnd(); };
-      window.speechSynthesis.speak(u);
-    } catch (e) { if (onEnd) onEnd(); }
-  };
-  G.stopSpeak = function () {
+    seq++;
     try { window.speechSynthesis.cancel(); } catch (e) { }
-    speaking = false;
+    var base = P.settings.rate || 1;
+    utter(voice, text, slow ? Math.max(0.5, base - 0.3) : base, onEnd);
+  };
+
+  G.stopSpeak = function () {
+    seq++;
+    try { window.speechSynthesis.cancel(); } catch (e) { }
+  };
+
+  /* 효과음 → "정답입니다" (한국어) → 정답 문장 (영어) 순서로 이어서 들려줍니다 */
+  var PRAISE = ['정답입니다', '잘하셨어요', '맞았어요'];
+  var praiseAt = 0;
+
+  G.praise = function (englishText) {
+    var mine = ++seq;
+    G.sfx('good');
+    var ko = PRAISE[praiseAt++ % PRAISE.length];
+    function sayEnglish() {
+      if (mine !== seq || !englishText || !voice) return;
+      setTimeout(function () {
+        if (mine !== seq) return;
+        utter(voice, englishText, P.settings.rate || 1, null);
+      }, 140);
+    }
+    setTimeout(function () {
+      if (mine !== seq) return;
+      try { window.speechSynthesis.cancel(); } catch (e) { }
+      if (voiceKo) utter(voiceKo, ko, 1, sayEnglish);
+      else sayEnglish();
+    }, 480);                       // 효과음이 끝난 뒤에 말이 시작되게
+  };
+
+  /* 틀렸을 때 — 부드럽게 다시 해보자고만 합니다 */
+  G.encourage = function (englishText) {
+    var mine = ++seq;
+    G.sfx('bad');
+    setTimeout(function () {
+      if (mine !== seq) return;
+      try { window.speechSynthesis.cancel(); } catch (e) { }
+      function sayEn() {
+        if (mine !== seq || !englishText || !voice) return;
+        setTimeout(function () {
+          if (mine !== seq) return;
+          utter(voice, englishText, Math.max(0.6, (P.settings.rate || 1) - 0.25), null);
+        }, 140);
+      }
+      if (voiceKo) utter(voiceKo, '다시 해볼까요', 1, sayEn);
+      else sayEn();
+    }, 420);
   };
 
   /* 정답 판정 (타이핑) */
@@ -2380,29 +2512,28 @@ button { font: inherit; color: inherit; cursor: pointer; }
     }
     h += '</div>';
 
-    // 단계별 지도
+    // 단계별 지도 — 모든 단계가 처음부터 열려 있어 원하는 곳부터 하실 수 있습니다
     G.CURRICULUM.forEach(function (st) {
-      var open = G.stageUnlocked(st.stage);
-      h += '<div class="stage-head' + (open ? '' : ' locked') + '">' +
-        '<div class="lv">' + st.stage + '단계 · ' + esc(st.name) + (open ? '' : ' 🔒') + '</div>' +
+      h += '<div class="stage-head">' +
+        '<div class="lv">' + st.stage + '단계 · ' + esc(st.name) + '</div>' +
         '<h3>' + esc(st.sub) + '</h3>' +
         '<p class="desc">유닛 ' + st.units.length + '개 · 문장 ' + (st.units.length * 12) + '개</p></div>';
 
       st.units.forEach(function (u) {
         var done = G.unitDone(u.id), total = G.unitTotal();
-        var unlocked = open && G.unitUnlocked(u.id);
         var isNext = nx && nx.unit.id === u.id;
-        h += '<div class="unit"' + (unlocked ? '' : ' style="opacity:.55"') + '>' +
+        h += '<div class="unit">' +
           '<div class="unit-top"><div class="unit-ico">' + G.picHTML(u.ic) + '</div>' +
-          '<div class="unit-title"><b>' + esc(u.t) + (unlocked ? '' : ' 🔒') + '</b>' +
+          '<div class="unit-title"><b>' + esc(u.t) + '</b>' +
           '<span>' + Math.min(done, total) + ' / ' + total + ' 단계 완료</span></div>' +
           (done >= total ? '<div style="font-size:1.7em">🏆</div>' : '') + '</div>' +
           '<div class="bar"><i style="width:' + Math.round(Math.min(1, done / total) * 100) + '%"></i></div>' +
           '<div class="nodes' + (isNext ? ' has-next' : '') + '">';
         for (var i = 0; i < total; i++) {
-          var cls = i < done ? 'done' : (unlocked && i === done ? 'next' : (unlocked ? '' : 'locked'));
+          // '지금 여기' 표시는 이어서 하실 곳 딱 한 군데에만
+          var cls = i < done ? 'done' : (isNext && i === done ? 'next' : '');
           h += '<button class="node ' + cls + '" data-unit="' + u.id + '" data-n="' + i + '"' +
-            (unlocked ? '' : ' disabled') + ' aria-label="' + esc(u.t) + ' ' + (i + 1) + '단계">' +
+            ' aria-label="' + esc(u.t) + ' ' + (i + 1) + '단계">' +
             (i < done ? '⭐' : (i + 1)) + '</button>';
         }
         h += '</div>';
@@ -2514,11 +2645,35 @@ button { font: inherit; color: inherit; cursor: pointer; }
         return '<button data-v="' + v[0] + '" class="' + (P.settings.size === v[0] ? 'on' : '') + '">' + v[1] + '</button>';
       }).join('') + '</div></div>';
 
-    h += '<div class="set-row"><h4>읽어주는 속도</h4><p>천천히 들으면 따라 하기 쉬워요</p><div class="seg" id="seg-rate">' +
-      [['0.65', '아주 느리게'], ['0.82', '느리게'], ['1', '보통']].map(function (o) {
+    // 목소리 고르기 — 기기마다 있는 음성이 달라서 있는 것만 보여드립니다
+    var vs = G.englishVoices();
+    if (vs.length > 1) {
+      var top = vs.slice(0, 6);
+      var cur = G.voiceName();
+      h += '<div class="set-row"><h4>영어 목소리</h4><p>마음에 드는 목소리를 골라 보세요. 눌러서 들어볼 수 있어요</p>';
+      top.forEach(function (v) {
+        var nice = v.name.replace(/Microsoft\s+/, '').replace(/\s*Online\s*\(Natural\)\s*/, ' ')
+          .replace(/\s*-\s*English\s*\(([^)]+)\)/, ' · $1').trim();
+        h += '<button class="voice-row' + (v.name === cur ? ' on' : '') + '" data-voice="' + esc(v.name) + '">' +
+          '<span class="vn">' + esc(nice) + '</span>' +
+          (/Natural|Neural/i.test(v.name) ? '<span class="pill s2">자연스러움</span>' : '') +
+          '<span class="vp">▶</span></button>';
+      });
+      h += '</div>';
+    }
+
+    h += '<div class="set-row"><h4>읽어주는 속도</h4><p>기본은 실제로 말하는 속도예요. 느리게 하면 또박또박해지지만 조금 어색해집니다</p>' +
+      '<div class="seg" id="seg-rate">' +
+      [['0.8', '천천히'], ['1', '자연스럽게'], ['1.1', '조금 빠르게']].map(function (o) {
         return '<button data-v="' + o[0] + '" class="' + (String(P.settings.rate) === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
       }).join('') + '</div>' +
       '<button class="btn ghost small" style="margin-top:12px" data-speak="Good morning. How are you today?">🔊 소리 들어보기</button></div>';
+
+    h += '<div class="set-row"><h4>정답 효과음</h4><p>맞히면 밝은 소리와 함께 "정답입니다" 하고 알려드려요</p>' +
+      '<div class="seg" id="seg-sfx">' +
+      [['1', '켜기'], ['0', '끄기']].map(function (o) {
+        return '<button data-v="' + o[0] + '" class="' + ((P.settings.sfx ? '1' : '0') === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
+      }).join('') + '</div></div>';
 
     h += '<div class="set-row"><h4>하루 목표</h4><p>매일 이만큼만 하면 충분해요</p><div class="seg" id="seg-goal">' +
       [['10', '10분'], ['20', '20분'], ['30', '30분']].map(function (o) {
@@ -2571,7 +2726,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   }
 
   function lessonHead() {
-    var total = Math.max(S.total, S.asked + S.queue.length);
+    var total = S.total;                       // 틀려도 총 문항 수는 늘지 않습니다
     var pct = total ? (S.asked / total) * 100 : 0;
     return '<div class="lesson-bar">' +
       '<button class="x-btn" id="btn-quit" aria-label="나가기">✕</button>' +
@@ -2696,66 +2851,110 @@ button { font: inherit; color: inherit; cursor: pointer; }
     if (btn) btn.disabled = S.placed.length === 0;
   }
 
-  /* ---- 판정 ---- */
+  /* ---- 판정 ----
+     맞출 때까지 같은 문제를 다시 풉니다. 두 번째 시도부터는 정답을 보여드려서
+     막혀서 그만두시는 일이 없게 합니다. */
   function verdict(ok, answerText, note) {
     var q = S.queue[0];
     if (q.item) G.recordAnswer(q.item.id, ok);
-    S.asked++;
-    if (ok) { S.correct++; if (!q._retry) S.first++; }
+    q._tries = (q._tries || 0) + 1;
+    if (ok) {
+      S.asked++; S.correct++;
+      if (q._tries === 1) S.first++;
+    }
 
     var v = document.createElement('div');
     v.className = 'verdict ' + (ok ? 'good' : 'bad');
-    v.innerHTML = '<h4>' + (ok ? '<span style="font-size:1.3em">🎉</span> 정답이에요!' : '<span style="font-size:1.3em">💡</span> 다시 한 번 봐요') + '</h4>' +
+    v.innerHTML = '<h4>' + (ok
+      ? '<span style="font-size:1.3em">🎉</span> 정답입니다!'
+      : '<span style="font-size:1.3em">💪</span> 다시 해볼까요?') + '</h4>' +
       (answerText ? '<p class="ans">' + answerText + '</p>' : '') +
       (note ? '<p class="ans"><em>' + note + '</em></p>' : '') +
-      '<button class="btn' + (ok ? '' : ' rose') + '" id="btn-next">계속하기</button>';
+      '<button class="btn' + (ok ? '' : ' rose') + '" id="' + (ok ? 'btn-next' : 'btn-retry') + '">' +
+      (ok ? '계속하기' : '다시 해보기') + '</button>';
     document.body.appendChild(v);
     requestAnimationFrame(function () { v.classList.add('on'); });
     S.verdictEl = v;
 
     var cta = el('cta'); if (cta) cta.style.display = 'none';
-    if (ok) G.speak(q.item ? q.item.en : '');
-    else if (q.item) setTimeout(function () { G.speak(q.item.en, true); }, 150);
+    var en = q.item ? q.item.en : null;
+    if (ok) G.praise(en); else G.encourage(en);
   }
 
   function clearVerdict() {
     if (S.verdictEl) { S.verdictEl.remove(); S.verdictEl = null; }
   }
 
-  function nextQ(wasWrong) {
+  /* 틀린 문제를 같은 화면에서 다시 풀게 준비 — 이미 고른 오답은 지워진 채로 남습니다 */
+  function retry() {
+    clearVerdict();
+    var q = S.queue[0];
+    var cta = el('cta'); if (cta) cta.style.display = '';
+    S.sel = null;
+
+    if (q.type === 'choice' || q.type === 'pic') {
+      document.querySelectorAll('.choice').forEach(function (c) { c.classList.remove('sel'); });
+    } else if (q.type === 'bank') {
+      S.placed = [];
+      var box = el('ansbox');
+      if (box) box.classList.remove('right', 'wrong');
+      renderBank();
+    } else if (q.type === 'type') {
+      var i = el('typein');
+      if (i) { i.value = ''; i.focus(); }
+    }
+    var cb = el('btn-check');
+    if (cb) cb.disabled = true;
+  }
+
+  function nextQ() {
     clearVerdict();
     var q = S.queue.shift();
     if (q && q.type === 'repeat') S.asked++;              // 따라 읽기도 진도에 포함
-    if (wasWrong && !q._retry) { q._retry = true; S.queue.splice(Math.min(2, S.queue.length), 0, q); }
     if (!S.queue.length) finish(); else renderQ();
   }
 
   function check() {
     var q = S.queue[0];
+    // 첫 시도에는 정답을 알려주지 않습니다 (스스로 다시 풀 기회를 드리려고).
+    // 두 번 이상 틀리면 정답을 보여드립니다.
+    var reveal = (q._tries || 0) >= 1;
+
     if (q.type === 'pic' || q.type === 'choice') {
       if (S.sel === null) return;
       var ok = q.options[S.sel].ok;
       var nodes = document.querySelectorAll('.choice');
-      q.options.forEach(function (o, i) {
-        if (o.ok) nodes[i].classList.add('right');
-        else if (i === S.sel) nodes[i].classList.add('wrong');
-        nodes[i].disabled = true;
-      });
+      if (ok) {
+        q.options.forEach(function (o, i) {
+          if (o.ok) nodes[i].classList.add('right');
+          nodes[i].disabled = true;
+        });
+      } else {
+        nodes[S.sel].classList.add('wrong');
+        nodes[S.sel].disabled = true;                       // 틀린 것은 지워 둡니다
+        if (reveal) {
+          q.options.forEach(function (o, i) { if (o.ok) nodes[i].classList.add('right'); });
+        }
+      }
       var right = q.options.filter(function (o) { return o.ok; })[0].label;
-      verdict(ok, ok ? '' : '정답: <b>' + esc(right) + '</b>',
-        q.item && q.item.kind === 's' && !ok ? esc(q.item.en) + ' — ' + esc(q.item.ko) : '');
+      verdict(ok,
+        ok ? '' : (reveal ? '정답: <b>' + esc(right) + '</b>' : '아니에요. 다른 것을 골라 보세요.'),
+        (!ok && reveal && q.item && q.item.kind === 's') ? esc(q.item.en) + ' — ' + esc(q.item.ko) : '');
 
     } else if (q.type === 'bank') {
       var got = S.placed.map(function (i) { return q.bank[i]; }).join(' ');
       var ok2 = G.normalize(got) === G.normalize(q.answer.join(' '));
       var box = el('ansbox'); box.classList.add(ok2 ? 'right' : 'wrong');
-      verdict(ok2, ok2 ? esc(q.item.ko) : '정답: <b>' + esc(q.answer.join(' ')) + '</b>',
+      verdict(ok2,
+        ok2 ? esc(q.item.ko) : (reveal ? '정답: <b>' + esc(q.answer.join(' ')) + '</b>' : '순서를 다시 맞춰 보세요.'),
         ok2 ? '' : esc(q.item.ko));
 
     } else if (q.type === 'type') {
       var v = (el('typein') || {}).value || '';
       var ok3 = G.normalize(v) === G.normalize(q.answer);
-      verdict(ok3, ok3 ? '' : '정답: <b>' + esc(q.answer) + '</b>', esc(q.item.ko));
+      verdict(ok3,
+        ok3 ? '' : (reveal ? '정답: <b>' + esc(q.answer) + '</b>' : '철자를 다시 확인해 보세요.'),
+        esc(q.item.ko));
     }
   }
 
@@ -2803,7 +3002,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
     el('scr-done').innerHTML = h;
     show('done');
     if (acc >= 70 || goalHit) confetti();
-    G.speak(acc >= 90 ? 'Perfect! Well done.' : 'Good job!');
+    G.sfx('finish');
+    setTimeout(function () { G.speak(acc >= 90 ? 'Perfect! Well done.' : 'Good job!'); }, 900);
   }
 
   /* ---------------- 온보딩 ---------------- */
@@ -2889,12 +3089,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
       return;
     }
     if (id === 'btn-check') { check(); return; }
-    if (id === 'btn-next') {
-      var wasWrong = S.verdictEl && S.verdictEl.classList.contains('bad');
-      G.stopSpeak();
-      nextQ(!!wasWrong);
-      return;
-    }
+    if (id === 'btn-next') { G.stopSpeak(); nextQ(); return; }
+    if (id === 'btn-retry') { G.stopSpeak(); retry(); return; }
     if (id === 'btn-dunno') {
       var q = S.queue[0];
       if (q.type === 'bank') {
@@ -2958,8 +3154,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
       if (seg.id === 'seg-goal') P.settings.goal = parseInt(v, 10);
       if (seg.id === 'seg-theme') P.settings.theme = v;
       if (seg.id === 'seg-auto') P.settings.autoPlay = v === '1';
+      if (seg.id === 'seg-sfx') P.settings.sfx = v === '1';
       G.save(); applySettings();
-      if (seg.id === 'seg-rate') G.speak('Good morning.');
+      if (seg.id === 'seg-rate') G.speak('Good morning. How are you today?');
+      if (seg.id === 'seg-sfx' && v === '1') G.sfx('good');
+      return;
+    }
+
+    // 목소리 고르기 — 누르면 바로 그 목소리로 들려드립니다
+    var vrow = b.closest('[data-voice]');
+    if (vrow) {
+      var vname = vrow.getAttribute('data-voice');
+      G.setVoice(vname);
+      document.querySelectorAll('[data-voice]').forEach(function (x) {
+        x.classList.toggle('on', x === vrow);
+      });
+      G.speak('Hello. Nice to meet you. How are you today?');
       return;
     }
     if (id === 'btn-reset') {
@@ -3022,7 +3232,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter') return;
     if (S.screen !== 'lesson') return;
-    var n = el('btn-next') || el('btn-check');
+    var n = el('btn-next') || el('btn-retry') || el('btn-check');
     if (n && !n.disabled) { e.preventDefault(); n.click(); }
   });
   document.addEventListener('input', function (e) {
