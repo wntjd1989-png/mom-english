@@ -2098,13 +2098,26 @@ button { font: inherit; color: inherit; cursor: pointer; }
     if (!vs.length) return null;
     var en = vs.filter(function (v) { return /^en(-|_)?/i.test(v.lang || ''); });
     if (!en.length) return null;
-    var prefer = ['Samantha', 'Google US English', 'Microsoft Aria', 'Microsoft Jenny',
-      'Microsoft Zira', 'Microsoft Michelle', 'Karen', 'Daniel'];
-    for (var i = 0; i < prefer.length; i++) {
-      var m = en.filter(function (v) { return v.name.indexOf(prefer[i]) >= 0; })[0];
-      if (m) return m;
+
+    function byName(list, names) {
+      for (var i = 0; i < names.length; i++) {
+        var m = list.filter(function (v) { return v.name.indexOf(names[i]) >= 0; })[0];
+        if (m) return m;
+      }
+      return null;
     }
-    return en.filter(function (v) { return /en-US/i.test(v.lang); })[0] || en[0];
+    var prefer = ['Samantha', 'Google US English', 'Microsoft Aria', 'Microsoft Ava',
+      'Microsoft Jenny', 'Microsoft Emma', 'Microsoft Michelle', 'Microsoft Zira', 'Karen', 'Daniel'];
+
+    // 기기에 내장된 음성을 먼저 씁니다 — 인터넷이 끊겨도 소리가 나야 하니까요.
+    var local = en.filter(function (v) { return v.localService; });
+    if (local.length) {
+      var lus = local.filter(function (v) { return /en-US/i.test(v.lang); });
+      return byName(lus, prefer) || lus[0] || byName(local, prefer) || local[0];
+    }
+    // 내장 음성이 없으면 온라인 음성이라도 (인터넷 있을 때만 소리가 납니다)
+    var us = en.filter(function (v) { return /en-US/i.test(v.lang); });
+    return byName(us, prefer) || us[0] || byName(en, prefer) || en[0];
   }
 
   G.initVoice = function (cb) {
@@ -2122,6 +2135,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   };
 
   G.voiceOK = function () { return !!voice; };
+  G.voiceName = function () { return voice ? voice.name : null; };
+  /* 온라인 전용 음성이면 인터넷이 끊겼을 때 소리가 나지 않습니다 */
+  G.voiceNeedsInternet = function () { return !!voice && !voice.localService; };
 
   /* 영어 음성이 없는 기기에서는 소리를 내지 않습니다.
      기기 기본 음성(예: 한국어)이 영어 문장을 읽으면 발음이 크게 틀리는데,
@@ -2524,7 +2540,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
     h += '<div class="card"><div class="set-row"><h4>소리가 안 나올 때</h4>' +
       '<p>' + (G.voiceOK()
-        ? '영어 음성이 준비되어 있어요. 소리가 작으면 기기 볼륨을 올려 주세요.'
+        ? ('영어 음성이 준비되어 있어요. 소리가 작으면 기기 볼륨을 올려 주세요.' +
+          (G.voiceNeedsInternet()
+            ? '<br><br>다만 이 기기의 영어 음성은 <b>인터넷이 있어야</b> 소리가 납니다. ' +
+            '인터넷이 없을 때도 문제는 그대로 풀 수 있어요.'
+            : '<br><br>인터넷이 없어도 소리가 납니다.'))
         : '이 기기에 <b>영어 음성이 없어서</b> 소리를 꺼 두었어요. 켜는 방법을 알려드릴게요.') + '</p>' +
       (G.voiceOK() ? '' : '<button class="btn ghost small" id="btn-voicehelp" style="margin-top:10px">🔈 영어 소리 켜는 법 보기</button>') + '</div>' +
       (isInstalled() ? '' :
