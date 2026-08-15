@@ -2102,7 +2102,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   /* ============================================================
      음성 (브라우저 내장 TTS — 인터넷 없이 동작)
      ============================================================ */
-  var voice = null, voiceKo = null, voicesReady = false;
+  var voice = null, voicesReady = false;
 
   /* 사람 목소리에 가까운 순서.
      Neural / Natural 계열이 훨씬 부드럽습니다. 옛 Zira·David 는 기계음이라 뒤로 뺐습니다. */
@@ -2144,22 +2144,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
     return en[0];
   }
 
-  /* "정답입니다" 를 말해 줄 한국어 목소리 */
-  function pickKoVoice() {
-    if (!('speechSynthesis' in window)) return null;
-    var ko = (window.speechSynthesis.getVoices() || [])
-      .filter(function (v) { return /^ko(-|_)?/i.test(v.lang || ''); });
-    if (!ko.length) return null;
-    var nat = ko.filter(function (v) { return /Natural|Neural/i.test(v.name); });
-    return nat[0] || ko[0];
-  }
-  G.koVoiceOK = function () { return !!voiceKo; };
 
   G.initVoice = function (cb) {
     if (!('speechSynthesis' in window)) { voicesReady = true; if (cb) cb(false); return; }
     function ready() {
       voice = pickVoice();
-      voiceKo = pickKoVoice();
       voicesReady = true;
       if (cb) cb(!!voice);
     }
@@ -2198,24 +2187,37 @@ button { font: inherit; color: inherit; cursor: pointer; }
     o.connect(g); g.connect(c.destination);
     o.start(at); o.stop(at + dur + 0.05);
   }
-  /* good: 도-미-솔 로 올라가는 밝은 소리 / bad: 부드럽게 내려가는 소리 (혼내는 느낌 없이) */
+
+  /* 종소리 — 단순한 '삐' 소리와 달리 배음을 여러 개 겹쳐야 실제 종처럼 들립니다.
+     높은 배음일수록 먼저 사라지게 해서 "띵—" 하고 여운이 남게 합니다. */
+  function bell(c, f, at, dur, vol) {
+    [[1, 1], [2, 0.45], [3, 0.22], [4.2, 0.12], [5.4, 0.06]].forEach(function (p) {
+      var o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(f * p[0], at);
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(vol * p[1], at + 0.006);   // 딱 치는 느낌
+      g.gain.exponentialRampToValueAtTime(0.0001, at + dur * (1 - p[0] * 0.08));
+      o.connect(g); g.connect(c.destination);
+      o.start(at); o.stop(at + dur + 0.1);
+    });
+  }
+
+  /* good: 초인종 같은 "띵—동—" / bad: 부드럽게 내려가는 소리 (혼내는 느낌 없이) */
   G.sfx = function (kind) {
     if (!P.settings.sfx) return;
     var c = audio(); if (!c) return;
     if (c.state === 'suspended') { try { c.resume(); } catch (e) { } }
     var t = c.currentTime + 0.01;
     if (kind === 'good') {
-      [[784, 0], [988, 0.085], [1319, 0.17]].forEach(function (n) {
-        tone(c, n[0], t + n[1], 0.28, 0.16);
-        tone(c, n[0] * 2, t + n[1], 0.2, 0.05, 'triangle');   // 살짝 반짝이는 배음
-      });
+      bell(c, 1318.5, t, 1.10, 0.20);          // 띵 (미)
+      bell(c, 1046.5, t + 0.20, 1.60, 0.19);   // 동 (도)
     } else if (kind === 'bad') {
       tone(c, 392, t, 0.22, 0.10, 'sine');
-      tone(c, 330, t + 0.13, 0.3, 0.09, 'sine');
+      tone(c, 330, t + 0.13, 0.30, 0.09, 'sine');
     } else if (kind === 'finish') {
-      [[523, 0], [659, 0.12], [784, 0.24], [1047, 0.36]].forEach(function (n) {
-        tone(c, n[0], t + n[1], 0.45, 0.15);
-        tone(c, n[0] * 2, t + n[1], 0.3, 0.04, 'triangle');
+      [[784, 0], [1046.5, 0.16], [1318.5, 0.32]].forEach(function (n) {
+        bell(c, n[0], t + n[1], 1.5, 0.17);
       });
     }
   };
@@ -2259,46 +2261,30 @@ button { font: inherit; color: inherit; cursor: pointer; }
     try { window.speechSynthesis.cancel(); } catch (e) { }
   };
 
-  /* 효과음 → "정답입니다" (한국어) → 정답 문장 (영어) 순서로 이어서 들려줍니다 */
-  var PRAISE = ['정답입니다', '잘하셨어요', '맞았어요'];
-  var praiseAt = 0;
-
+  /* 정답: "띵—동—" 종소리 → 정답 문장(영어) 다시 읽어주기.
+     한국어 안내 음성은 넣지 않습니다 — 소리만으로 충분히 알 수 있고,
+     매번 같은 말을 듣는 것보다 그 시간에 영어를 한 번 더 듣는 편이 낫습니다. */
   G.praise = function (englishText) {
     var mine = ++seq;
     G.sfx('good');
-    var ko = PRAISE[praiseAt++ % PRAISE.length];
-    function sayEnglish() {
-      if (mine !== seq || !englishText || !voice) return;
-      setTimeout(function () {
-        if (mine !== seq) return;
-        utter(voice, englishText, P.settings.rate || 1, null);
-      }, 140);
-    }
+    if (!englishText || !voice) return;
     setTimeout(function () {
       if (mine !== seq) return;
       try { window.speechSynthesis.cancel(); } catch (e) { }
-      if (voiceKo) utter(voiceKo, ko, 1, sayEnglish);
-      else sayEnglish();
-    }, 480);                       // 효과음이 끝난 뒤에 말이 시작되게
+      utter(voice, englishText, P.settings.rate || 1, null);
+    }, 620);                       // 종소리의 "동" 이 울린 뒤에 이어서
   };
 
-  /* 틀렸을 때 — 부드럽게 다시 해보자고만 합니다 */
+  /* 틀렸을 때 — 부드러운 소리만. 정답을 아직 안 알려준 상태면 소리로도 흘리지 않습니다. */
   G.encourage = function (englishText) {
     var mine = ++seq;
     G.sfx('bad');
+    if (!englishText || !voice) return;
     setTimeout(function () {
       if (mine !== seq) return;
       try { window.speechSynthesis.cancel(); } catch (e) { }
-      function sayEn() {
-        if (mine !== seq || !englishText || !voice) return;
-        setTimeout(function () {
-          if (mine !== seq) return;
-          utter(voice, englishText, Math.max(0.6, (P.settings.rate || 1) - 0.25), null);
-        }, 140);
-      }
-      if (voiceKo) utter(voiceKo, '다시 해볼까요', 1, sayEn);
-      else sayEn();
-    }, 420);
+      utter(voice, englishText, Math.max(0.6, (P.settings.rate || 1) - 0.25), null);
+    }, 520);
   };
 
   /* 정답 판정 (타이핑) */
@@ -2669,7 +2655,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
       }).join('') + '</div>' +
       '<button class="btn ghost small" style="margin-top:12px" data-speak="Good morning. How are you today?">🔊 소리 들어보기</button></div>';
 
-    h += '<div class="set-row"><h4>정답 효과음</h4><p>맞히면 밝은 소리와 함께 "정답입니다" 하고 알려드려요</p>' +
+    h += '<div class="set-row"><h4>정답 효과음</h4><p>맞히면 "띵—동—" 소리가 나고 정답을 다시 읽어드려요</p>' +
       '<div class="seg" id="seg-sfx">' +
       [['1', '켜기'], ['0', '끄기']].map(function (o) {
         return '<button data-v="' + o[0] + '" class="' + ((P.settings.sfx ? '1' : '0') === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
@@ -2878,7 +2864,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
     var cta = el('cta'); if (cta) cta.style.display = 'none';
     var en = q.item ? q.item.en : null;
-    if (ok) G.praise(en); else G.encourage(en);
+    if (ok) {
+      G.praise(en);
+    } else {
+      // 첫 번째로 틀렸을 때는 정답을 화면에도 소리로도 알려주지 않습니다.
+      // 두 번째부터 정답이 공개되므로 그때 함께 들려드립니다.
+      G.encourage(q._tries >= 2 ? en : null);
+    }
   }
 
   function clearVerdict() {
