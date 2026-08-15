@@ -1,0 +1,3045 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>엄마의 영어</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="하루 20분, 그림과 소리로 배우는 영어. 60대 학습자를 위해 만든 단계별 영어 학습 앱.">
+<meta name="theme-color" content="#FFFCF5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="엄마의 영어">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<style>
+/* ============================================================
+   엄마의 영어 — 60대 학습자를 위한 접근성 우선 디자인
+   - 기본 글자 20px, 버튼 최소 높이 60px
+   - 얇은 회색 글씨 금지, 대비 4.5:1 이상
+   - 라이트/다크 모두 대응
+   ============================================================ */
+
+:root {
+  --bg:        #FFFCF5;
+  --bg-soft:   #F6F1E6;
+  --card:      #FFFFFF;
+  --card-2:    #FBF7EE;
+  --ink:       #1B2430;
+  --ink-2:     #46536A;
+  --line:      #DED5C4;
+  --line-2:    #C4B79E;
+
+  --brand:     #1E7F4F;
+  --brand-ink: #14603B;
+  --brand-soft:#DCF3E5;
+
+  --gold:      #E08A00;
+  --gold-soft: #FFF0D0;
+
+  --rose:      #C42B4B;
+  --rose-soft: #FDE4E9;
+
+  --blue:      #1F6FB2;
+  --blue-soft: #DCEDFB;
+
+  --purple:    #6D4AA8;
+  --purple-soft:#EDE4FB;
+
+  /* 색 위에 올라가는 글씨색 — 다크 모드에서는 배경색이 밝아지므로 어두운 글씨로 뒤집습니다 */
+  --on-brand:  #FFFFFF;
+  --on-rose:   #FFFFFF;
+  --on-blue:   #FFFFFF;
+
+  /* 연한 배경 위에 올리는 '글씨용' 색 (버튼 배경색보다 진해야 읽힙니다) */
+  --gold-text:  #8A5200;
+  --brand-text: #14603B;
+
+  --shadow:    0 4px 0 var(--line-2);
+  --shadow-lg: 0 10px 30px rgba(27,36,48,.13);
+
+  --r:   18px;
+  --r-lg:26px;
+
+  --fs: 20px;           /* 글씨 크기 설정으로 바뀜 */
+  --tap: 62px;          /* 최소 터치 영역 */
+}
+
+:root[data-size="large"]  { --fs: 23px; --tap: 68px; }
+:root[data-size="xlarge"] { --fs: 26px; --tap: 74px; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #14171C;
+    --bg-soft:   #1B1F26;
+    --card:      #21262F;
+    --card-2:    #272D37;
+    --ink:       #F2F5F9;
+    --ink-2:     #B9C4D4;
+    --line:      #39414E;
+    --line-2:    #4A5464;
+    --brand:     #3FBF7C;
+    --brand-ink: #7BDCA8;
+    --brand-soft:#1D3A2C;
+    --gold:      #F5B23C;
+    --gold-soft: #3A2E15;
+    --rose:      #FF7A94;
+    --rose-soft: #3B1B23;
+    --blue:      #63B3ED;
+    --blue-soft: #17293A;
+    --purple:    #B69AE8;
+    --purple-soft:#2A2140;
+    --on-brand:  #04240F;
+    --on-rose:   #3A0A15;
+    --on-blue:   #04202F;
+    --gold-text:  #F5B23C;
+    --brand-text: #7BDCA8;
+    --shadow:    0 4px 0 var(--line-2);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"] {
+  --bg:        #14171C;
+  --bg-soft:   #1B1F26;
+  --card:      #21262F;
+  --card-2:    #272D37;
+  --ink:       #F2F5F9;
+  --ink-2:     #B9C4D4;
+  --line:      #39414E;
+  --line-2:    #4A5464;
+  --brand:     #3FBF7C;
+  --brand-ink: #7BDCA8;
+  --brand-soft:#1D3A2C;
+  --gold:      #F5B23C;
+  --gold-soft: #3A2E15;
+  --rose:      #FF7A94;
+  --rose-soft: #3B1B23;
+  --blue:      #63B3ED;
+  --blue-soft: #17293A;
+  --purple:    #B69AE8;
+  --purple-soft:#2A2140;
+  --on-brand:  #04240F;
+  --on-rose:   #3A0A15;
+  --on-blue:   #04202F;
+  --gold-text:  #F5B23C;
+  --brand-text: #7BDCA8;
+  --shadow:    0 4px 0 var(--line-2);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,.5);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕",
+               system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: var(--fs);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  word-break: keep-all;      /* 한글이 단어 중간에서 잘리지 않게 */
+  overflow-wrap: break-word; /* 대신 긴 영어 단어는 넘치지 않게 */
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 4px solid var(--blue); outline-offset: 3px; border-radius: 8px; }
+
+/* ---------- 레이아웃 ---------- */
+#app { max-width: 720px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; position: relative; }
+.screen { display: none; padding-bottom: 120px; }
+.screen.on { display: block; animation: fadeUp .28s ease both; }
+@keyframes fadeUp { from { opacity:0; transform: translateY(10px);} to {opacity:1; transform:none;} }
+
+.pad { padding: 0 18px; }
+
+/* ---------- 상단 바 ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--bg);
+  border-bottom: 2px solid var(--line);
+  padding: 12px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.tb-item {
+  display: flex; align-items: center; gap: 6px;
+  font-weight: 800; font-size: .92em;
+  padding: 6px 12px; border-radius: 999px;
+  border: 2px solid var(--line);
+  background: var(--card);
+}
+.tb-item .em { font-size: 1.25em; line-height: 1; }
+.tb-item.streak { color: var(--gold-text); background: var(--gold-soft); border-color: var(--gold); }
+.tb-item.xp     { color: var(--brand-text); background: var(--brand-soft); border-color: var(--brand); }
+.tb-spacer { flex: 1; }
+
+/* 오늘 목표 링 */
+.goal-ring { width: 52px; height: 52px; flex: none; position: relative; }
+.goal-ring svg { transform: rotate(-90deg); display:block; }
+.goal-ring .track { stroke: var(--line); }
+.goal-ring .fill  { stroke: var(--brand); stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
+.goal-ring .lbl {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: .62em; font-weight: 900; color: var(--brand-text);
+}
+.goal-ring.done .lbl { font-size: .9em; }
+
+/* ---------- 카드 / 버튼 ---------- */
+.card {
+  background: var(--card); border: 2px solid var(--line);
+  border-radius: var(--r-lg); padding: 20px; margin: 16px 0;
+}
+
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; min-height: var(--tap);
+  padding: 14px 20px;
+  border: none; border-radius: var(--r);
+  font-weight: 900; letter-spacing: -.01em;
+  background: var(--brand); color: var(--on-brand);
+  box-shadow: 0 5px 0 var(--brand-ink);
+  transition: transform .06s, box-shadow .06s;
+}
+.btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--brand-ink); }
+.btn[disabled] { background: var(--line); color: var(--ink-2); box-shadow: 0 5px 0 var(--line-2); cursor: default; }
+.btn.ghost {
+  background: var(--card); color: var(--ink);
+  border: 2px solid var(--line-2); box-shadow: 0 5px 0 var(--line-2);
+}
+.btn.rose { background: var(--rose); color: var(--on-rose); box-shadow: 0 5px 0 #8E1B34; }
+.btn.small { min-height: 52px; padding: 10px 16px; font-size: .92em; }
+.row { display: flex; gap: 12px; }
+
+/* ---------- 홈: 학습 지도 ---------- */
+.hero {
+  margin: 16px 18px; padding: 20px;
+  border-radius: var(--r-lg);
+  background: linear-gradient(135deg, var(--brand-soft), var(--gold-soft));
+  border: 2px solid var(--line);
+  display: flex; align-items: center; gap: 16px;
+}
+.hero .txt { flex: 1; min-width: 0; }
+.hero h2 { margin: 0 0 4px; font-size: 1.15em; }
+.hero p  { margin: 0; color: var(--ink-2); font-size: .88em; font-weight: 700; }
+.mascot { width: 92px; height: 92px; flex: none; }
+
+.stage-head {
+  margin: 26px 18px 10px; padding: 16px 20px;
+  border-radius: var(--r);
+  background: var(--card-2); border: 2px solid var(--line);
+}
+.stage-head .lv { font-size: .78em; font-weight: 900; color: var(--brand-text); letter-spacing: .04em; }
+.stage-head h3 { margin: 2px 0 0; font-size: 1.08em; }
+.stage-head .desc { margin: 4px 0 0; font-size: .82em; color: var(--ink-2); font-weight: 600; }
+.stage-head.locked { opacity: .62; }
+
+.unit {
+  margin: 14px 18px; padding: 18px;
+  background: var(--card); border: 2px solid var(--line);
+  border-radius: var(--r-lg);
+}
+.unit-top { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+.unit-ico { width: 56px; height: 56px; flex: none; border-radius: 16px; background: var(--bg-soft);
+            display: grid; place-items: center; overflow: hidden; }
+.unit-ico svg { width: 44px; height: 44px; }
+.unit-title { flex: 1; min-width: 0; }
+.unit-title b { display: block; font-size: 1.02em; }
+.unit-title span { font-size: .78em; color: var(--ink-2); font-weight: 700; }
+
+.bar { height: 14px; border-radius: 999px; background: var(--bg-soft); border: 2px solid var(--line); overflow: hidden; margin-top: 10px; }
+.bar > i { display: block; height: 100%; background: var(--brand); border-radius: 999px; transition: width .5s ease; }
+
+/* 레슨 노드들 */
+.nodes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.node {
+  width: 70px; height: 70px; flex: none;
+  border-radius: 50%; border: none;
+  display: grid; place-items: center;
+  font-weight: 900; font-size: .82em;
+  background: var(--bg-soft); color: var(--ink-2);
+  box-shadow: 0 5px 0 var(--line-2);
+  position: relative;
+  transition: transform .08s, box-shadow .08s;
+}
+.node:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--line-2); }
+.node.done   { background: var(--brand); color:var(--on-brand); box-shadow: 0 5px 0 var(--brand-ink); }
+.node.next   { background: var(--gold); color:#4A2C00; box-shadow: 0 5px 0 #A15F00; animation: bob 1.8s ease-in-out infinite; }
+.node.locked { opacity: .5; box-shadow: 0 5px 0 var(--line-2); }
+.node .crown { position: absolute; top: -8px; right: -4px; font-size: 1.1em; }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+.node.next::after {
+  content: "지금 여기"; position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
+  font-size: .52em; font-weight: 900; color: var(--gold-text); white-space: nowrap;
+}
+/* 라벨이 아랫줄 버튼에 가리지 않게 줄 간격을 벌립니다 */
+.nodes.has-next { row-gap: 34px; padding-bottom: 20px; }
+
+/* ---------- 학습 화면 ---------- */
+.lesson-bar { position: sticky; top: 0; z-index: 30; background: var(--bg); padding: 12px 18px 14px;
+              display: flex; align-items: center; gap: 14px; border-bottom: 2px solid var(--line); }
+.x-btn { width: 46px; height: 46px; flex: none; border-radius: 50%; border: 2px solid var(--line);
+         background: var(--card); font-size: 1.1em; font-weight: 900; display:grid; place-items:center; }
+.prog { flex: 1; height: 18px; border-radius: 999px; background: var(--bg-soft); border: 2px solid var(--line); overflow: hidden; }
+.prog > i { display: block; height: 100%; background: linear-gradient(90deg, var(--brand), #52C98A); transition: width .45s cubic-bezier(.3,1.4,.5,1); }
+
+.q-head { margin: 20px 18px 4px; font-size: 1.12em; font-weight: 900; }
+.q-sub  { margin: 0 18px 14px; font-size: .82em; font-weight: 700; color: var(--ink-2); }
+
+/* 그림 무대 */
+.stage-pic {
+  margin: 8px 18px 14px; border-radius: var(--r-lg);
+  background: var(--card-2); border: 2px solid var(--line);
+  min-height: 190px; display: grid; place-items: center; padding: 14px;
+  overflow: hidden;
+}
+.stage-pic svg { width: 170px; height: 170px; }
+.stage-pic .emo { font-size: 104px; line-height: 1.1; }
+.pop-in { animation: popIn .45s cubic-bezier(.2,1.5,.4,1) both; }
+@keyframes popIn { from { transform: scale(.5) rotate(-8deg); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+/* 나타났다가 이어서 둥실 떠 있기 */
+.pic-anim { animation: popIn .45s cubic-bezier(.2,1.5,.4,1) both, floaty 3.2s ease-in-out .45s infinite; }
+.unit-ico .emo { font-size: 34px; line-height: 1; }
+.spk .emo, .spk span { display: block; }
+
+/* 말풍선 문장 */
+.speak-row { display: flex; align-items: center; gap: 12px; margin: 0 18px 16px; }
+.spk {
+  width: var(--tap); height: var(--tap); flex: none; border-radius: 50%;
+  border: none; background: var(--blue); color: var(--on-blue);
+  box-shadow: 0 5px 0 #15507F; display: grid; place-items: center;
+}
+.spk:active { transform: translateY(4px); box-shadow: 0 1px 0 #15507F; }
+.spk svg { width: 30px; height: 30px; }
+.spk.slow { background: var(--purple); box-shadow: 0 5px 0 #4A3079; width: 52px; height: 52px; }
+.spk.slow svg { width: 24px; height: 24px; }
+.spk.playing { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.09)} }
+
+.bubble {
+  flex: 1; background: var(--card); border: 2px solid var(--line);
+  border-radius: var(--r); padding: 14px 16px; font-weight: 800; line-height: 1.45;
+}
+.bubble .ko { font-size: .8em; color: var(--ink-2); font-weight: 700; margin-top: 4px; }
+
+/* 선택지 */
+.choices { display: grid; gap: 12px; margin: 0 18px; }
+.choices.grid2 { grid-template-columns: 1fr 1fr; }
+.choice {
+  border: 2px solid var(--line); background: var(--card);
+  border-radius: var(--r); padding: 16px; min-height: var(--tap);
+  font-weight: 800; text-align: left;
+  box-shadow: 0 5px 0 var(--line-2);
+  display: flex; align-items: center; gap: 12px;
+  transition: transform .08s, box-shadow .08s, background .15s, border-color .15s;
+}
+.choice:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--line-2); }
+.choice.pic { flex-direction: column; text-align: center; gap: 8px; padding: 14px 10px; }
+.choice.pic svg { width: 78px; height: 78px; }
+.choice.pic .emo { font-size: 60px; line-height: 1; }
+.choice .num { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--bg-soft);
+               border: 2px solid var(--line); display: grid; place-items: center; font-size: .72em; font-weight: 900; }
+.choice.sel   { border-color: var(--blue); background: var(--blue-soft); box-shadow: 0 5px 0 var(--blue); }
+.choice.right { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 5px 0 var(--brand); }
+.choice.wrong { border-color: var(--rose); background: var(--rose-soft); box-shadow: 0 5px 0 var(--rose); animation: shake .4s; }
+.choice[disabled] { cursor: default; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-9px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(3px)} }
+
+/* 단어 조립 */
+.answer-box {
+  margin: 0 18px; min-height: 96px; padding: 10px;
+  border-radius: var(--r); background: var(--card-2);
+  border: 2px dashed var(--line-2);
+  display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start;
+}
+.answer-box.right { border-color: var(--brand); border-style: solid; background: var(--brand-soft); }
+.answer-box.wrong { border-color: var(--rose); border-style: solid; background: var(--rose-soft); }
+.bank { margin: 16px 18px 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.tile {
+  border: 2px solid var(--line-2); background: var(--card);
+  border-radius: 14px; padding: 10px 16px; min-height: 54px;
+  font-weight: 800; box-shadow: 0 4px 0 var(--line-2);
+  transition: transform .08s, box-shadow .08s, opacity .15s;
+}
+.tile:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--line-2); }
+.tile.used { opacity: .28; pointer-events: none; box-shadow: none; transform: translateY(3px); }
+.tile.placed { animation: popIn .22s ease both; }
+
+/* 짝 맞추기 */
+.match-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 18px; }
+.match-btn {
+  border: 2px solid var(--line); background: var(--card); border-radius: var(--r);
+  min-height: 66px; padding: 12px; font-weight: 800; box-shadow: 0 4px 0 var(--line-2);
+  display: flex; align-items: center; justify-content: center; text-align: center; gap: 8px;
+}
+.match-btn .emo { font-size: 1.5em; }
+.match-btn.sel  { border-color: var(--blue); background: var(--blue-soft); box-shadow: 0 4px 0 var(--blue); }
+.match-btn.gone { opacity: .2; pointer-events: none; }
+.match-btn.bad  { border-color: var(--rose); background: var(--rose-soft); animation: shake .35s; }
+
+/* 입력 */
+.typebox {
+  margin: 0 18px; width: calc(100% - 36px);
+  min-height: var(--tap); padding: 14px 16px;
+  font: inherit; font-weight: 800;
+  border: 2px solid var(--line-2); border-radius: var(--r);
+  background: var(--card); color: var(--ink);
+}
+.typebox:focus { border-color: var(--blue); }
+
+/* 하단 판정 바 */
+.verdict {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  max-width: 720px; margin: 0 auto;
+  background: var(--card); border-top: 3px solid var(--line);
+  padding: 16px 18px calc(16px + env(safe-area-inset-bottom));
+  transform: translateY(110%); transition: transform .3s cubic-bezier(.2,1.2,.4,1);
+}
+.verdict.on { transform: none; }
+.verdict.good { background: var(--brand-soft); border-top-color: var(--brand); }
+.verdict.bad  { background: var(--rose-soft);  border-top-color: var(--rose); }
+.verdict h4 { margin: 0 0 4px; font-size: 1.05em; display: flex; align-items: center; gap: 10px; }
+.verdict.good h4 { color: var(--brand-ink); }
+.verdict.bad  h4 { color: var(--rose); }
+.verdict .ans { margin: 0 0 12px; font-weight: 800; font-size: .9em; }
+.verdict .ans em { font-style: normal; color: var(--ink-2); font-weight: 700; }
+
+.footer-cta {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 35;
+  max-width: 720px; margin: 0 auto; padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 70%, transparent);
+}
+
+/* ---------- 완료 화면 ---------- */
+.done-wrap { text-align: center; padding: 40px 18px 0; }
+.done-wrap h2 { font-size: 1.6em; margin: 18px 0 6px; }
+.done-wrap .mascot { width: 150px; height: 150px; margin: 0 auto; }
+.stat-row { display: flex; gap: 12px; margin: 26px 0; }
+.stat {
+  flex: 1; border-radius: var(--r); border: 3px solid var(--gold);
+  background: var(--gold-soft); padding: 14px 8px;
+}
+.stat b { display: block; font-size: 1.5em; color: var(--gold-text); }
+.stat span { font-size: .74em; font-weight: 800; color: var(--ink-2); }
+.stat.g { border-color: var(--brand); background: var(--brand-soft); }
+.stat.g b { color: var(--brand-text); }
+.stat.b { border-color: var(--blue); background: var(--blue-soft); }
+.stat.b b { color: var(--blue); }
+
+.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 60; overflow: hidden; }
+.confetti i {
+  position: absolute; width: 12px; height: 18px; border-radius: 3px;
+  animation: fall 2.6s linear forwards;
+}
+@keyframes fall {
+  from { transform: translateY(-14vh) rotate(0deg); opacity: 1 }
+  to   { transform: translateY(105vh) rotate(760deg); opacity: 0 }
+}
+
+/* ---------- 기록 ---------- */
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; margin-top: 12px; }
+.cal .d {
+  aspect-ratio: 1; border-radius: 10px; background: var(--bg-soft);
+  border: 2px solid var(--line); display: grid; place-items: center;
+  font-size: .58em; font-weight: 900; color: var(--ink-2);
+}
+.cal .d.on { background: var(--brand); border-color: var(--brand-ink); color: var(--on-brand); }
+.cal .d.today { outline: 3px solid var(--gold); outline-offset: 1px; }
+.cal-head { display: grid; grid-template-columns: repeat(7,1fr); gap: 7px; margin-top: 14px; }
+.cal-head span { text-align: center; font-size: .6em; font-weight: 900; color: var(--ink-2); }
+
+.word-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 0;
+  border-bottom: 2px solid var(--line);
+}
+.word-item:last-child { border-bottom: none; }
+.word-item .emo { font-size: 1.7em; width: 44px; text-align: center; flex: none; }
+.word-item .w { flex: 1; min-width: 0; }
+.word-item .w b { display: block; }
+.word-item .w span { font-size: .78em; color: var(--ink-2); font-weight: 700; }
+.pill { font-size: .62em; font-weight: 900; padding: 5px 11px; border-radius: 999px; flex: none; }
+.pill.s0 { background: var(--rose-soft); color: var(--rose); }
+.pill.s1 { background: var(--gold-soft); color: var(--gold-text); }
+.pill.s2 { background: var(--brand-soft); color: var(--brand-text); }
+
+/* ---------- 설정 ---------- */
+.seg { display: flex; gap: 8px; margin-top: 10px; }
+.seg button {
+  flex: 1; min-height: 56px; border-radius: 14px; font-weight: 900;
+  border: 2px solid var(--line-2); background: var(--card); box-shadow: 0 4px 0 var(--line-2);
+}
+.seg button.on { background: var(--brand); color: var(--on-brand); border-color: var(--brand-ink); box-shadow: 0 4px 0 var(--brand-ink); }
+.set-row { padding: 16px 0; border-bottom: 2px solid var(--line); }
+.set-row:last-child { border-bottom: none; }
+.set-row h4 { margin: 0 0 2px; font-size: .98em; }
+.set-row p { margin: 0; font-size: .78em; color: var(--ink-2); font-weight: 700; }
+
+/* ---------- 하단 탭 ---------- */
+.tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
+  max-width: 720px; margin: 0 auto;
+  background: var(--card); border-top: 3px solid var(--line);
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tab {
+  border: none; background: none; padding: 10px 4px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-size: .6em; font-weight: 900; color: var(--ink-2);
+}
+.tab .em { font-size: 1.9em; line-height: 1; filter: grayscale(1); opacity: .55; transition: .2s; }
+.tab.on { color: var(--brand-text); }
+.tab.on .em { filter: none; opacity: 1; transform: translateY(-2px); }
+
+/* ---------- 온보딩 ---------- */
+.ob { padding: 44px 22px 0; text-align: center; }
+.ob .mascot { width: 160px; height: 160px; margin: 0 auto 10px; }
+.ob h1 { font-size: 1.55em; margin: 8px 0; }
+.ob p { color: var(--ink-2); font-weight: 700; font-size: .88em; margin: 0 0 26px; }
+
+.toast {
+  position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: var(--bg); padding: 12px 22px; border-radius: 999px;
+  font-weight: 800; font-size: .82em; z-index: 70; opacity: 0; transition: .3s; pointer-events: none;
+  max-width: 90vw; text-align: center;
+}
+.toast.on { opacity: 1; transform: translateX(-50%); }
+
+.hide { display: none !important; }
+
+/* ---------- 안내 창 ---------- */
+.modal-bg {
+  position: fixed; inset: 0; z-index: 80;
+  background: rgba(20,24,30,.55);
+  display: grid; place-items: center; padding: 18px;
+  animation: fadeUp .2s ease both;
+}
+.modal {
+  background: var(--card); border: 3px solid var(--line);
+  border-radius: var(--r-lg); padding: 22px;
+  max-width: 480px; width: 100%; max-height: 86vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+.modal h3 { margin: 0 0 10px; font-size: 1.15em; }
+.modal p  { margin: 0 0 12px; font-size: .86em; font-weight: 700; color: var(--ink-2); line-height: 1.6; }
+.modal ol { margin: 0 0 14px; padding-left: 1.3em; font-size: .86em; font-weight: 800; line-height: 1.9; }
+.modal ol li::marker { color: var(--brand); font-weight: 900; }
+
+/* 소리 안내 배너 */
+.notice {
+  margin: 0 18px 4px; padding: 14px 16px;
+  border-radius: var(--r); border: 2px solid var(--gold);
+  background: var(--gold-soft);
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; text-align: left;
+}
+.notice .em { font-size: 1.7em; flex: none; }
+.notice b { display: block; font-size: .9em; }
+.notice span { font-size: .74em; font-weight: 700; color: var(--ink-2); }
+/* 글씨를 크게 쓰시는 분도 눌리기 쉽도록 버튼은 한 줄을 다 씁니다 */
+.notice button {
+  flex: 1 0 100%; min-height: 50px;
+  border: 2px solid var(--gold); background: var(--card);
+  border-radius: 999px; padding: 9px 15px; font-size: .78em; font-weight: 900; color: var(--gold-text);
+}
+
+@media (max-width: 380px) {
+  .node { width: 62px; height: 62px; }
+  .stage-pic svg { width: 140px; height: 140px; }
+  .stage-pic .emo { font-size: 86px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <section id="scr-onboard" class="screen"></section>
+  <section id="scr-home" class="screen"></section>
+  <section id="scr-lesson" class="screen"></section>
+  <section id="scr-done" class="screen"></section>
+  <section id="scr-review" class="screen"></section>
+  <section id="scr-stats" class="screen"></section>
+  <section id="scr-settings" class="screen"></section>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-tab="learn"><span class="em">📚</span>배우기</button>
+    <button class="tab" data-tab="review"><span class="em">🔁</span>복습</button>
+    <button class="tab" data-tab="stats"><span class="em">📈</span>기록</button>
+    <button class="tab" data-tab="settings"><span class="em">⚙️</span>설정</button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+/* ============================================================
+   그림 라이브러리
+   - 손으로 그린 SVG 일러스트 (핵심 어휘)
+   - 없는 단어는 큰 이모지로 대체 (모든 기기에서 컬러로 표시됨)
+   ============================================================ */
+(function (G) {
+  'use strict';
+
+  var V = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
+
+  // 자주 쓰는 조각
+  function circ(cx, cy, r, f) { return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + f + '"/>'; }
+  function rect(x, y, w, h, f, rd) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (rd || 0) + '" fill="' + f + '"/>'; }
+  function path(d, f, s, sw) {
+    return '<path d="' + d + '" fill="' + (f || 'none') + '"' +
+      (s ? ' stroke="' + s + '" stroke-width="' + (sw || 4) + '" stroke-linecap="round" stroke-linejoin="round"' : '') + '/>';
+  }
+  var GROUND = rect(0, 82, 100, 18, '#BFE3C4', 0);
+
+  // 사람 얼굴 (표정/머리색 조합)
+  function face(hair, skin, mouth, extra) {
+    return circ(50, 52, 26, skin) +
+      path('M24 46 Q28 20 50 20 Q72 20 76 46 Q70 34 50 34 Q30 34 24 46Z', hair) +
+      circ(41, 50, 3.6, '#3A2A20') + circ(59, 50, 3.6, '#3A2A20') +
+      (mouth === 'sad'
+        ? path('M41 68 Q50 60 59 68', null, '#3A2A20', 4)
+        : path('M41 62 Q50 72 59 62', null, '#3A2A20', 4)) +
+      (extra || '');
+  }
+
+  var I = {};
+
+  /* ---- 인사 / 사람 ---- */
+  I.wave = face('#3A2A20', '#F6CDA5', 'smile') +
+    path('M79 46 L88 30', null, '#F6CDA5', 9) + circ(89, 27, 8, '#F6CDA5');
+  I.man = face('#2E2119', '#F6CDA5', 'smile') + rect(30, 78, 40, 22, '#3B7DD8', 8);
+  I.woman = face('#6B3A1F', '#F8D6B3', 'smile',
+    path('M22 52 Q20 78 26 84', null, '#6B3A1F', 8) + path('M78 52 Q80 78 74 84', null, '#6B3A1F', 8)) +
+    rect(30, 78, 40, 22, '#D6558A', 8);
+  I.boy = circ(50, 46, 22, '#F6CDA5') + path('M28 42 Q32 20 50 20 Q68 20 72 42 Q64 32 50 32 Q36 32 28 42Z', '#2E2119') +
+    circ(42, 45, 3.2, '#3A2A20') + circ(58, 45, 3.2, '#3A2A20') + path('M43 56 Q50 64 57 56', null, '#3A2A20', 3.6) +
+    rect(32, 68, 36, 32, '#2FA0C9', 8);
+  I.girl = circ(50, 46, 22, '#F8D6B3') + path('M27 44 Q30 18 50 18 Q70 18 73 44 Q64 30 50 30 Q36 30 27 44Z', '#7A4322') +
+    circ(24, 52, 8, '#7A4322') + circ(76, 52, 8, '#7A4322') +
+    circ(42, 45, 3.2, '#3A2A20') + circ(58, 45, 3.2, '#3A2A20') + path('M43 56 Q50 64 57 56', null, '#3A2A20', 3.6) +
+    path('M50 68 L32 100 L68 100 Z', '#E86A9A');
+  I.baby = circ(50, 55, 28, '#FBD9BC') + path('M32 44 Q38 26 50 26 Q62 26 68 44', null, '#C98A55', 5) +
+    circ(41, 55, 3.6, '#3A2A20') + circ(59, 55, 3.6, '#3A2A20') + circ(50, 67, 5, '#E0868A') +
+    circ(30, 58, 5, '#F4B7BC') + circ(70, 58, 5, '#F4B7BC');
+  I.family = circ(32, 44, 16, '#F6CDA5') + rect(16, 60, 32, 34, '#3B7DD8', 8) +
+    circ(68, 46, 15, '#F8D6B3') + rect(53, 61, 30, 33, '#D6558A', 8) +
+    circ(50, 70, 11, '#FBD9BC') + rect(39, 82, 22, 18, '#F2C14E', 6);
+  I.smile = circ(50, 50, 38, '#FFD24A') + circ(38, 42, 5, '#4A3000') + circ(62, 42, 5, '#4A3000') +
+    path('M32 60 Q50 78 68 60', null, '#4A3000', 6);
+  I.sad = circ(50, 50, 38, '#9DB6CC') + circ(38, 42, 5, '#2A3B4A') + circ(62, 42, 5, '#2A3B4A') +
+    path('M34 70 Q50 56 66 70', null, '#2A3B4A', 6) + path('M62 50 Q66 62 62 66', '#5FA8E0');
+  I.heart = path('M50 86 C14 60 12 34 30 25 C40 20 48 26 50 33 C52 26 60 20 70 25 C88 34 86 60 50 86Z', '#E23E5C');
+
+  /* ---- 음식 ---- */
+  I.apple = path('M50 24 Q46 12 56 10', null, '#7A5230', 5) +
+    path('M50 26 C30 18 14 34 20 56 C25 76 40 90 50 90 C60 90 75 76 80 56 C86 34 70 18 50 26Z', '#E23E3E') +
+    path('M52 24 Q68 14 76 22 Q66 30 52 26Z', '#4FAE55');
+  I.banana = path('M22 34 Q24 74 62 82 Q88 86 84 62 Q70 74 50 64 Q34 54 34 32Z', '#F5C93B') +
+    path('M22 34 Q20 28 26 28 Q32 30 34 32', '#B08A18');
+  I.bread = path('M18 44 Q18 26 40 26 L64 26 Q86 26 86 44 L86 74 Q86 82 78 82 L26 82 Q18 82 18 74Z', '#D99B4E') +
+    path('M28 44 Q34 34 46 36', null, '#B47A34', 4);
+  I.rice = path('M18 56 Q50 40 82 56 Q78 84 50 84 Q22 84 18 56Z', '#FFFFFF') +
+    path('M14 54 Q50 34 86 54', null, '#DCDCDC', 4) + rect(14, 54, 72, 8, '#EFEFEF', 4);
+  I.egg = path('M50 14 C70 14 82 44 82 60 C82 78 68 88 50 88 C32 88 18 78 18 60 C18 44 30 14 50 14Z', '#FFFDF2') +
+    circ(50, 60, 15, '#FFC93C');
+  I.fish = path('M18 50 Q40 26 66 50 Q40 74 18 50Z', '#5FB8E8') + path('M66 50 L88 34 L88 66Z', '#3D96C6') +
+    circ(32, 46, 4, '#12384E');
+  I.meat = path('M22 62 Q22 34 50 30 Q80 26 82 52 Q84 76 54 80 Q26 84 22 62Z', '#D4665C') +
+    path('M64 74 L84 84', null, '#F0E6D2', 9);
+  I.milk = rect(30, 26, 40, 62, '#FFFFFF', 6) + path('M30 26 L50 8 L70 26Z', '#E8F1FA') +
+    rect(34, 52, 32, 22, '#4A9BE0', 4) + rect(30, 26, 40, 62, 'none', 0);
+  I.water = path('M50 12 C68 36 80 50 80 62 C80 78 66 90 50 90 C34 90 20 78 20 62 C20 50 32 36 50 12Z', '#4FA8E8') +
+    path('M36 66 Q38 76 48 80', null, '#BFE4FA', 5);
+  I.coffee = rect(20, 36, 52, 44, '#FFFFFF', 8) + rect(24, 42, 44, 30, '#7A4B24', 5) +
+    path('M72 46 Q90 46 90 58 Q90 70 72 70', null, '#FFFFFF', 7) + rect(14, 82, 64, 8, '#C9CFD6', 4);
+  I.food = circ(50, 56, 32, '#FFFFFF') + circ(50, 56, 24, '#F2C14E') +
+    path('M14 30 L14 56', null, '#8A929B', 5) + path('M86 30 L86 56', null, '#8A929B', 5);
+
+  /* ---- 동물 ---- */
+  I.dog = circ(50, 56, 26, '#C98A4B') + path('M24 34 L20 62 L34 56Z', '#A96C32') + path('M76 34 L80 62 L66 56Z', '#A96C32') +
+    circ(41, 52, 3.8, '#2B1A0E') + circ(59, 52, 3.8, '#2B1A0E') + path('M50 62 L50 68', null, '#2B1A0E', 3.5) +
+    circ(50, 62, 5, '#2B1A0E') + path('M40 72 Q50 80 60 72', null, '#2B1A0E', 3.5);
+  I.cat = circ(50, 58, 25, '#9AA3AC') + path('M28 40 L26 20 L44 34Z', '#9AA3AC') + path('M72 40 L74 20 L56 34Z', '#9AA3AC') +
+    circ(41, 54, 3.8, '#2B2F33') + circ(59, 54, 3.8, '#2B2F33') + path('M50 62 L46 66 M50 62 L54 66', null, '#2B2F33', 3) +
+    path('M50 60 L50 64', null, '#E28B9B', 5) +
+    path('M20 58 L34 60 M20 66 L34 64 M80 58 L66 60 M80 66 L66 64', null, '#5A6169', 2.5);
+  I.bird = path('M28 56 Q28 34 50 34 Q72 34 72 54 Q72 74 50 76 Q30 76 28 56Z', '#5AC3E8') +
+    path('M72 44 L88 50 L72 56Z', '#F2A03C') + circ(62, 46, 3.6, '#123A4C') +
+    path('M34 58 Q46 50 56 62 Q44 70 34 58Z', '#3AA5CC') + path('M40 76 L36 90 M56 76 L60 90', null, '#F2A03C', 4);
+  I.horse = path('M20 84 L26 50 Q30 32 50 32 L66 32 Q80 32 80 46 L80 84', '#A5703C', null) +
+    circ(72, 30, 14, '#A5703C') + path('M64 18 L66 30 M78 18 L76 30', null, '#8A5A2A', 6) + circ(76, 30, 3, '#2B1A0E');
+  I.pig = circ(50, 56, 26, '#F0A8B8') + path('M26 34 L26 50 L38 44Z', '#E890A4') + path('M74 34 L74 50 L62 44Z', '#E890A4') +
+    circ(41, 52, 3.4, '#4A2530') + circ(59, 52, 3.4, '#4A2530') +
+    '<ellipse cx="50" cy="66" rx="12" ry="9" fill="#E890A4"/>' + circ(46, 66, 2.4, '#7A3448') + circ(54, 66, 2.4, '#7A3448');
+
+  /* ---- 자연 ---- */
+  I.sun = circ(50, 50, 24, '#FFC93C') +
+    path('M50 8 L50 20 M50 80 L50 92 M8 50 L20 50 M80 50 L92 50 M20 20 L28 28 M72 72 L80 80 M80 20 L72 28 M28 72 L20 80',
+      null, '#F5A623', 6);
+  I.moon = path('M62 12 A40 40 0 1 0 62 88 A32 32 0 1 1 62 12Z', '#F2D98A') + circ(74, 22, 3, '#FFF7D0') + circ(84, 40, 2.4, '#FFF7D0');
+  I.star = path('M50 10 L61 38 L92 40 L68 60 L76 90 L50 73 L24 90 L32 60 L8 40 L39 38Z', '#FFC93C');
+  I.cloud = path('M26 72 Q10 72 10 58 Q10 44 26 44 Q28 26 46 26 Q64 26 68 42 Q90 42 90 58 Q90 72 74 72Z', '#C9DCEA');
+  I.rain = path('M26 58 Q10 58 10 46 Q10 32 26 32 Q28 16 46 16 Q64 16 68 30 Q90 30 90 46 Q90 58 74 58Z', '#94AFC4') +
+    path('M30 68 L26 84 M50 68 L46 84 M70 68 L66 84', null, '#4FA8E8', 6);
+  I.snow = path('M26 56 Q10 56 10 44 Q10 30 26 30 Q28 14 46 14 Q64 14 68 28 Q90 28 90 44 Q90 56 74 56Z', '#D8E6F0') +
+    circ(30, 74, 5, '#7EC8F0') + circ(50, 82, 5, '#7EC8F0') + circ(70, 72, 5, '#7EC8F0');
+  I.tree = GROUND + rect(45, 56, 10, 34, '#8A5A2A', 3) +
+    circ(50, 40, 24, '#4FAE55') + circ(32, 50, 16, '#3E9448') + circ(68, 50, 16, '#3E9448');
+  I.flower = GROUND + path('M50 54 L50 90', null, '#4FAE55', 5) +
+    circ(50, 34, 11, '#FFC93C') + circ(50, 16, 11, '#E86A9A') + circ(68, 25, 11, '#E86A9A') +
+    circ(68, 45, 11, '#E86A9A') + circ(32, 45, 11, '#E86A9A') + circ(32, 25, 11, '#E86A9A') + circ(50, 34, 9, '#FFC93C');
+  I.mountain = rect(0, 0, 100, 100, '#CFE7F5', 0) + circ(76, 22, 10, '#FFC93C') +
+    path('M0 88 L30 34 L52 66 L68 44 L100 88Z', '#6E8B57') + path('M30 34 L18 56 L42 56Z', '#FFFFFF') +
+    path('M68 44 L60 58 L78 58Z', '#FFFFFF');
+  I.sea = rect(0, 0, 100, 56, '#BFE3F5', 0) + circ(78, 20, 10, '#FFC93C') +
+    path('M0 56 L100 56 L100 100 L0 100Z', '#3E8FC4') +
+    path('M0 66 Q14 58 28 66 Q42 74 56 66 Q70 58 84 66 Q94 72 100 68', null, '#9ED6F0', 4);
+
+  /* ---- 물건 / 집 ---- */
+  I.house = GROUND + rect(24, 48, 52, 42, '#F2DEC0', 3) + path('M16 50 L50 20 L84 50Z', '#C4574B') +
+    rect(44, 66, 14, 24, '#8A5A2A', 2) + rect(30, 56, 12, 12, '#7EC8F0', 2) + rect(60, 56, 12, 12, '#7EC8F0', 2);
+  I.door = rect(26, 12, 48, 78, '#A5703C', 4) + rect(32, 18, 36, 66, '#C08B4E', 3) + circ(62, 52, 4, '#F5C93B');
+  I.window = rect(18, 18, 64, 64, '#8A5A2A', 4) + rect(24, 24, 52, 52, '#9ED6F0', 2) +
+    path('M50 24 L50 76 M24 50 L76 50', null, '#8A5A2A', 5);
+  I.book = path('M14 22 Q32 14 50 22 L50 84 Q32 76 14 84Z', '#E05A4E') +
+    path('M86 22 Q68 14 50 22 L50 84 Q68 76 86 84Z', '#4A8FD0') + rect(47, 20, 6, 66, '#8A929B', 2);
+  I.pen = path('M18 84 L26 62 L74 14 L86 26 L38 74Z', '#F2C14E') + path('M74 14 L86 26', null, '#C99B22', 4) +
+    path('M18 84 L26 76 L24 68Z', '#3A3A3A');
+  I.chair = rect(28, 14, 12, 50, '#A5703C', 3) + rect(60, 14, 12, 50, '#A5703C', 3) +
+    rect(24, 52, 52, 12, '#C08B4E', 3) + rect(28, 64, 8, 26, '#A5703C', 2) + rect(64, 64, 8, 26, '#A5703C', 2);
+  I.table = rect(12, 38, 76, 12, '#C08B4E', 4) + rect(20, 50, 9, 40, '#A5703C', 2) + rect(71, 50, 9, 40, '#A5703C', 2);
+  I.bed = rect(10, 44, 80, 12, '#F0E6D2', 4) + rect(10, 56, 80, 20, '#4A8FD0', 4) +
+    rect(18, 34, 26, 14, '#FFFFFF', 5) + rect(10, 34, 8, 52, '#A5703C', 3) + rect(84, 46, 8, 40, '#A5703C', 3);
+  I.clock = circ(50, 50, 38, '#FFFFFF') + circ(50, 50, 38, 'none') +
+    '<circle cx="50" cy="50" r="38" fill="none" stroke="#3A3A3A" stroke-width="6"/>' +
+    path('M50 50 L50 28 M50 50 L66 58', null, '#3A3A3A', 5) + circ(50, 50, 4, '#E23E3E');
+  I.phone = rect(30, 8, 40, 84, '#2B2F33', 8) + rect(34, 18, 32, 62, '#9ED6F0', 3) + circ(50, 86, 3.4, '#8A929B');
+  I.computer = rect(12, 20, 76, 50, '#2B2F33', 5) + rect(17, 25, 66, 40, '#5AC3E8', 2) +
+    rect(38, 70, 24, 8, '#8A929B', 2) + rect(26, 78, 48, 7, '#8A929B', 3);
+  I.money = rect(10, 30, 80, 44, '#4FAE55', 6) + rect(16, 36, 68, 32, 'none', 3) +
+    '<rect x="16" y="36" width="68" height="32" rx="3" fill="none" stroke="#2E7A36" stroke-width="2.5"/>' +
+    circ(50, 52, 12, '#2E7A36') + circ(50, 52, 8, '#4FAE55');
+  I.key = circ(30, 50, 18, 'none') + '<circle cx="30" cy="50" r="18" fill="none" stroke="#E0A32E" stroke-width="9"/>' +
+    rect(44, 45, 44, 10, '#E0A32E', 3) + rect(72, 55, 8, 14, '#E0A32E', 2) + rect(58, 55, 8, 12, '#E0A32E', 2);
+  I.bag = path('M18 36 L82 36 L76 90 L24 90Z', '#C4574B') +
+    path('M36 36 Q36 14 50 14 Q64 14 64 36', null, '#8A3A32', 6);
+  I.shoe = path('M14 76 L14 52 Q28 46 36 56 Q46 68 66 68 L86 72 Q90 76 86 82 L18 82 Q14 82 14 76Z', '#3B5BA5') +
+    path('M20 60 L30 56 M28 66 L38 62', null, '#FFFFFF', 3);
+  I.hat = path('M18 74 Q50 62 82 74 Q50 86 18 74Z', '#3A3A3A') + path('M32 74 L36 30 Q50 22 64 30 L68 74', '#4A4A4A') +
+    rect(32, 60, 36, 8, '#C4574B', 0);
+  I.shirt = path('M22 24 L38 16 Q50 26 62 16 L78 24 L86 42 L72 48 L72 88 L28 88 L28 48 L14 42Z', '#4A8FD0');
+  I.umbrella = path('M10 52 Q10 18 50 18 Q90 18 90 52 Q74 42 66 52 Q58 42 50 52 Q42 42 34 52 Q26 42 10 52Z', '#C4574B') +
+    path('M50 52 L50 82 Q50 92 38 90', null, '#8A5A2A', 5);
+
+  /* ---- 이동 ---- */
+  I.car = path('M12 66 L18 46 Q22 38 34 38 L66 38 Q78 38 82 46 L88 66 L88 78 L12 78Z', '#E05A4E') +
+    rect(28, 44, 18, 14, '#BFE3F5', 3) + rect(54, 44, 18, 14, '#BFE3F5', 3) +
+    circ(28, 78, 10, '#2B2F33') + circ(72, 78, 10, '#2B2F33') + circ(28, 78, 4, '#B0B6BC') + circ(72, 78, 4, '#B0B6BC');
+  I.bus = rect(10, 22, 80, 54, '#F2C14E', 8) + rect(16, 30, 30, 20, '#BFE3F5', 3) + rect(54, 30, 30, 20, '#BFE3F5', 3) +
+    rect(16, 58, 68, 8, '#C99B22', 2) + circ(28, 78, 9, '#2B2F33') + circ(72, 78, 9, '#2B2F33');
+  I.train = rect(16, 18, 68, 56, '#3B7DD8', 10) + rect(24, 26, 52, 22, '#BFE3F5', 4) +
+    rect(20, 56, 60, 10, '#2A5A9E', 3) + circ(32, 80, 8, '#2B2F33') + circ(68, 80, 8, '#2B2F33') +
+    path('M28 88 L28 94 M72 88 L72 94', null, '#F2C14E', 4);
+  I.plane = path('M50 8 Q58 8 58 26 L58 40 L92 62 L92 72 L58 62 L58 78 L70 88 L70 94 L50 88 L30 94 L30 88 L42 78 L42 62 L8 72 L8 62 L42 40 L42 26 Q42 8 50 8Z', '#5AC3E8');
+  I.bike = '<circle cx="24" cy="68" r="18" fill="none" stroke="#2B2F33" stroke-width="6"/>' +
+    '<circle cx="76" cy="68" r="18" fill="none" stroke="#2B2F33" stroke-width="6"/>' +
+    path('M24 68 L44 40 L64 40 L76 68 M44 40 L58 68', null, '#E05A4E', 5) + path('M40 34 L54 34', null, '#2B2F33', 5);
+  I.walk = circ(52, 16, 10, '#F6CDA5') + path('M52 26 L48 54', null, '#3B7DD8', 9) +
+    path('M48 54 L36 84 M48 54 L64 80', null, '#2A4A7A', 8) + path('M50 34 L34 44 M50 34 L68 42', null, '#F6CDA5', 7);
+  I.run = circ(58, 16, 10, '#F6CDA5') + path('M58 26 L46 50', null, '#E05A4E', 9) +
+    path('M46 50 L26 66 M46 50 L62 74 L58 88', null, '#2A4A7A', 8) + path('M54 34 L74 30 M52 40 L34 34', null, '#F6CDA5', 7);
+  I.sleep = rect(10, 56, 80, 22, '#4A8FD0', 6) + rect(16, 44, 26, 16, '#FFFFFF', 5) + circ(30, 40, 11, '#F6CDA5') +
+    path('M62 40 L74 40 L62 52 L74 52', null, '#8A929B', 4) + path('M78 24 L88 24 L78 34 L88 34', null, '#8A929B', 3.5);
+
+  /* ---- 장소 ---- */
+  I.school = GROUND + rect(16, 40, 68, 50, '#F2DEC0', 3) + path('M10 42 L50 16 L90 42Z', '#3B7DD8') +
+    rect(42, 62, 16, 28, '#8A5A2A', 2) + rect(24, 50, 12, 12, '#7EC8F0', 2) + rect(64, 50, 12, 12, '#7EC8F0', 2) +
+    path('M50 16 L50 6 L64 10 L50 14', '#E23E3E');
+  I.hospital = GROUND + rect(18, 26, 64, 64, '#FFFFFF', 4) +
+    '<rect x="18" y="26" width="64" height="64" rx="4" fill="none" stroke="#C9CFD6" stroke-width="3"/>' +
+    rect(44, 36, 12, 32, '#E23E3E', 2) + rect(34, 46, 32, 12, '#E23E3E', 2) + rect(42, 74, 16, 16, '#7EC8F0', 2);
+  I.store = GROUND + rect(16, 44, 68, 46, '#F2DEC0', 3) + rect(12, 32, 76, 14, '#4FAE55', 3) +
+    path('M12 46 L88 46 L88 56 L12 56Z', '#E05A4E') +
+    path('M12 46 L24 56 M24 46 L36 56 M36 46 L48 56 M48 46 L60 56 M60 46 L72 56 M72 46 L84 56', null, '#FFFFFF', 5) +
+    rect(38, 64, 24, 26, '#7EC8F0', 2);
+  I.bank = GROUND + path('M8 38 L50 14 L92 38Z', '#3B7DD8') + rect(12, 38, 76, 8, '#2A5A9E', 2) +
+    rect(20, 46, 10, 34, '#E8EDF2', 2) + rect(45, 46, 10, 34, '#E8EDF2', 2) + rect(70, 46, 10, 34, '#E8EDF2', 2) +
+    rect(12, 80, 76, 10, '#8A929B', 2);
+  I.park = GROUND + circ(26, 44, 18, '#4FAE55') + rect(23, 58, 6, 26, '#8A5A2A', 2) +
+    circ(72, 38, 14, '#3E9448') + rect(69, 50, 6, 32, '#8A5A2A', 2) +
+    rect(40, 70, 26, 6, '#C08B4E', 2) + rect(42, 76, 4, 12, '#A5703C', 1) + rect(60, 76, 4, 12, '#A5703C', 1);
+  I.city = rect(0, 0, 100, 100, '#CFE7F5', 0) + rect(8, 40, 22, 60, '#7A8794', 2) + rect(34, 22, 24, 78, '#5D6A78', 2) +
+    rect(62, 52, 20, 48, '#7A8794', 2) + rect(84, 34, 14, 66, '#5D6A78', 2) +
+    rect(12, 46, 6, 6, '#FFD24A', 1) + rect(22, 46, 6, 6, '#FFD24A', 1) + rect(40, 30, 6, 6, '#FFD24A', 1) +
+    rect(50, 30, 6, 6, '#FFD24A', 1) + rect(40, 44, 6, 6, '#FFD24A', 1) + rect(66, 60, 6, 6, '#FFD24A', 1);
+
+  /* ---- 추상 / 학습용 ---- */
+  I.time = I.clock;
+  I.question = circ(50, 50, 40, '#F2C14E') +
+    path('M38 38 Q38 24 52 24 Q66 24 66 38 Q66 48 52 52 L52 62', null, '#4A3000', 8) + circ(52, 76, 5.5, '#4A3000');
+  I.check = circ(50, 50, 40, '#4FAE55') + path('M28 52 L44 68 L74 34', null, '#FFFFFF', 9);
+  I.cross = circ(50, 50, 40, '#E05A4E') + path('M34 34 L66 66 M66 34 L34 66', null, '#FFFFFF', 9);
+  I.trophy = path('M32 16 L68 16 L66 46 Q64 60 50 60 Q36 60 34 46Z', '#F2C14E') +
+    path('M32 22 Q16 22 18 34 Q20 44 34 44 M68 22 Q84 22 82 34 Q80 44 66 44', null, '#E0A32E', 5) +
+    rect(44, 60, 12, 16, '#C99B22', 2) + rect(30, 76, 40, 12, '#E0A32E', 3);
+  I.fire = path('M50 90 C28 90 18 74 22 58 C26 44 38 40 38 26 C50 34 54 44 54 52 C58 46 60 38 58 30 C76 42 82 60 76 72 C70 84 62 90 50 90Z', '#F2792E') +
+    path('M50 88 C40 88 34 80 36 70 C38 62 46 58 48 48 C56 58 62 66 60 76 C58 84 56 88 50 88Z', '#FFC93C');
+  I.calendar = rect(12, 22, 76, 68, '#FFFFFF', 6) + rect(12, 22, 76, 18, '#E05A4E', 6) +
+    '<rect x="12" y="22" width="76" height="68" rx="6" fill="none" stroke="#C9CFD6" stroke-width="3"/>' +
+    rect(28, 14, 8, 16, '#8A929B', 3) + rect(64, 14, 8, 16, '#8A929B', 3) +
+    circ(32, 54, 5, '#4FAE55') + circ(50, 54, 5, '#4FAE55') + circ(68, 54, 5, '#C9CFD6') +
+    circ(32, 72, 5, '#C9CFD6') + circ(50, 72, 5, '#C9CFD6') + circ(68, 72, 5, '#C9CFD6');
+
+  /* ---- 마스코트 (움직이는 부엉이 선생님) ---- */
+  var MASCOT_BODY =
+    '<ellipse cx="50" cy="60" rx="32" ry="30" fill="#4FAE55"/>' +
+    '<ellipse cx="50" cy="66" rx="21" ry="20" fill="#BDE8C4"/>' +
+    '<path d="M22 36 L18 16 L38 26Z" fill="#3E9448"/>' +
+    '<path d="M78 36 L82 16 L62 26Z" fill="#3E9448"/>' +
+    '<g class="m-eyes">' +
+    '<circle cx="37" cy="46" r="13" fill="#FFFFFF"/><circle cx="63" cy="46" r="13" fill="#FFFFFF"/>' +
+    '<circle cx="39" cy="47" r="6" fill="#20303A"/><circle cx="61" cy="47" r="6" fill="#20303A"/>' +
+    '<circle cx="41" cy="45" r="2" fill="#FFFFFF"/><circle cx="63" cy="45" r="2" fill="#FFFFFF"/>' +
+    '</g>' +
+    '<path d="M50 56 L43 64 L57 64Z" fill="#F2A03C"/>' +
+    '<path d="M34 88 L28 96 M42 88 L38 96 M58 88 L62 96 M66 88 L72 96" stroke="#F2A03C" stroke-width="4" stroke-linecap="round"/>';
+
+  G.MASCOT = {
+    happy: V + '<g class="m-body">' + MASCOT_BODY + '</g>' +
+      '<style>.m-body{transform-origin:50% 90%;animation:mHop 2.2s ease-in-out infinite}' +
+      '@keyframes mHop{0%,100%{transform:translateY(0) scale(1,1)}45%{transform:translateY(-6px) scale(.98,1.02)}}</style></svg>',
+    cheer: V + '<g class="m-body">' + MASCOT_BODY +
+      '<path d="M16 44 L4 24" stroke="#3E9448" stroke-width="8" stroke-linecap="round"/>' +
+      '<path d="M84 44 L96 24" stroke="#3E9448" stroke-width="8" stroke-linecap="round"/></g>' +
+      '<style>.m-body{transform-origin:50% 90%;animation:mCheer .7s ease-in-out infinite alternate}' +
+      '@keyframes mCheer{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-10px) rotate(4deg)}}</style></svg>',
+    think: V + '<g class="m-body">' + MASCOT_BODY + '</g>' +
+      '<circle cx="86" cy="20" r="4" fill="#C9DCEA"><animate attributeName="r" values="3;6;3" dur="2s" repeatCount="indefinite"/></circle>' +
+      '<style>.m-body{transform-origin:50% 90%;animation:mTilt 3s ease-in-out infinite}' +
+      '@keyframes mTilt{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}</style></svg>',
+    sleep: V + '<g class="m-body">' + MASCOT_BODY.replace(/<g class="m-eyes">[\s\S]*?<\/g>/,
+      '<path d="M27 46 Q37 54 47 46 M53 46 Q63 54 73 46" stroke="#20303A" stroke-width="4" fill="none" stroke-linecap="round"/>') + '</g>' +
+      '<text x="76" y="26" font-size="18" fill="#8A929B" font-weight="bold">z</text>' +
+      '<style>.m-body{transform-origin:50% 90%;animation:mBreath 3.4s ease-in-out infinite}' +
+      '@keyframes mBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}</style></svg>'
+  };
+
+  /* ---- 이모지 대체 사전 (SVG 없는 어휘) ---- */
+  var EMO = {
+    orange: '🍊', grape: '🍇', strawberry: '🍓', watermelon: '🍉', tomato: '🍅', potato: '🥔',
+    carrot: '🥕', onion: '🧅', corn: '🌽', soup: '🍲', noodle: '🍜', salad: '🥗', cheese: '🧀',
+    butter: '🧈', sugar: '🍬', salt: '🧂', tea: '🍵', juice: '🧃', beer: '🍺', wine: '🍷',
+    cake: '🍰', cookie: '🍪', icecream: '🍦', chicken: '🍗', pizza: '🍕', sandwich: '🥪',
+    breakfast: '🍳', lunch: '🍱', dinner: '🍽️', restaurant: '🍽️', menu: '📋', bill: '🧾',
+    rabbit: '🐰', bear: '🐻', tiger: '🐯', lion: '🦁', elephant: '🐘', monkey: '🐵', cow: '🐮',
+    sheep: '🐑', duck: '🦆', frog: '🐸', bee: '🐝', butterfly: '🦋', spider: '🕷️', snake: '🐍',
+    grandmother: '👵', grandfather: '👴', mother: '👩', father: '👨', sister: '👧', brother: '👦',
+    friend: '🧑‍🤝‍🧑', teacher: '🧑‍🏫', doctor: '🧑‍⚕️', nurse: '👩‍⚕️', police: '👮', chef: '🧑‍🍳',
+    farmer: '🧑‍🌾', driver: '🚕', student: '🧑‍🎓', baby2: '👶', people: '👥', neighbor: '🏘️',
+    eye: '👁️', ear: '👂', nose: '👃', mouth: '👄', hand: '✋', foot: '🦶', leg: '🦵',
+    arm: '💪', head: '🗣️', hair: '💇', tooth: '🦷', bone: '🦴', brain: '🧠', blood: '🩸',
+    hurt: '🤕', sick: '🤒', medicine: '💊', pill: '💊', shot: '💉', bandage: '🩹', mask: '😷',
+    happy: '😄', angry: '😠', tired: '😪', surprised: '😲', worried: '😟', proud: '😌',
+    love: '❤️', laugh: '😂', cry: '😭', bored: '🥱', excited: '🤩', nervous: '😰', calm: '😊',
+    red: '🟥', blue: '🟦', green: '🟩', yellow: '🟨', black: '⬛', white: '⬜', brown: '🟫',
+    orangecolor: '🟧', purple: '🟪', pink: '🌸', gray: '🩶', color: '🎨',
+    one: '1️⃣', two: '2️⃣', three: '3️⃣', four: '4️⃣', five: '5️⃣', six: '6️⃣', seven: '7️⃣',
+    eight: '8️⃣', nine: '9️⃣', ten: '🔟', number: '🔢', hundred: '💯',
+    monday: '📅', week: '🗓️', month: '📆', year: '🎊', today: '📍', tomorrow: '➡️', yesterday: '⬅️',
+    morning: '🌅', afternoon: '🌤️', evening: '🌆', night: '🌙', hour: '⏰', minute: '⏱️',
+    spring: '🌸', summer: '☀️', fall: '🍂', winter: '❄️', weather: '🌦️', wind: '💨', hot: '🥵', cold: '🥶',
+    airport: '✈️', station: '🚉', hotel: '🏨', ticket: '🎫', passport: '🛂', map: '🗺️', luggage: '🧳',
+    beach: '🏖️', island: '🏝️', camera: '📷', photo: '🖼️', gift: '🎁', party: '🎉', music: '🎵',
+    movie: '🎬', tv: '📺', radio: '📻', news: '📰', letter: '✉️', email: '📧', message: '💬',
+    price: '🏷️', card: '💳', cash: '💵', receipt: '🧾', sale: '🔖', size: '📏', shopping: '🛒',
+    market: '🏪', office: '🏢', church: '⛪', library: '📚', museum: '🏛️', post: '📮', pharmacy: '💊',
+    work: '💼', job: '🧰', meeting: '🤝', plan: '📝', idea: '💡', problem: '⚠️', answer: '✅',
+    question2: '❓', help: '🆘', safe: '🛡️', danger: '⚠️', rule: '📏', team: '👥', boss: '🧑‍💼',
+    exercise: '🏃', walk2: '🚶', swim: '🏊', dance: '💃', sing: '🎤', read: '📖', write: '✍️',
+    cook: '👨‍🍳', clean: '🧹', wash: '🧼', shop: '🛍️', drive: '🚗', rest: '🛋️', pray: '🙏',
+    garden: '🪴', knit: '🧶', golf: '⛳', tennis: '🎾', soccer: '⚽', baseball: '⚾', yoga: '🧘',
+    up: '⬆️', down: '⬇️', left: '⬅️', right: '➡️', near: '📍', far: '🔭', inside: '📥', outside: '📤',
+    big: '🐘', small: '🐜', long: '📏', short: '📐', new: '🆕', old: '📜', fast: '⚡', slow: '🐌',
+    good: '👍', bad: '👎', open: '🔓', close: '🔒', start: '🚦', end: '🏁', win: '🏆', lose: '💔',
+    remember: '🧠', forget: '🌀', hope: '🌈', dream: '💭', worry: '😟', thank: '🙏', sorry: '🙇',
+    please: '🤲', yes: '⭕', no: '❌', maybe: '🤷', again: '🔁', together: '🫂', alone: '🧍'
+  };
+
+  /* 그림 얻기: {type:'svg'|'emo', html} */
+  G.pic = function (key) {
+    if (!key) return null;
+    var k = String(key).toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (I[k]) return { type: 'svg', html: V + I[k] + '</svg>' };
+    if (EMO[k]) return { type: 'emo', html: EMO[k] };
+    return null;
+  };
+  G.hasPic = function (key) { return !!G.pic(key); };
+  G.ICON_KEYS = Object.keys(I).concat(Object.keys(EMO));
+
+  /* 그림 고르기 문제에 쓸 수 있는 그림
+     - 손으로 그린 일러스트만 사용합니다.
+     - 이모지는 서로 너무 비슷하거나(📅 🗓️ 📆) 뜻이 추상적이라(🆘 = need)
+       "그림만 보고 고르기" 문제로는 공정하지 않습니다. 뜻 고르기 문제로만 씁니다. */
+  var NOT_QUIZ = { question: 1, check: 1, cross: 1, time: 1 };
+
+  /* 이모지 중에서도 "보고 바로 알 수 있고, 서로 헷갈리지 않는" 것만 추가로 허용합니다.
+     일부러 뺀 것들:
+       📅 📆 🗓️ (monday/month/week — 셋이 거의 똑같이 생김)
+       🌅 🌆 (morning/evening — 구분 불가), 🌤️ 🌦️ (afternoon/weather)
+       ✈️ 💵 ☀️ ❄️ (이미 손그림 plane/money/sun/snow 와 겹침)
+       🆘 💡 ⚠️ 📏 등 뜻이 추상적이라 그림으로 못 맞히는 것 전부
+     그리고 같은 그림을 쓰는 짝은 둘 다 뺐습니다:
+       🧾 (receipt/bill), 🍽️ (restaurant/dinner), 👥 (people/team), 💊 (pill/pharmacy),
+       ❤️ (love — 손그림 heart 와 겹침), 🍳 (breakfast — 손그림 egg 와 겹침),
+       🤕 (hurt — sick 🤒 과 헷갈림) */
+  var EMO_QUIZ = ('orange grape strawberry watermelon tomato potato carrot onion corn soup noodle salad ' +
+    'cheese tea juice cake cookie icecream chicken pizza sandwich lunch salt sugar butter beer wine ' +
+    'rabbit bear tiger lion elephant monkey cow sheep duck frog bee butterfly snake spider ' +
+    'grandmother grandfather mother father sister brother friend teacher doctor nurse police chef farmer student ' +
+    'eye ear nose mouth hand foot leg tooth medicine sick ' +
+    'hotel ticket passport map luggage beach camera photo gift music movie tv radio news letter message card ' +
+    'market church library museum garden golf tennis soccer baseball spring fall station menu ' +
+    'one two three four five six seven eight nine ten ' +
+    'red blue green yellow black white brown purple ' +
+    'up down left right hot cold ' +
+    'exercise swim dance sing read write clean wash ' +
+    'angry tired surprised cry yes no thank work shopping price party').split(' ');
+
+  var QUIZ = {};
+  Object.keys(I).forEach(function (k) { if (!NOT_QUIZ[k]) QUIZ[k] = 1; });
+  EMO_QUIZ.forEach(function (k) { if (EMO[k]) QUIZ[k] = 1; });
+  G.isPicQuiz = function (key) {
+    if (!key) return false;
+    return !!QUIZ[String(key).toLowerCase().replace(/[^a-z0-9]/g, '')];
+  };
+
+  /* 뜻이 없는 기호 — 문제 화면의 큰 그림 자리에는 쓰지 않습니다 */
+  var FILLER = { question: 1, question2: 1, check: 1, cross: 1, answer: 1 };
+  G.isFillerPic = function (key) {
+    if (!key) return true;
+    return !!FILLER[String(key).toLowerCase().replace(/[^a-z0-9]/g, '')];
+  };
+
+  /* 화면에 넣을 HTML */
+  G.picHTML = function (key, cls) {
+    var p = G.pic(key);
+    if (!p) return '<div class="emo ' + (cls || '') + '">📘</div>';
+    if (p.type === 'emo') return '<div class="emo ' + (cls || '') + '">' + p.html + '</div>';
+    return '<span class="' + (cls || '') + '" style="display:block">' + p.html + '</span>';
+  };
+
+  /* 스피커 아이콘 */
+  G.SPEAKER = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+    '<path d="M4 9v6h4l5 5V4L8 9H4z"/>' +
+    '<path d="M16.5 8.5a5 5 0 010 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>' +
+    '<path d="M19 6a8.5 8.5 0 010 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+  /* 천천히 듣기 — 거북이가 한눈에 알아보기 쉽습니다 */
+  G.SPEAKER_SLOW = '<span style="font-size:1.5em;line-height:1">🐢</span>';
+
+})(window.G = window.G || {});
+
+/* ============================================================
+   커리큘럼 — 6단계 24유닛
+   w: 단어  [영어, 한국어, 그림키]
+   s: 문장  [영어, 한국어, 그림키]
+   tip: 유닛 시작 때 보여줄 한 줄 설명
+   ============================================================ */
+(function (G) {
+  'use strict';
+
+  G.CURRICULUM = [
+    /* ================= 1단계 ================= */
+    {
+      stage: 1, name: '왕기초', sub: '알파벳을 넘어 첫 문장까지', ic: 'wave',
+      units: [
+        {
+          id: 'u01', t: '인사와 소개', ic: 'wave',
+          tip: '영어 인사는 시간에 따라 달라요. 아침엔 Good morning, 저녁엔 Good evening.',
+          w: [
+            ['hello', '안녕하세요', 'wave'], ['goodbye', '안녕히 가세요', 'hand'],
+            ['yes', '네', 'yes'], ['no', '아니요', 'no'],
+            ['please', '부탁합니다', 'please'], ['sorry', '미안합니다', 'sorry'],
+            ['name', '이름', 'letter'], ['friend', '친구', 'friend'],
+            ['teacher', '선생님', 'teacher'], ['morning', '아침', 'morning'],
+            ['thank you', '고맙습니다', 'thank'], ['meet', '만나다', 'meeting']
+          ],
+          s: [
+            ['Hello!', '안녕하세요!', 'wave'],
+            ['Good morning.', '좋은 아침이에요.', 'morning'],
+            ['My name is Mina.', '제 이름은 미나예요.', 'letter'],
+            ['What is your name?', '이름이 뭐예요?', 'letter'],
+            ['Nice to meet you.', '만나서 반갑습니다.', 'meeting'],
+            ['Thank you very much.', '정말 고맙습니다.', 'thank'],
+            ['I am sorry.', '미안합니다.', 'sorry'],
+            ['Goodbye. See you tomorrow.', '안녕히 가세요. 내일 봐요.', 'hand'],
+            ['Yes, I am a teacher.', '네, 저는 선생님이에요.', 'teacher'],
+            ['No, I am not.', '아니요, 저는 아니에요.', 'no'],
+            ['This is my friend.', '이 사람은 제 친구예요.', 'friend'],
+            ['How are you today?', '오늘 어떻게 지내세요?', 'smile']
+          ]
+        },
+        {
+          id: 'u02', t: '나와 너 (be동사)', ic: 'man',
+          tip: 'I 뒤에는 am, You/We/They 뒤에는 are, He/She 뒤에는 is 를 씁니다.',
+          w: [
+            ['I', '나, 저', 'man'], ['you', '당신, 너', 'woman'],
+            ['he', '그 (남자)', 'man'], ['she', '그녀 (여자)', 'woman'],
+            ['we', '우리', 'people'], ['they', '그들', 'people'],
+            ['happy', '행복한', 'happy'], ['tired', '피곤한', 'tired'],
+            ['fine', '괜찮은', 'good'], ['hungry', '배고픈', 'food'],
+            ['student', '학생', 'student'], ['doctor', '의사', 'doctor']
+          ],
+          s: [
+            ['I am happy.', '저는 행복해요.', 'happy'],
+            ['You are my friend.', '당신은 제 친구예요.', 'friend'],
+            ['He is a doctor.', '그는 의사예요.', 'doctor'],
+            ['She is a teacher.', '그녀는 선생님이에요.', 'teacher'],
+            ['We are students.', '우리는 학생이에요.', 'student'],
+            ['They are my family.', '그들은 제 가족이에요.', 'family'],
+            ['I am not tired.', '저는 피곤하지 않아요.', 'tired'],
+            ['Are you hungry?', '배고프세요?', 'food'],
+            ['Is she your sister?', '그녀가 당신 여동생인가요?', 'sister'],
+            ['I am fine, thank you.', '저는 괜찮아요, 고마워요.', 'good'],
+            ['He is not at home.', '그는 집에 없어요.', 'house'],
+            ['We are very happy today.', '우리는 오늘 정말 행복해요.', 'smile']
+          ]
+        },
+        {
+          id: 'u03', t: '숫자와 나이', ic: 'number',
+          tip: '나이를 말할 때는 "I am 60 years old." 처럼 be동사를 씁니다.',
+          w: [
+            ['one', '하나', 'one'], ['two', '둘', 'two'], ['three', '셋', 'three'],
+            ['four', '넷', 'four'], ['five', '다섯', 'five'], ['ten', '열', 'ten'],
+            ['twenty', '스물', 'number'], ['sixty', '예순', 'number'],
+            ['age', '나이', 'calendar'], ['year', '해, 년', 'year'],
+            ['birthday', '생일', 'party'], ['old', '나이 든, 오래된', 'old']
+          ],
+          s: [
+            ['I have two sons.', '저는 아들이 둘 있어요.', 'boy'],
+            ['She is five years old.', '그 아이는 다섯 살이에요.', 'girl'],
+            ['How old are you?', '나이가 어떻게 되세요?', 'calendar'],
+            ['I am sixty years old.', '저는 예순 살이에요.', 'woman'],
+            ['There are ten apples.', '사과가 열 개 있어요.', 'apple'],
+            ['My birthday is in May.', '제 생일은 5월이에요.', 'party'],
+            ['He has three children.', '그는 아이가 셋 있어요.', 'family'],
+            ['It is four o\'clock.', '네 시예요.', 'clock'],
+            ['We need five chairs.', '의자가 다섯 개 필요해요.', 'chair'],
+            ['Twenty people are here.', '스무 명이 여기 있어요.', 'people'],
+            ['I read one book every week.', '저는 매주 책 한 권을 읽어요.', 'book'],
+            ['My phone number is 010-1234.', '제 전화번호는 010-1234예요.', 'phone']
+          ]
+        },
+        {
+          id: 'u04', t: '가족', ic: 'family',
+          tip: 'my(나의), your(당신의), his(그의), her(그녀의) — 소유를 나타냅니다.',
+          w: [
+            ['family', '가족', 'family'], ['mother', '어머니', 'mother'],
+            ['father', '아버지', 'father'], ['son', '아들', 'boy'],
+            ['daughter', '딸', 'girl'], ['grandmother', '할머니', 'grandmother'],
+            ['grandfather', '할아버지', 'grandfather'], ['sister', '언니, 누나', 'sister'],
+            ['brother', '형, 오빠', 'brother'], ['husband', '남편', 'man'],
+            ['wife', '아내', 'woman'], ['baby', '아기', 'baby']
+          ],
+          s: [
+            ['This is my family.', '이쪽은 제 가족이에요.', 'family'],
+            ['My mother is very kind.', '우리 어머니는 참 친절하세요.', 'mother'],
+            ['My father likes coffee.', '우리 아버지는 커피를 좋아하세요.', 'coffee'],
+            ['I have one son and one daughter.', '저는 아들 하나, 딸 하나 있어요.', 'family'],
+            ['My grandson is a baby.', '제 손자는 아기예요.', 'baby'],
+            ['Her husband is a farmer.', '그녀의 남편은 농부예요.', 'farmer'],
+            ['His wife works at a bank.', '그의 아내는 은행에서 일해요.', 'bank'],
+            ['My sister lives in Busan.', '제 언니는 부산에 살아요.', 'house'],
+            ['We eat dinner together.', '우리는 함께 저녁을 먹어요.', 'dinner'],
+            ['My daughter calls me every day.', '제 딸은 매일 저에게 전화해요.', 'phone'],
+            ['Do you have children?', '자녀가 있으세요?', 'family'],
+            ['Our family is very close.', '우리 가족은 아주 화목해요.', 'heart']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 2단계 ================= */
+    {
+      stage: 2, name: '기초', sub: '생활 속 단어 익히기', ic: 'house',
+      units: [
+        {
+          id: 'u05', t: '색깔과 크기', ic: 'color',
+          tip: '형용사는 명사 앞에 옵니다. a red apple (빨간 사과)',
+          w: [
+            ['red', '빨간', 'red'], ['blue', '파란', 'blue'], ['green', '초록', 'green'],
+            ['yellow', '노란', 'yellow'], ['white', '하얀', 'white'], ['black', '검은', 'black'],
+            ['big', '큰', 'big'], ['small', '작은', 'small'], ['long', '긴', 'long'],
+            ['new', '새로운', 'new'], ['old', '오래된', 'old'], ['color', '색깔', 'color']
+          ],
+          s: [
+            ['The apple is red.', '그 사과는 빨개요.', 'apple'],
+            ['I like blue.', '저는 파란색을 좋아해요.', 'blue'],
+            ['My car is white.', '제 차는 하얀색이에요.', 'car'],
+            ['This bag is very big.', '이 가방은 아주 커요.', 'bag'],
+            ['She has a small dog.', '그녀는 작은 개를 키워요.', 'dog'],
+            ['What color is it?', '그건 무슨 색이에요?', 'color'],
+            ['The black cat is sleeping.', '검은 고양이가 자고 있어요.', 'cat'],
+            ['I want a new phone.', '저는 새 전화기를 원해요.', 'phone'],
+            ['This book is old.', '이 책은 오래됐어요.', 'book'],
+            ['The yellow flower is pretty.', '노란 꽃이 예뻐요.', 'flower'],
+            ['Her hair is long.', '그녀는 머리가 길어요.', 'hair'],
+            ['Green tea is good for you.', '녹차는 몸에 좋아요.', 'tea']
+          ]
+        },
+        {
+          id: 'u06', t: '집과 물건', ic: 'house',
+          tip: 'on(위에), in(안에), under(아래에) — 위치를 말하는 말입니다.',
+          w: [
+            ['house', '집', 'house'], ['door', '문', 'door'], ['window', '창문', 'window'],
+            ['table', '식탁', 'table'], ['chair', '의자', 'chair'], ['bed', '침대', 'bed'],
+            ['book', '책', 'book'], ['pen', '펜', 'pen'], ['key', '열쇠', 'key'],
+            ['bag', '가방', 'bag'], ['phone', '전화기', 'phone'], ['clock', '시계', 'clock']
+          ],
+          s: [
+            ['I live in a small house.', '저는 작은 집에 살아요.', 'house'],
+            ['Please close the door.', '문 좀 닫아 주세요.', 'door'],
+            ['Open the window, please.', '창문 좀 열어 주세요.', 'window'],
+            ['The book is on the table.', '책이 식탁 위에 있어요.', 'book'],
+            ['Where is my key?', '제 열쇠가 어디 있죠?', 'key'],
+            ['My phone is in the bag.', '제 전화기는 가방 안에 있어요.', 'bag'],
+            ['The clock is on the wall.', '시계가 벽에 있어요.', 'clock'],
+            ['Please sit on this chair.', '이 의자에 앉으세요.', 'chair'],
+            ['I go to bed at ten.', '저는 열 시에 자러 가요.', 'bed'],
+            ['There is a pen on the desk.', '책상 위에 펜이 있어요.', 'pen'],
+            ['Our house has two rooms.', '우리 집은 방이 두 개예요.', 'house'],
+            ['The window is very clean.', '창문이 아주 깨끗해요.', 'window']
+          ]
+        },
+        {
+          id: 'u07', t: '음식과 음료', ic: 'food',
+          tip: '셀 수 없는 것에는 some을 씁니다. some water, some bread',
+          w: [
+            ['water', '물', 'water'], ['coffee', '커피', 'coffee'], ['milk', '우유', 'milk'],
+            ['bread', '빵', 'bread'], ['rice', '밥', 'rice'], ['egg', '달걀', 'egg'],
+            ['fish', '생선', 'fish'], ['meat', '고기', 'meat'], ['apple', '사과', 'apple'],
+            ['banana', '바나나', 'banana'], ['tea', '차', 'tea'], ['soup', '국, 수프', 'soup']
+          ],
+          s: [
+            ['I drink water every morning.', '저는 매일 아침 물을 마셔요.', 'water'],
+            ['She likes coffee with milk.', '그녀는 우유 넣은 커피를 좋아해요.', 'coffee'],
+            ['We eat rice for dinner.', '우리는 저녁에 밥을 먹어요.', 'rice'],
+            ['Do you want some bread?', '빵 좀 드시겠어요?', 'bread'],
+            ['The fish is very fresh.', '그 생선은 아주 신선해요.', 'fish'],
+            ['I cook soup for my family.', '저는 가족을 위해 국을 끓여요.', 'soup'],
+            ['He eats two eggs.', '그는 달걀 두 개를 먹어요.', 'egg'],
+            ['This apple is sweet.', '이 사과는 달아요.', 'apple'],
+            ['Please give me a cup of tea.', '차 한 잔 주세요.', 'tea'],
+            ['I do not eat meat.', '저는 고기를 안 먹어요.', 'meat'],
+            ['The food is delicious.', '음식이 맛있어요.', 'food'],
+            ['Would you like some more?', '조금 더 드시겠어요?', 'food']
+          ]
+        },
+        {
+          id: 'u08', t: '요일과 시간', ic: 'clock',
+          tip: '시간 앞에는 at, 요일 앞에는 on, 달·연도 앞에는 in 을 씁니다.',
+          w: [
+            ['Monday', '월요일', 'monday'], ['week', '주', 'week'], ['month', '달, 월', 'month'],
+            ['morning', '아침', 'morning'], ['afternoon', '오후', 'afternoon'], ['evening', '저녁', 'evening'],
+            ['night', '밤', 'night'], ['hour', '시간', 'hour'], ['minute', '분', 'minute'],
+            ['today', '오늘', 'today'], ['tomorrow', '내일', 'tomorrow'], ['yesterday', '어제', 'yesterday']
+          ],
+          s: [
+            ['Today is Monday.', '오늘은 월요일이에요.', 'monday'],
+            ['I get up at six in the morning.', '저는 아침 여섯 시에 일어나요.', 'morning'],
+            ['See you tomorrow evening.', '내일 저녁에 봬요.', 'evening'],
+            ['What time is it now?', '지금 몇 시예요?', 'clock'],
+            ['It is half past seven.', '일곱 시 반이에요.', 'clock'],
+            ['I study English every day.', '저는 매일 영어를 공부해요.', 'book'],
+            ['She comes home in the afternoon.', '그녀는 오후에 집에 와요.', 'afternoon'],
+            ['We meet on Sunday.', '우리는 일요일에 만나요.', 'calendar'],
+            ['I sleep at eleven at night.', '저는 밤 열한 시에 자요.', 'night'],
+            ['Yesterday was very busy.', '어제는 아주 바빴어요.', 'yesterday'],
+            ['Next week I visit my son.', '다음 주에 아들을 만나러 가요.', 'week'],
+            ['The class starts in ten minutes.', '수업이 10분 후에 시작해요.', 'minute']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 3단계 ================= */
+    {
+      stage: 3, name: '초급', sub: '하루를 영어로 말하기', ic: 'sun',
+      units: [
+        {
+          id: 'u09', t: '매일 하는 일', ic: 'sun',
+          tip: 'He / She 뒤에 오는 동사에는 -s 를 붙입니다. He walks. She cooks.',
+          w: [
+            ['get up', '일어나다', 'morning'], ['eat', '먹다', 'food'], ['drink', '마시다', 'water'],
+            ['work', '일하다', 'work'], ['sleep', '자다', 'sleep'], ['walk', '걷다', 'walk'],
+            ['cook', '요리하다', 'cook'], ['clean', '청소하다', 'clean'], ['read', '읽다', 'read'],
+            ['watch', '보다', 'tv'], ['wash', '씻다', 'wash'], ['go', '가다', 'walk2']
+          ],
+          s: [
+            ['I get up early every day.', '저는 매일 일찍 일어나요.', 'morning'],
+            ['She goes to work by bus.', '그녀는 버스로 출근해요.', 'bus'],
+            ['He walks in the park.', '그는 공원에서 걸어요.', 'park'],
+            ['My mother cooks breakfast.', '어머니가 아침을 차리세요.', 'cook'],
+            ['I read the newspaper.', '저는 신문을 읽어요.', 'news'],
+            ['We watch TV in the evening.', '우리는 저녁에 TV를 봐요.', 'tv'],
+            ['She cleans the house on Saturday.', '그녀는 토요일에 집을 청소해요.', 'clean'],
+            ['Do you drink coffee?', '커피 드세요?', 'coffee'],
+            ['He does not work on Sunday.', '그는 일요일에 일하지 않아요.', 'rest'],
+            ['I wash my hands before dinner.', '저는 저녁 전에 손을 씻어요.', 'wash'],
+            ['What do you do every morning?', '아침마다 뭐 하세요?', 'morning'],
+            ['She always helps her neighbor.', '그녀는 늘 이웃을 도와요.', 'neighbor']
+          ]
+        },
+        {
+          id: 'u10', t: '좋아하는 것', ic: 'heart',
+          tip: '"~하고 싶다"는 want to + 동사. I want to learn English.',
+          w: [
+            ['like', '좋아하다', 'good'], ['love', '사랑하다', 'love'], ['want', '원하다', 'hope'],
+            ['need', '필요하다', 'help'], ['music', '음악', 'music'], ['movie', '영화', 'movie'],
+            ['garden', '정원', 'garden'], ['exercise', '운동', 'exercise'], ['travel', '여행하다', 'plane'],
+            ['sing', '노래하다', 'sing'], ['dance', '춤추다', 'dance'], ['hobby', '취미', 'idea']
+          ],
+          s: [
+            ['I like Korean food.', '저는 한국 음식을 좋아해요.', 'food'],
+            ['She loves her grandchildren.', '그녀는 손주들을 무척 사랑해요.', 'baby'],
+            ['I want to learn English.', '저는 영어를 배우고 싶어요.', 'book'],
+            ['He needs a new bag.', '그는 새 가방이 필요해요.', 'bag'],
+            ['My hobby is gardening.', '제 취미는 정원 가꾸기예요.', 'garden'],
+            ['We listen to music together.', '우리는 함께 음악을 들어요.', 'music'],
+            ['Do you like movies?', '영화 좋아하세요?', 'movie'],
+            ['I do not like cold weather.', '저는 추운 날씨를 안 좋아해요.', 'cold'],
+            ['She sings very well.', '그녀는 노래를 아주 잘해요.', 'sing'],
+            ['I want to travel to America.', '저는 미국에 여행 가고 싶어요.', 'plane'],
+            ['Walking is good exercise.', '걷기는 좋은 운동이에요.', 'walk'],
+            ['What do you like to do?', '뭐 하는 걸 좋아하세요?', 'heart']
+          ]
+        },
+        {
+          id: 'u11', t: '날씨와 계절', ic: 'cloud',
+          tip: '날씨를 말할 때는 주어로 It 을 씁니다. It is sunny.',
+          w: [
+            ['weather', '날씨', 'weather'], ['sun', '해', 'sun'], ['rain', '비', 'rain'],
+            ['snow', '눈', 'snow'], ['cloud', '구름', 'cloud'], ['wind', '바람', 'wind'],
+            ['hot', '더운', 'hot'], ['cold', '추운', 'cold'], ['spring', '봄', 'spring'],
+            ['summer', '여름', 'summer'], ['fall', '가을', 'fall'], ['winter', '겨울', 'winter']
+          ],
+          s: [
+            ['It is sunny today.', '오늘은 화창해요.', 'sun'],
+            ['It is raining outside.', '밖에 비가 오고 있어요.', 'rain'],
+            ['The weather is very cold.', '날씨가 아주 추워요.', 'cold'],
+            ['I like spring flowers.', '저는 봄꽃을 좋아해요.', 'flower'],
+            ['Summer in Korea is hot.', '한국의 여름은 더워요.', 'hot'],
+            ['It snows a lot in winter.', '겨울에는 눈이 많이 와요.', 'snow'],
+            ['Take an umbrella with you.', '우산 챙겨 가세요.', 'umbrella'],
+            ['The wind is strong today.', '오늘은 바람이 세요.', 'wind'],
+            ['What is the weather like?', '날씨가 어때요?', 'weather'],
+            ['Fall is my favorite season.', '가을이 제가 제일 좋아하는 계절이에요.', 'fall'],
+            ['It will be warm tomorrow.', '내일은 따뜻할 거예요.', 'sun'],
+            ['The sky is clear and blue.', '하늘이 맑고 파래요.', 'cloud']
+          ]
+        },
+        {
+          id: 'u12', t: '몸과 건강', ic: 'hospital',
+          tip: '아픈 곳을 말할 때: My head hurts. / I have a headache.',
+          w: [
+            ['head', '머리', 'head'], ['eye', '눈', 'eye'], ['hand', '손', 'hand'],
+            ['leg', '다리', 'leg'], ['hospital', '병원', 'hospital'], ['doctor', '의사', 'doctor'],
+            ['medicine', '약', 'medicine'], ['sick', '아픈', 'sick'], ['hurt', '아프다', 'hurt'],
+            ['rest', '쉬다', 'rest'], ['pain', '통증', 'hurt'], ['healthy', '건강한', 'good']
+          ],
+          s: [
+            ['My head hurts.', '머리가 아파요.', 'head'],
+            ['I have a cold.', '감기에 걸렸어요.', 'sick'],
+            ['She is sick today.', '그녀는 오늘 아파요.', 'sick'],
+            ['Please take this medicine.', '이 약을 드세요.', 'medicine'],
+            ['I go to the hospital every month.', '저는 매달 병원에 가요.', 'hospital'],
+            ['The doctor is very kind.', '그 의사 선생님은 아주 친절해요.', 'doctor'],
+            ['My back hurts a little.', '허리가 조금 아파요.', 'hurt'],
+            ['You need some rest.', '좀 쉬셔야 해요.', 'rest'],
+            ['Please drink warm water.', '따뜻한 물을 드세요.', 'water'],
+            ['I feel much better now.', '지금은 훨씬 나아요.', 'happy'],
+            ['Where does it hurt?', '어디가 아프세요?', 'doctor'],
+            ['Walking keeps me healthy.', '걷기가 저를 건강하게 해 줘요.', 'walk']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 4단계 ================= */
+    {
+      stage: 4, name: '중급', sub: '밖에 나가서 쓰는 영어', ic: 'store',
+      units: [
+        {
+          id: 'u13', t: '가게에서 쇼핑', ic: 'store',
+          tip: '가격을 물을 때: How much is this? / How much does it cost?',
+          w: [
+            ['store', '가게', 'store'], ['buy', '사다', 'shopping'], ['price', '가격', 'price'],
+            ['money', '돈', 'money'], ['expensive', '비싼', 'money'], ['cheap', '싼', 'sale'],
+            ['size', '크기', 'size'], ['card', '카드', 'card'], ['cash', '현금', 'cash'],
+            ['receipt', '영수증', 'receipt'], ['sale', '할인', 'sale'], ['market', '시장', 'market']
+          ],
+          s: [
+            ['How much is this?', '이거 얼마예요?', 'price'],
+            ['It is too expensive.', '너무 비싸요.', 'money'],
+            ['Do you have a bigger size?', '더 큰 사이즈 있어요?', 'size'],
+            ['I will take this one.', '이걸로 할게요.', 'shopping'],
+            ['Can I pay by card?', '카드로 계산해도 되나요?', 'card'],
+            ['Where is the market?', '시장이 어디예요?', 'market'],
+            ['I need to buy some milk.', '우유를 좀 사야 해요.', 'milk'],
+            ['This is on sale today.', '이건 오늘 할인해요.', 'sale'],
+            ['Here is your receipt.', '영수증 여기 있습니다.', 'receipt'],
+            ['Do you have this in blue?', '이거 파란색 있어요?', 'blue'],
+            ['I am just looking, thank you.', '그냥 둘러보는 거예요, 고마워요.', 'eye'],
+            ['Could you give me a discount?', '좀 깎아 주실 수 있어요?', 'sale']
+          ]
+        },
+        {
+          id: 'u14', t: '길 묻고 답하기', ic: 'city',
+          tip: '길을 물을 때: Excuse me, where is ~? / How can I get to ~?',
+          w: [
+            ['left', '왼쪽', 'left'], ['right', '오른쪽', 'right'], ['near', '가까운', 'near'],
+            ['far', '먼', 'far'], ['station', '역', 'station'], ['bus', '버스', 'bus'],
+            ['street', '거리', 'city'], ['map', '지도', 'map'], ['corner', '모퉁이', 'near'],
+            ['stop', '정류장', 'bus'], ['straight', '곧장', 'up'], ['taxi', '택시', 'drive']
+          ],
+          s: [
+            ['Where is the bus stop?', '버스 정류장이 어디예요?', 'bus'],
+            ['Go straight for two blocks.', '두 블록 곧장 가세요.', 'up'],
+            ['Turn left at the corner.', '모퉁이에서 왼쪽으로 도세요.', 'left'],
+            ['It is on your right.', '오른쪽에 있어요.', 'right'],
+            ['Is it far from here?', '여기서 먼가요?', 'far'],
+            ['The station is very near.', '역은 아주 가까워요.', 'station'],
+            ['How can I get to the hospital?', '병원에 어떻게 가나요?', 'hospital'],
+            ['Take the number five bus.', '5번 버스를 타세요.', 'bus'],
+            ['I am lost. Can you help me?', '길을 잃었어요. 도와주시겠어요?', 'help'],
+            ['It takes about ten minutes.', '10분쯤 걸려요.', 'minute'],
+            ['Excuse me, where is the restroom?', '실례합니다, 화장실이 어디예요?', 'map'],
+            ['Please follow this street.', '이 길을 따라가세요.', 'map']
+          ]
+        },
+        {
+          id: 'u15', t: '식당에서 주문', ic: 'restaurant',
+          tip: '정중한 주문: I would like ~ / Could I have ~ ?',
+          w: [
+            ['restaurant', '식당', 'restaurant'], ['menu', '메뉴', 'menu'], ['order', '주문하다', 'menu'],
+            ['bill', '계산서', 'bill'], ['table', '테이블', 'table'], ['delicious', '맛있는', 'food'],
+            ['spicy', '매운', 'hot'], ['dessert', '후식', 'cake'], ['drink', '음료', 'juice'],
+            ['salt', '소금', 'salt'], ['sugar', '설탕', 'sugar'], ['chicken', '닭고기', 'chicken']
+          ],
+          s: [
+            ['A table for two, please.', '두 명 자리 부탁합니다.', 'table'],
+            ['Can I see the menu?', '메뉴 좀 볼 수 있을까요?', 'menu'],
+            ['I would like the chicken.', '닭고기로 주세요.', 'chicken'],
+            ['Is this dish spicy?', '이 음식 매워요?', 'hot'],
+            ['Could I have some water?', '물 좀 주시겠어요?', 'water'],
+            ['The food was delicious.', '음식이 맛있었어요.', 'food'],
+            ['Can we get the bill, please?', '계산서 좀 주시겠어요?', 'bill'],
+            ['One coffee, no sugar.', '커피 하나, 설탕 없이요.', 'coffee'],
+            ['Do you have a vegetarian dish?', '채식 메뉴 있나요?', 'salad'],
+            ['Please make it less salty.', '덜 짜게 해 주세요.', 'salt'],
+            ['What do you recommend?', '뭘 추천하시나요?', 'menu'],
+            ['Thank you for the meal.', '잘 먹었습니다.', 'thank']
+          ]
+        },
+        {
+          id: 'u16', t: '지난 일 말하기 (과거)', ic: 'calendar',
+          tip: '과거형은 보통 -ed 를 붙이지만, go→went 처럼 바뀌는 것도 많아요.',
+          w: [
+            ['went', '갔다', 'walk2'], ['ate', '먹었다', 'food'], ['saw', '보았다', 'eye'],
+            ['was', '였다', 'yesterday'], ['made', '만들었다', 'cook'], ['bought', '샀다', 'shopping'],
+            ['came', '왔다', 'door'], ['gave', '주었다', 'gift'], ['took', '탔다, 가져갔다', 'bus'],
+            ['said', '말했다', 'message'], ['did', '했다', 'answer'], ['last', '지난', 'calendar']
+          ],
+          s: [
+            ['I went to the market yesterday.', '저는 어제 시장에 갔어요.', 'market'],
+            ['She ate dinner with her son.', '그녀는 아들과 저녁을 먹었어요.', 'dinner'],
+            ['We saw a good movie.', '우리는 좋은 영화를 봤어요.', 'movie'],
+            ['The weather was very nice.', '날씨가 아주 좋았어요.', 'sun'],
+            ['He bought a new car.', '그는 새 차를 샀어요.', 'car'],
+            ['I made soup for my family.', '저는 가족을 위해 국을 끓였어요.', 'soup'],
+            ['They came to my house.', '그들이 우리 집에 왔어요.', 'house'],
+            ['She gave me a beautiful gift.', '그녀가 저에게 예쁜 선물을 줬어요.', 'gift'],
+            ['I took the bus this morning.', '저는 오늘 아침 버스를 탔어요.', 'bus'],
+            ['What did you do last weekend?', '지난 주말에 뭐 하셨어요?', 'calendar'],
+            ['It was a wonderful day.', '정말 좋은 하루였어요.', 'happy'],
+            ['He said thank you to me.', '그가 저에게 고맙다고 했어요.', 'thank']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 5단계 ================= */
+    {
+      stage: 5, name: '중상급', sub: '생각과 계획을 나누기', ic: 'plane',
+      units: [
+        {
+          id: 'u17', t: '계획과 미래', ic: 'plan',
+          tip: '미래는 will 또는 be going to. 계획이 확실하면 be going to 를 많이 씁니다.',
+          w: [
+            ['will', '~할 것이다', 'up'], ['plan', '계획', 'plan'], ['next', '다음의', 'right'],
+            ['later', '나중에', 'clock'], ['soon', '곧', 'fast'], ['hope', '바라다', 'hope'],
+            ['visit', '방문하다', 'door'], ['start', '시작하다', 'start'], ['finish', '끝내다', 'end'],
+            ['ready', '준비된', 'check'], ['together', '함께', 'together'], ['meeting', '회의, 만남', 'meeting']
+          ],
+          s: [
+            ['I will visit my daughter next week.', '다음 주에 딸을 만나러 갈 거예요.', 'girl'],
+            ['We are going to travel in May.', '우리는 5월에 여행 갈 거예요.', 'plane'],
+            ['What are your plans for tomorrow?', '내일 계획이 어떻게 되세요?', 'plan'],
+            ['I hope to see you soon.', '곧 뵙기를 바랍니다.', 'hope'],
+            ['She will call you later.', '그녀가 나중에 전화할 거예요.', 'phone'],
+            ['The meeting starts at three.', '회의는 세 시에 시작해요.', 'meeting'],
+            ['Let us meet in front of the station.', '역 앞에서 만나요.', 'station'],
+            ['I am going to study English every day.', '저는 매일 영어를 공부할 거예요.', 'book'],
+            ['We will finish this by Friday.', '우리는 금요일까지 이걸 끝낼 거예요.', 'end'],
+            ['Are you ready to go?', '갈 준비 되셨어요?', 'check'],
+            ['I plan to walk every morning.', '저는 매일 아침 걸을 계획이에요.', 'walk'],
+            ['Let us do it together.', '함께 해요.', 'together']
+          ]
+        },
+        {
+          id: 'u18', t: '여행과 공항', ic: 'airport',
+          tip: '공항·호텔에서는 정중한 표현이 기본입니다. Could you ~ ? 를 기억하세요.',
+          w: [
+            ['airport', '공항', 'airport'], ['ticket', '표', 'ticket'], ['passport', '여권', 'passport'],
+            ['luggage', '짐', 'luggage'], ['hotel', '호텔', 'hotel'], ['flight', '항공편', 'plane'],
+            ['seat', '좌석', 'chair'], ['gate', '탑승구', 'door'], ['travel', '여행', 'plane'],
+            ['camera', '카메라', 'camera'], ['beach', '해변', 'beach'], ['view', '경치', 'mountain']
+          ],
+          s: [
+            ['Where is the check-in counter?', '체크인 카운터가 어디예요?', 'airport'],
+            ['Here is my passport.', '제 여권 여기 있습니다.', 'passport'],
+            ['I have two suitcases.', '가방이 두 개 있어요.', 'luggage'],
+            ['What time does the flight leave?', '비행기가 몇 시에 출발하나요?', 'plane'],
+            ['My seat is by the window.', '제 자리는 창가예요.', 'window'],
+            ['I booked a room for three nights.', '3박으로 방을 예약했어요.', 'hotel'],
+            ['Is breakfast included?', '아침 식사가 포함인가요?', 'breakfast'],
+            ['Could you take a photo for us?', '사진 좀 찍어 주시겠어요?', 'camera'],
+            ['How do I get to the city center?', '시내에 어떻게 가나요?', 'city'],
+            ['I lost my luggage.', '짐을 잃어버렸어요.', 'luggage'],
+            ['This is my first time here.', '여기는 처음이에요.', 'new'],
+            ['The view is beautiful.', '경치가 아름다워요.', 'mountain']
+          ]
+        },
+        {
+          id: 'u19', t: '감정과 의견', ic: 'smile',
+          tip: '생각을 말할 때: I think ~ / In my opinion ~ / I agree with you.',
+          w: [
+            ['think', '생각하다', 'idea'], ['feel', '느끼다', 'heart'], ['believe', '믿다', 'pray'],
+            ['agree', '동의하다', 'yes'], ['sure', '확실한', 'check'], ['maybe', '아마도', 'maybe'],
+            ['glad', '기쁜', 'happy'], ['worried', '걱정하는', 'worried'], ['proud', '자랑스러운', 'proud'],
+            ['surprised', '놀란', 'surprised'], ['opinion', '의견', 'idea'], ['wonderful', '멋진', 'star']
+          ],
+          s: [
+            ['I think it is a good idea.', '좋은 생각인 것 같아요.', 'idea'],
+            ['I feel a little tired today.', '오늘은 좀 피곤해요.', 'tired'],
+            ['I agree with you.', '당신 말에 동의해요.', 'yes'],
+            ['I am not sure about that.', '그건 잘 모르겠어요.', 'maybe'],
+            ['Maybe you are right.', '아마 당신이 맞을 거예요.', 'maybe'],
+            ['I am so proud of my son.', '저는 아들이 정말 자랑스러워요.', 'proud'],
+            ['She was very surprised.', '그녀는 아주 놀랐어요.', 'surprised'],
+            ['I am worried about the weather.', '날씨가 걱정돼요.', 'worried'],
+            ['What do you think about this?', '이거 어떻게 생각하세요?', 'idea'],
+            ['In my opinion, it is too expensive.', '제 생각엔 너무 비싸요.', 'money'],
+            ['I am glad you came.', '와 주셔서 기뻐요.', 'happy'],
+            ['That sounds wonderful.', '정말 좋겠네요.', 'star']
+          ]
+        },
+        {
+          id: 'u20', t: '전화와 약속', ic: 'phone',
+          tip: '전화에서 자기를 밝힐 때는 I am 이 아니라 This is ~ speaking. 을 씁니다.',
+          w: [
+            ['call', '전화하다', 'phone'], ['message', '메시지', 'message'], ['answer', '받다, 답하다', 'answer'],
+            ['wait', '기다리다', 'hour'], ['busy', '바쁜', 'work'], ['appointment', '약속', 'calendar'],
+            ['late', '늦은', 'slow'], ['early', '이른', 'fast'], ['again', '다시', 'again'],
+            ['moment', '잠깐', 'minute'], ['speak', '말하다', 'sing'], ['check', '확인하다', 'check']
+          ],
+          s: [
+            ['Hello, may I speak to Mr. Kim?', '여보세요, 김 선생님 계신가요?', 'phone'],
+            ['This is Mina speaking.', '저는 미나입니다.', 'message'],
+            ['Could you call me back later?', '나중에 다시 전화 주시겠어요?', 'phone'],
+            ['I will send you a message.', '메시지 보내 드릴게요.', 'message'],
+            ['Sorry, I am busy right now.', '죄송해요, 지금 바빠요.', 'work'],
+            ['Can we meet at two o\'clock?', '두 시에 만날 수 있을까요?', 'clock'],
+            ['I am sorry I am late.', '늦어서 죄송합니다.', 'sorry'],
+            ['Please wait a moment.', '잠시만 기다려 주세요.', 'hour'],
+            ['The line is busy.', '통화 중이에요.', 'phone'],
+            ['Let me check my calendar.', '일정 좀 확인해 볼게요.', 'calendar'],
+            ['Could you say that again, please?', '다시 한 번 말씀해 주시겠어요?', 'again'],
+            ['I will see you then.', '그때 뵐게요.', 'meeting']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 6단계 ================= */
+    {
+      stage: 6, name: '고급', sub: '자연스럽게 대화하기', ic: 'trophy',
+      units: [
+        {
+          id: 'u21', t: '경험 말하기 (현재완료)', ic: 'trophy',
+          tip: 'have + 과거분사. "지금까지 ~해 왔다 / ~해 본 적 있다"는 뜻입니다.',
+          w: [
+            ['ever', '한 번이라도', 'question2'], ['never', '한 번도 없는', 'no'], ['already', '이미', 'check'],
+            ['yet', '아직', 'hour'], ['since', '~이래로', 'calendar'], ['before', '전에', 'left'],
+            ['twice', '두 번', 'two'], ['experience', '경험', 'idea'], ['visited', '방문했다', 'door'],
+            ['tried', '시도했다', 'start'], ['lived', '살았다', 'house'], ['known', '알아 왔다', 'brain']
+          ],
+          s: [
+            ['I have lived here for thirty years.', '저는 여기 30년째 살고 있어요.', 'house'],
+            ['Have you ever been to Japan?', '일본에 가 보신 적 있어요?', 'plane'],
+            ['I have never tried this food.', '이 음식은 한 번도 안 먹어 봤어요.', 'food'],
+            ['She has already finished her work.', '그녀는 이미 일을 끝냈어요.', 'end'],
+            ['I have not seen him since Monday.', '월요일 이후로 그를 못 봤어요.', 'monday'],
+            ['We have known each other for a long time.', '우리는 오래 알고 지냈어요.', 'friend'],
+            ['Have you eaten yet?', '식사는 하셨어요?', 'food'],
+            ['I have been to Seoul twice.', '서울에 두 번 가 봤어요.', 'city'],
+            ['He has just arrived.', '그가 방금 도착했어요.', 'door'],
+            ['It has been a long day.', '긴 하루였어요.', 'tired'],
+            ['I have always wanted to learn English.', '저는 늘 영어를 배우고 싶었어요.', 'hope'],
+            ['She has taught for twenty years.', '그녀는 20년째 가르치고 있어요.', 'teacher']
+          ]
+        },
+        {
+          id: 'u22', t: '부드럽게 말하기 (조동사)', ic: 'question',
+          tip: 'Can 보다 Could, Will 보다 Would 가 더 정중하게 들립니다.',
+          w: [
+            ['can', '할 수 있다', 'good'], ['could', '할 수 있을까요', 'please'], ['should', '해야 한다', 'rule'],
+            ['must', '반드시 해야 한다', 'danger'], ['may', '해도 될까요', 'question2'], ['would', '~하시겠어요', 'please'],
+            ['might', '~일지도 모른다', 'maybe'], ['have to', '해야 한다', 'rule'], ['need to', '할 필요가 있다', 'help'],
+            ['rather', '차라리', 'maybe'], ['shall', '~할까요', 'together'], ['advice', '조언', 'idea']
+          ],
+          s: [
+            ['Can you help me, please?', '좀 도와주시겠어요?', 'help'],
+            ['Could you speak more slowly?', '조금 천천히 말씀해 주시겠어요?', 'slow'],
+            ['You should get some rest.', '좀 쉬시는 게 좋겠어요.', 'rest'],
+            ['I have to go now.', '지금 가야 해요.', 'walk2'],
+            ['May I ask you a question?', '질문 하나 드려도 될까요?', 'hand'],
+            ['Would you like some tea?', '차 드시겠어요?', 'tea'],
+            ['You must be very tired.', '많이 피곤하시겠어요.', 'tired'],
+            ['We might go out later.', '나중에 나갈지도 몰라요.', 'maybe'],
+            ['I could not sleep last night.', '어젯밤에 잠을 못 잤어요.', 'sleep'],
+            ['You do not have to worry.', '걱정하지 않으셔도 돼요.', 'calm'],
+            ['Shall we take a walk?', '산책할까요?', 'walk'],
+            ['I would rather stay home tonight.', '오늘 밤은 그냥 집에 있을래요.', 'house']
+          ]
+        },
+        {
+          id: 'u23', t: '가족 이야기 나누기', ic: 'baby',
+          tip: '길게 말할 때는 and, but, because 로 문장을 이어 보세요.',
+          w: [
+            ['grandchild', '손주', 'baby'], ['grow', '자라다', 'tree'], ['remember', '기억하다', 'remember'],
+            ['miss', '그리워하다', 'cry'], ['take care of', '돌보다', 'heart'], ['hug', '안다', 'together'],
+            ['story', '이야기', 'book'], ['picture', '사진', 'photo'], ['holiday', '명절, 휴일', 'party'],
+            ['thankful', '고마운', 'thank'], ['often', '자주', 'again'], ['important', '중요한', 'star']
+          ],
+          s: [
+            ['My grandson is growing so fast.', '손자가 정말 빨리 커요.', 'baby'],
+            ['I miss my children very much.', '저는 아이들이 무척 보고 싶어요.', 'cry'],
+            ['She takes care of her grandmother.', '그녀는 할머니를 돌봐요.', 'grandmother'],
+            ['We visit them every holiday.', '우리는 명절마다 그들을 찾아가요.', 'party'],
+            ['I remember when he was a baby.', '그가 아기였을 때가 기억나요.', 'remember'],
+            ['Look at this picture of my family.', '우리 가족 사진 좀 보세요.', 'photo'],
+            ['They live far away from us.', '그들은 우리와 멀리 떨어져 살아요.', 'far'],
+            ['I am thankful for my family.', '저는 가족이 고마워요.', 'thank'],
+            ['He reminds me of his father.', '그를 보면 그의 아버지가 떠올라요.', 'father'],
+            ['Time goes by so quickly.', '시간이 참 빨리 가네요.', 'clock'],
+            ['I want to see them more often.', '더 자주 보고 싶어요.', 'again'],
+            ['Family is the most important thing.', '가족이 가장 중요해요.', 'heart']
+          ]
+        },
+        {
+          id: 'u24', t: '뉴스와 생각 나누기', ic: 'news',
+          tip: '의견이 다를 때 부드럽게: I see your point, but ~ / On the other hand ~',
+          w: [
+            ['news', '뉴스', 'news'], ['problem', '문제', 'problem'], ['change', '변화', 'again'],
+            ['future', '미래', 'dream'], ['health', '건강', 'good'], ['report', '보도', 'news'],
+            ['important', '중요한', 'star'], ['difficult', '어려운', 'problem'], ['interesting', '흥미로운', 'idea'],
+            ['society', '사회', 'people'], ['however', '그러나', 'maybe'], ['depend', '달려 있다', 'rule']
+          ],
+          s: [
+            ['According to the news, prices are going up.', '뉴스에 따르면 물가가 오르고 있어요.', 'news'],
+            ['I read an interesting article this morning.', '오늘 아침에 흥미로운 기사를 읽었어요.', 'read'],
+            ['The weather has changed a lot these days.', '요즘 날씨가 많이 변했어요.', 'weather'],
+            ['Health is more important than money.', '건강이 돈보다 중요해요.', 'good'],
+            ['It is a difficult problem to solve.', '해결하기 어려운 문제예요.', 'problem'],
+            ['Many people are worried about the future.', '많은 사람들이 미래를 걱정해요.', 'worried'],
+            ['I do not quite agree with that opinion.', '그 의견에는 완전히 동의하지는 않아요.', 'maybe'],
+            ['On the other hand, there are good points.', '한편으로는 좋은 점도 있어요.', 'idea'],
+            ['Let me explain what I mean.', '제 말을 설명해 드릴게요.', 'message'],
+            ['That is a good point.', '좋은 지적이에요.', 'check'],
+            ['I would like to hear your thoughts.', '당신 생각을 듣고 싶어요.', 'ear'],
+            ['In the end, it depends on the person.', '결국은 사람마다 다르죠.', 'people']
+          ]
+        }
+      ]
+    }
+  ];
+
+  /* 유닛 빠른 조회 + 전체 항목 인덱스 */
+  G.UNITS = [];
+  G.ITEMS = {};
+  G.CURRICULUM.forEach(function (st) {
+    st.units.forEach(function (u, i) {
+      u.stage = st.stage; u.stageName = st.name; u.order = G.UNITS.length; u.idxInStage = i;
+      G.UNITS.push(u);
+      u.w.forEach(function (a, k) { G.ITEMS[u.id + ':w' + k] = { id: u.id + ':w' + k, kind: 'w', en: a[0], ko: a[1], pic: a[2], unit: u.id }; });
+      u.s.forEach(function (a, k) { G.ITEMS[u.id + ':s' + k] = { id: u.id + ':s' + k, kind: 's', en: a[0], ko: a[1], pic: a[2], unit: u.id }; });
+    });
+  });
+
+  G.unitItems = function (uid) {
+    var out = [], u = G.UNITS.filter(function (x) { return x.id === uid; })[0];
+    if (!u) return out;
+    u.w.forEach(function (_, k) { out.push(G.ITEMS[uid + ':w' + k]); });
+    u.s.forEach(function (_, k) { out.push(G.ITEMS[uid + ':s' + k]); });
+    return out;
+  };
+
+  /* 유닛당 레슨 수: 항목 24개 × 노출 3회 ÷ 문항 10개 ≈ 7 */
+  G.LESSONS_PER_UNIT = 7;
+  G.QUESTIONS_PER_LESSON = 10;
+
+})(window.G = window.G || {});
+
+/* ============================================================
+   학습 엔진
+   - 진도/연속일수/XP 저장 (localStorage)
+   - 레슨별 문제 자동 생성 (한 항목을 여러 유형으로 반복 노출)
+   - 간격 반복 복습 (SRS)
+   - 음성 읽어주기 (브라우저 내장 TTS, 인터넷 불필요)
+   ============================================================ */
+(function (G) {
+  'use strict';
+
+  var KEY = 'mom-english-v1';
+
+  /* ---------- 유틸 ---------- */
+  function seedRand(seed) {          // 같은 레슨은 항상 같은 문제 (되돌아가도 흔들리지 않게)
+    var s = seed >>> 0 || 1;
+    return function () {
+      s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0;
+      return s / 4294967296;
+    };
+  }
+  function hash(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  function shuffle(arr, rnd) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  G.shuffle = shuffle; G.seedRand = seedRand; G.hash = hash;
+
+  function todayKey(d) {
+    d = d || new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function dayNum(d) { return Math.floor((d || Date.now()) / 86400000); }
+  G.todayKey = todayKey; G.dayNum = dayNum;
+
+  /* ---------- 저장소 ---------- */
+  var DEFAULT = {
+    v: 1,
+    name: '',
+    xp: 0,
+    streak: 0,
+    bestStreak: 0,
+    lastDay: '',
+    days: {},              // '2026-08-15': {min: 12, lessons: 2, xp: 40}
+    prog: {},              // unitId -> 완료한 레슨 수
+    srs: {},               // itemId -> {s:0~5, due:일수, seen:n, miss:n}
+    settings: { size: 'normal', rate: 0.82, theme: 'auto', goal: 20, autoPlay: true },
+    onboarded: false
+  };
+
+  var P;
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      P = raw ? JSON.parse(raw) : null;
+    } catch (e) { P = null; }
+    if (!P || P.v !== 1) P = JSON.parse(JSON.stringify(DEFAULT));
+    for (var k in DEFAULT) if (!(k in P)) P[k] = JSON.parse(JSON.stringify(DEFAULT[k]));
+    for (var s in DEFAULT.settings) if (!(s in P.settings)) P.settings[s] = DEFAULT.settings[s];
+    return P;
+  }
+  /* 저장이 되는 환경인지 미리 확인해 둡니다.
+     안 되는데 조용히 넘어가면 어머니는 진도가 사라진 이유를 알 수 없습니다. */
+  var storageOK = (function () {
+    try {
+      localStorage.setItem(KEY + '__t', '1');
+      localStorage.removeItem(KEY + '__t');
+      return true;
+    } catch (e) { return false; }
+  })();
+  G.storageOK = function () { return storageOK; };
+
+  function save() {
+    if (!storageOK) return;
+    try { localStorage.setItem(KEY, JSON.stringify(P)); }
+    catch (e) { storageOK = false; }   // 용량 초과 등
+  }
+  load();                                   // 최초 한 번만 읽고, 이후에는 메모리 것을 그대로 씁니다
+  G.P = function () { return P; };
+  G.save = save;
+  G.reset = function () { P = JSON.parse(JSON.stringify(DEFAULT)); save(); return P; };
+
+  /* ---------- 하루 기록 / 연속일수 ---------- */
+  function today() {
+    var t = todayKey();
+    if (!P.days[t]) P.days[t] = { min: 0, lessons: 0, xp: 0 };
+    return P.days[t];
+  }
+  G.today = today;
+
+  G.addMinutes = function (sec) {
+    var d = today();
+    d.min = Math.round((d.min + sec / 60) * 10) / 10;
+    save();
+  };
+
+  G.markStudied = function (xp) {
+    var t = todayKey(), d = today();
+    d.lessons++; d.xp += xp;
+    P.xp += xp;
+    if (P.lastDay !== t) {
+      var y = new Date(); y.setDate(y.getDate() - 1);
+      P.streak = (P.lastDay === todayKey(y)) ? P.streak + 1 : 1;
+      P.lastDay = t;
+      if (P.streak > P.bestStreak) P.bestStreak = P.streak;
+    }
+    save();
+  };
+
+  /* 하루가 지나면 연속일수는 화면에서 계산해 보정 */
+  G.liveStreak = function () {
+    if (!P.lastDay) return 0;
+    var t = todayKey(), y = new Date(); y.setDate(y.getDate() - 1);
+    if (P.lastDay === t || P.lastDay === todayKey(y)) return P.streak;
+    return 0;
+  };
+
+  G.goalPct = function () {
+    var d = today();
+    return Math.min(1, d.min / (P.settings.goal || 20));
+  };
+
+  /* ---------- 진도 ---------- */
+  G.unitDone = function (uid) { return P.prog[uid] || 0; };
+  G.unitTotal = function () { return G.LESSONS_PER_UNIT; };
+  G.unitComplete = function (uid) { return (P.prog[uid] || 0) >= G.LESSONS_PER_UNIT; };
+
+  G.unitUnlocked = function (uid) {
+    var i = G.UNITS.findIndex(function (u) { return u.id === uid; });
+    if (i <= 0) return true;
+    var prev = G.UNITS[i - 1];
+    return (P.prog[prev.id] || 0) >= Math.ceil(G.LESSONS_PER_UNIT * 0.6); // 앞 유닛 60%면 다음 열림
+  };
+
+  G.stageUnlocked = function (stage) {
+    if (stage <= 1) return true;
+    var prevUnits = G.UNITS.filter(function (u) { return u.stage === stage - 1; });
+    var done = prevUnits.filter(function (u) { return G.unitComplete(u.id); }).length;
+    return done >= prevUnits.length - 1;   // 이전 단계 대부분 끝내면 열림
+  };
+
+  G.nextLesson = function () {
+    for (var i = 0; i < G.UNITS.length; i++) {
+      var u = G.UNITS[i];
+      if ((P.prog[u.id] || 0) < G.LESSONS_PER_UNIT) return { unit: u, n: P.prog[u.id] || 0 };
+    }
+    return null;   // 전 과정 완료
+  };
+
+  G.overallPct = function () {
+    var done = 0;
+    G.UNITS.forEach(function (u) { done += Math.min(G.LESSONS_PER_UNIT, P.prog[u.id] || 0); });
+    return done / (G.UNITS.length * G.LESSONS_PER_UNIT);
+  };
+
+  /* ---------- SRS ---------- */
+  var INTERVAL = [0, 1, 2, 4, 8, 16, 32];   // 강도별 다음 복습까지 일수
+
+  G.recordAnswer = function (itemId, ok) {
+    var r = P.srs[itemId] || { s: 0, due: 0, seen: 0, miss: 0 };
+    r.seen++;
+    if (ok) r.s = Math.min(6, r.s + 1); else { r.s = Math.max(0, r.s - 1); r.miss++; }
+    r.due = dayNum() + INTERVAL[r.s];
+    P.srs[itemId] = r;
+  };
+
+  G.dueItems = function (limit) {
+    var d = dayNum(), out = [];
+    for (var id in P.srs) {
+      var r = P.srs[id], it = G.ITEMS[id];
+      if (!it) continue;
+      if (r.due <= d) out.push({ item: it, r: r });
+    }
+    out.sort(function (a, b) { return (a.r.s - b.r.s) || (a.r.due - b.r.due); });
+    return out.slice(0, limit || 40);
+  };
+
+  G.learnedCount = function () { return Object.keys(P.srs).length; };
+  G.strongCount = function () {
+    var n = 0; for (var id in P.srs) if (P.srs[id].s >= 4) n++; return n;
+  };
+  G.weakItems = function (limit) {
+    var out = [];
+    for (var id in P.srs) {
+      var it = G.ITEMS[id]; if (!it) continue;
+      out.push({ item: it, r: P.srs[id] });
+    }
+    out.sort(function (a, b) { return (b.r.miss - a.r.miss) || (a.r.s - b.r.s); });
+    return out.slice(0, limit || 30);
+  };
+
+  /* ============================================================
+     문제 생성
+     ============================================================ */
+
+  /* 레슨별 항목 배치 — 새 단어 → 새 문장 → 총정리 순 */
+  function lessonItems(unit, n) {
+    var W = [], S = [];
+    unit.w.forEach(function (_, k) { W.push(G.ITEMS[unit.id + ':w' + k]); });
+    unit.s.forEach(function (_, k) { S.push(G.ITEMS[unit.id + ':s' + k]); });
+    var rnd = seedRand(hash(unit.id + '#' + n));
+    var half = Math.ceil(W.length / 2);
+
+    var plans = [
+      function () { var a = W.slice(0, half); return a.concat(a).slice(0, 10); },
+      function () { var a = W.slice(half); return a.concat(a).slice(0, 10); },
+      function () { return shuffle(W, rnd).slice(0, 10); },
+      function () { var a = S.slice(0, 5); return a.concat(a).slice(0, 10); },
+      function () { var a = S.slice(5, 10); return a.concat(a).slice(0, 10); },
+      function () { return shuffle(S.slice(8).concat(S.slice(0, 4)), rnd).concat(shuffle(W, rnd).slice(0, 4)).slice(0, 10); },
+      function () { return shuffle(S, rnd).slice(0, 6).concat(shuffle(W, rnd).slice(0, 4)); }
+    ];
+    var f = plans[n % plans.length];
+    return shuffle(f(), rnd);
+  }
+
+  /* 자주 쓰는 목록은 한 번만 만들어 두기 */
+  var ALL = null, PICABLE = null, WORDPOOL = null;
+  function allItems() {
+    if (!ALL) ALL = Object.keys(G.ITEMS).map(function (k) { return G.ITEMS[k]; });
+    return ALL;
+  }
+  function picable() {
+    if (!PICABLE) PICABLE = allItems().filter(function (x) { return x.kind === 'w' && G.isPicQuiz(x.pic); });
+    return PICABLE;
+  }
+  var USTAGE = null;
+  function stageOfUnit(uid) {
+    if (!USTAGE) { USTAGE = {}; G.UNITS.forEach(function (u) { USTAGE[u.id] = u.stage; }); }
+    return USTAGE[uid] || 1;
+  }
+  function wordPool() {
+    if (!WORDPOOL) {
+      var seen = {}; WORDPOOL = [];
+      allItems().forEach(function (x) {
+        x.en.split(/\s+/).forEach(function (w) {
+          if (w.length > 1 && !/[.?!,]$/.test(w) && !seen[w]) { seen[w] = 1; WORDPOOL.push(w); }
+        });
+      });
+    }
+    return WORDPOOL;
+  }
+
+  /* 오답 선택지 뽑기 — 같은 유닛 우선, 모자라면 전체에서 */
+  function distract(item, count, rnd, pool) {
+    var same = (pool || allItems())
+      .filter(function (x) { return x.kind === item.kind && x.id !== item.id && x.ko !== item.ko && x.en !== item.en; });
+    var mine = same.filter(function (x) { return x.unit === item.unit; });
+    var rest = same.filter(function (x) { return x.unit !== item.unit; });
+    var picked = shuffle(mine, rnd).slice(0, count);
+    if (picked.length < count) picked = picked.concat(shuffle(rest, rnd).slice(0, count - picked.length));
+    return picked;
+  }
+
+  /* 그림 오답 — 같은 유닛 → 배운 단계 안 → 그래도 모자라면 전체 순서로 고릅니다.
+     아직 배우지 않은 단계의 단어가 오답으로 나오지 않게 하는 게 핵심입니다. */
+  function picDistract(item, count, rnd, stage) {
+    var all = picable().filter(function (x) { return x.id !== item.id && x.pic !== item.pic; });
+    var tiers = [
+      all.filter(function (x) { return x.unit === item.unit; }),
+      all.filter(function (x) { return stageOfUnit(x.unit) <= stage; }),
+      all
+    ];
+    var seen = {}, out = [];
+    tiers.forEach(function (tier) {
+      shuffle(tier, rnd).forEach(function (x) {
+        if (out.length >= count || seen[x.pic]) return;
+        seen[x.pic] = 1; out.push(x);
+      });
+    });
+    return out.slice(0, count);
+  }
+
+  function words(sentence) {
+    return sentence.replace(/\s+/g, ' ').trim().split(' ');
+  }
+
+  /* 유형 하나 만들기 */
+  function makeQ(item, typeHint, rnd, stage, pool) {
+    var t = typeHint;
+
+    if (t === 'pic' && G.isPicQuiz(item.pic)) {
+      var others = picDistract(item, 3, rnd, stage);
+      if (others.length === 3) {
+        var opts = shuffle([item].concat(others), rnd);
+        return {
+          type: 'pic', item: item,
+          head: '알맞은 그림을 고르세요',
+          sub: '',
+          prompt: item.ko,
+          audio: item.en,
+          options: opts.map(function (o) { return { pic: o.pic, label: o.en, ok: o.id === item.id }; })
+        };
+      }
+      t = 'en2ko';
+    }
+
+    if (t === 'ko2en') {
+      var ws = words(item.en);
+      if (ws.length >= 2 && ws.length <= 10) {
+        var extras = distract(item, 1, rnd, pool)
+          .reduce(function (acc, d) { return acc.concat(words(d.en)); }, [])
+          .filter(function (w) { return ws.indexOf(w) < 0; });
+        var bank = shuffle(ws.concat(shuffle(extras, rnd).slice(0, ws.length <= 4 ? 2 : 3)), rnd);
+        return {
+          type: 'bank', item: item,
+          head: '한국어를 영어로 만들어 보세요',
+          sub: item.ko, pic: item.pic,
+          answer: ws, bank: bank
+        };
+      }
+      t = 'en2ko';
+    }
+
+    if (t === 'listen') {
+      var ws2 = words(item.en);
+      if (ws2.length >= 2 && ws2.length <= 9) {
+        var ex2 = distract(item, 1, rnd, pool)
+          .reduce(function (acc, d) { return acc.concat(words(d.en)); }, [])
+          .filter(function (w) { return ws2.indexOf(w) < 0; });
+        return {
+          type: 'bank', item: item, listen: true,
+          head: '듣고 문장을 만들어 보세요',
+          sub: '', answer: ws2,
+          bank: shuffle(ws2.concat(shuffle(ex2, rnd).slice(0, 2)), rnd)
+        };
+      }
+      t = 'en2ko';
+    }
+
+    if (t === 'blank') {
+      var ws3 = words(item.en);
+      if (ws3.length >= 4) {
+        var bi = 1 + Math.floor(rnd() * (ws3.length - 1));
+        var target = ws3[bi];
+        var pool2 = wordPool().filter(function (w) {
+          return w.toLowerCase() !== target.toLowerCase() &&
+            Math.abs(w.length - target.length) <= 4;
+        });
+        var uniq = [], seenW = {};
+        shuffle(pool2, rnd).forEach(function (w) { if (!seenW[w] && uniq.length < 3) { seenW[w] = 1; uniq.push(w); } });
+        if (uniq.length === 3) {
+          var shown = ws3.slice(); shown[bi] = '____';
+          return {
+            type: 'choice', item: item,
+            head: '빈칸에 알맞은 말을 고르세요',
+            sub: shown.join(' '), pic: item.pic, audio: item.en, sublarge: true,
+            options: shuffle([target].concat(uniq), rnd).map(function (o) { return { label: o, ok: o === target }; })
+          };
+        }
+      }
+      t = 'en2ko';
+    }
+
+    if (t === 'type' && item.kind === 'w' && item.en.split(' ').length === 1) {
+      return {
+        type: 'type', item: item,
+        head: '한국어를 영어로 적어 보세요',
+        sub: item.ko, pic: item.pic,
+        answer: item.en
+      };
+    }
+
+    if (t === 'ko2enChoice') {
+      return {
+        type: 'choice', item: item,
+        head: '알맞은 영어를 고르세요',
+        sub: item.ko, pic: item.pic,
+        options: shuffle([{ label: item.en, ok: true }].concat(
+          distract(item, 3, rnd, pool).map(function (d) { return { label: d.en, ok: false }; })), rnd)
+      };
+    }
+
+    /* 기본: 영어 → 한국어 뜻 고르기 */
+    return {
+      type: 'choice', item: item,
+      head: '무슨 뜻일까요?',
+      sub: item.en, audio: item.en, sublarge: true, pic: null,
+      options: shuffle([{ label: item.ko, ok: true }].concat(
+        distract(item, 3, rnd, pool).map(function (d) { return { label: d.ko, ok: false }; })), rnd)
+    };
+  }
+
+  /* 짝 맞추기 (한 레슨에 한 번) — 짧은 항목 위주라야 화면이 편합니다 */
+  function makeMatch(items, rnd, pool) {
+    function uniq(a) {
+      return a.filter(function (x, i, arr) { return arr.findIndex(function (y) { return y.id === x.id; }) === i; });
+    }
+    var short = function (x) { return x.en.split(' ').length <= 3; };
+    var cand = uniq(shuffle(items, rnd)).filter(short);
+    if (cand.length < 5 && pool) {
+      var ids = {}; cand.forEach(function (x) { ids[x.id] = 1; });
+      shuffle(pool, rnd).forEach(function (x) {
+        if (cand.length < 5 && !ids[x.id] && short(x)) { ids[x.id] = 1; cand.push(x); }
+      });
+    }
+    var pick = cand.slice(0, 5);
+    if (pick.length < 4) return null;
+    return {
+      type: 'match', items: pick,
+      head: '짝을 맞춰 보세요',
+      sub: '영어와 뜻을 하나씩 눌러 주세요',
+      left: shuffle(pick, rnd).map(function (x) { return { id: x.id, label: x.en, pic: x.pic }; }),
+      right: shuffle(pick, rnd).map(function (x) { return { id: x.id, label: x.ko }; })
+    };
+  }
+
+  /* 따라 읽기 (발음 연습, 정답/오답 없음) */
+  function makeRepeat(item) {
+    return {
+      type: 'repeat', item: item,
+      head: '소리 내어 따라 읽어 보세요',
+      sub: item.en, ko: item.ko, pic: item.pic
+    };
+  }
+
+  /* 유형 순환표 — 한 레슨 안에서도 여러 방식이 섞이고,
+     같은 항목이 다시 나오면 반드시 다른 방식으로 물어봅니다. */
+  function typeTable(kind, stage) {
+    if (kind === 'w') {
+      return stage >= 3 ? ['pic', 'en2ko', 'ko2enChoice', 'type']
+        : ['pic', 'en2ko', 'ko2enChoice'];
+    }
+    return stage >= 2 ? ['ko2en', 'en2ko', 'listen', 'blank']
+      : ['ko2en', 'en2ko', 'blank'];
+  }
+
+  G.buildLesson = function (unit, n) {
+    var rnd = seedRand(hash(unit.id + '@' + n + '!'));
+    var items = lessonItems(unit, n);
+    var pool = G.unitItems(unit.id);
+    var stage = unit.stage;
+    var used = {}, qs = [];
+
+    items.forEach(function (it, qi) {
+      var table = typeTable(it.kind, stage);
+      var mine = used[it.id] || (used[it.id] = []);
+      var start = (n + qi) % table.length;
+      var t = null;
+      for (var k = 0; k < table.length && !t; k++) {
+        var c = table[(start + k) % table.length];
+        if (mine.indexOf(c) < 0) t = c;
+      }
+      if (!t) t = table[start];
+      mine.push(t);
+      qs.push(makeQ(it, t, rnd, stage, pool));
+    });
+
+    // 3번째 자리에 짝 맞추기, 마지막에 따라 읽기
+    var m = makeMatch(items, rnd, pool);
+    if (m) qs.splice(Math.min(3, qs.length), 0, m);
+    var sent = items.filter(function (x) { return x.kind === 's'; });
+    var rep = sent.length ? sent[Math.floor(rnd() * sent.length)] : items[0];
+    if (rep) qs.push(makeRepeat(rep));
+
+    return { unit: unit, n: n, questions: qs, title: unit.t + ' · ' + (n + 1) + '단계' };
+  };
+
+  /* 복습 레슨 — 오래됐거나 자주 틀린 항목으로 */
+  G.buildReview = function () {
+    var due = G.dueItems(60).map(function (x) { return x.item; });
+    if (due.length < 6) {
+      var extra = G.weakItems(20).map(function (x) { return x.item; });
+      extra.forEach(function (i) { if (due.indexOf(i) < 0) due.push(i); });
+    }
+    if (!due.length) return null;
+    var rnd = seedRand(hash('review' + todayKey()));
+    var items = shuffle(due, rnd).slice(0, 10);
+    var qs = items.map(function (it, i) {
+      var table = it.kind === 'w' ? ['pic', 'en2ko', 'ko2enChoice'] : ['en2ko', 'ko2en', 'listen'];
+      return makeQ(it, table[i % table.length], rnd, 6, null);
+    });
+    var m = makeMatch(items, rnd, due);
+    if (m) qs.splice(Math.min(3, qs.length), 0, m);
+    return { unit: null, n: -1, questions: qs, title: '복습' };
+  };
+
+  G.dueCount = function () { return G.dueItems(999).length; };
+
+  /* ============================================================
+     음성 (브라우저 내장 TTS — 인터넷 없이 동작)
+     ============================================================ */
+  var voice = null, voicesReady = false;
+
+  function pickVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    var vs = window.speechSynthesis.getVoices() || [];
+    if (!vs.length) return null;
+    var en = vs.filter(function (v) { return /^en(-|_)?/i.test(v.lang || ''); });
+    if (!en.length) return null;
+    var prefer = ['Samantha', 'Google US English', 'Microsoft Aria', 'Microsoft Jenny',
+      'Microsoft Zira', 'Microsoft Michelle', 'Karen', 'Daniel'];
+    for (var i = 0; i < prefer.length; i++) {
+      var m = en.filter(function (v) { return v.name.indexOf(prefer[i]) >= 0; })[0];
+      if (m) return m;
+    }
+    return en.filter(function (v) { return /en-US/i.test(v.lang); })[0] || en[0];
+  }
+
+  G.initVoice = function (cb) {
+    if (!('speechSynthesis' in window)) { voicesReady = true; if (cb) cb(false); return; }
+    function ready() {
+      voice = pickVoice();
+      voicesReady = true;
+      if (cb) cb(!!voice);
+    }
+    if ((window.speechSynthesis.getVoices() || []).length) ready();
+    else {
+      window.speechSynthesis.onvoiceschanged = ready;
+      setTimeout(function () { if (!voicesReady) ready(); }, 1200);
+    }
+  };
+
+  G.voiceOK = function () { return !!voice; };
+
+  /* 영어 음성이 없는 기기에서는 소리를 내지 않습니다.
+     기기 기본 음성(예: 한국어)이 영어 문장을 읽으면 발음이 크게 틀리는데,
+     초보 학습자는 그게 틀린 줄 모르고 따라 하게 됩니다. 차라리 안 내는 편이 낫습니다. */
+  G.onNoVoice = null;
+  var speaking = false;
+  G.speak = function (text, slow, onEnd) {
+    if (!text || !('speechSynthesis' in window)) { if (onEnd) onEnd(); return; }
+    if (!voice) voice = pickVoice();
+    if (!voice) {
+      if (voicesReady && G.onNoVoice) G.onNoVoice();
+      if (onEnd) onEnd();
+      return;
+    }
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(String(text).replace(/____/g, '   '));
+      u.voice = voice; u.lang = voice.lang;
+      var base = (G.P().settings.rate || 0.82);
+      u.rate = slow ? Math.max(0.4, base - 0.32) : base;
+      u.pitch = 1;
+      speaking = true;
+      u.onend = u.onerror = function () { speaking = false; if (onEnd) onEnd(); };
+      window.speechSynthesis.speak(u);
+    } catch (e) { if (onEnd) onEnd(); }
+  };
+  G.stopSpeak = function () {
+    try { window.speechSynthesis.cancel(); } catch (e) { }
+    speaking = false;
+  };
+
+  /* 정답 판정 (타이핑) */
+  G.normalize = function (s) {
+    return String(s).toLowerCase().replace(/[.,!?'"]/g, '').replace(/\s+/g, ' ').trim();
+  };
+
+})(window.G = window.G || {});
+
+/* ============================================================
+   화면 그리기 & 조작
+   ============================================================ */
+(function (G) {
+  'use strict';
+
+  var $ = function (s) { return document.querySelector(s); };
+  var el = function (id) { return document.getElementById(id); };
+  var esc = function (s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  };
+
+  var P = G.P();
+  var S = { screen: 'home', tab: 'learn', lesson: null, qi: 0, queue: [], sel: null, placed: [], t0: 0, correct: 0, first: 0, asked: 0 };
+
+  /* ---------------- 공통 ---------------- */
+  function show(name) {
+    ['onboard', 'home', 'lesson', 'done', 'review', 'stats', 'settings'].forEach(function (n) {
+      var s = el('scr-' + n); if (s) s.classList.toggle('on', n === name);
+    });
+    S.screen = name;
+    el('tabs').classList.toggle('hide', name === 'lesson' || name === 'done' || name === 'onboard');
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- 홈 화면에 앱으로 설치하기 ---------- */
+  var installEvt = null;
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function isInstalled() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+      navigator.standalone === true;
+  }
+  // 이 이벤트는 페이지가 열리자마자 한 번만 오므로 미리 잡아 둡니다
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); installEvt = e;
+    if (S.screen === 'home') renderHome();
+  });
+  window.addEventListener('appinstalled', function () {
+    installEvt = null;
+    if (S.screen === 'home') renderHome();
+    toast('앱이 설치되었어요. 이제 홈 화면 아이콘으로 여세요');
+  });
+  function canOfferInstall() {
+    if (isInstalled()) return false;
+    return !!installEvt || isIOS;
+  }
+  function doInstall() {
+    if (installEvt) {
+      installEvt.prompt();
+      installEvt.userChoice.then(function () { installEvt = null; renderHome(); });
+      return;
+    }
+    installHelp();
+  }
+  function installHelp() {
+    if (document.querySelector('.modal-bg')) return;
+    var steps = isIOS
+      ? '<ol><li>아래쪽 가운데 <b>공유 버튼 <span style="font-size:1.2em">⬆️</span></b> 를 누르세요</li>' +
+      '<li>목록을 내려서 <b>"홈 화면에 추가"</b> 를 누르세요</li>' +
+      '<li>오른쪽 위 <b>"추가"</b> 를 누르면 끝!</li></ol>' +
+      '<p>사파리(Safari)에서 열어야 이 방법이 보입니다.</p>'
+      : '<ol><li>오른쪽 위 <b>점 세 개 (⋮)</b> 를 누르세요</li>' +
+      '<li><b>"앱 설치"</b> 또는 <b>"홈 화면에 추가"</b> 를 누르세요</li>' +
+      '<li><b>"설치"</b> 를 누르면 끝!</li></ol>';
+    var d = document.createElement('div');
+    d.className = 'modal-bg';
+    d.innerHTML = '<div class="modal">' +
+      '<h3>📱 홈 화면에 앱으로 넣기</h3>' +
+      '<p>이렇게 하면 다른 앱들처럼 <b>아이콘을 눌러서</b> 바로 열 수 있고, ' +
+      '주소창 없이 화면을 꽉 채워 씁니다. 인터넷이 없어도 열립니다.</p>' +
+      steps +
+      '<button class="btn" data-close-modal="1">알겠어요</button></div>';
+    document.body.appendChild(d);
+  }
+
+  /* ---------- 영어 음성이 없을 때 안내 ---------- */
+  var voiceHelpOpen = false, voiceHelpSeen = false;
+  function voiceHelp() {
+    if (voiceHelpOpen || document.querySelector('.modal-bg')) return;
+    voiceHelpOpen = true;
+    var d = document.createElement('div');
+    d.className = 'modal-bg';
+    d.innerHTML = '<div class="modal">' +
+      '<h3>🔈 영어 소리를 켜려면</h3>' +
+      '<p>이 기기에는 <b>영어 음성</b>이 설치되어 있지 않아요.<br>' +
+      '기기의 한국어 음성이 영어를 읽으면 발음이 크게 달라져서, ' +
+      '잘못 익히시지 않도록 소리를 잠시 꺼 두었습니다.</p>' +
+      '<p><b>Windows에서 1분이면 켤 수 있어요</b></p>' +
+      '<ol><li>시작 → <b>설정</b></li>' +
+      '<li><b>시간 및 언어</b> → <b>음성</b></li>' +
+      '<li><b>음성 관리</b> → <b>음성 추가</b></li>' +
+      '<li><b>English (United States)</b> 선택 후 추가</li>' +
+      '<li>이 화면에서 <b>F5</b> (새로 고침)</li></ol>' +
+      '<p>휴대폰이나 태블릿에서는 대부분 그냥 소리가 납니다.<br>' +
+      '소리가 없어도 그림과 글씨로 학습은 그대로 됩니다.</p>' +
+      '<button class="btn" data-close-modal="1">알겠어요</button></div>';
+    document.body.appendChild(d);
+  }
+  function closeModal() {
+    var m = document.querySelector('.modal-bg');
+    if (m) m.remove();
+    voiceHelpOpen = false;
+  }
+
+  var toastT;
+  function toast(msg) {
+    var t = el('toast'); t.textContent = msg; t.classList.add('on');
+    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, 2200);
+  }
+
+  function applySettings() {
+    document.documentElement.setAttribute('data-size', P.settings.size);
+    if (P.settings.theme === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', P.settings.theme);
+  }
+
+  function speakerBtn(text, big) {
+    return '<button class="spk' + (big ? '' : ' slow') + '" data-speak="' + esc(text) + '"' +
+      (big ? '' : ' data-slow="1"') + ' aria-label="' + (big ? '듣기' : '천천히 듣기') + '">' +
+      (big ? G.SPEAKER : G.SPEAKER_SLOW) + '</button>';
+  }
+
+  function confetti() {
+    var c = document.createElement('div'); c.className = 'confetti';
+    var cols = ['#4FAE55', '#F2C14E', '#E05A4E', '#3B7DD8', '#B69AE8'];
+    for (var i = 0; i < 40; i++) {
+      var p = document.createElement('i');
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.background = cols[i % cols.length];
+      p.style.animationDelay = (Math.random() * .8) + 's';
+      p.style.animationDuration = (2 + Math.random() * 1.4) + 's';
+      c.appendChild(p);
+    }
+    document.body.appendChild(c);
+    setTimeout(function () { c.remove(); }, 4200);
+  }
+
+  /* ---------------- 상단 바 ---------------- */
+  function topbar() {
+    var pct = G.goalPct(), d = G.today();
+    var r = 22, circ = 2 * Math.PI * r;
+    return '<div class="topbar">' +
+      '<div class="tb-item streak"><span class="em">🔥</span>' + G.liveStreak() + '일</div>' +
+      '<div class="tb-item xp"><span class="em">⭐</span>' + P.xp + '</div>' +
+      '<div class="tb-spacer"></div>' +
+      '<div class="goal-ring' + (pct >= 1 ? ' done' : '') + '">' +
+      '<svg width="52" height="52"><circle class="track" cx="26" cy="26" r="' + r + '" fill="none" stroke-width="6"/>' +
+      '<circle class="fill" cx="26" cy="26" r="' + r + '" fill="none" stroke-width="6" ' +
+      'stroke-dasharray="' + circ + '" stroke-dashoffset="' + (circ * (1 - pct)) + '"/></svg>' +
+      '<div class="lbl">' + (pct >= 1 ? '✅' : Math.round(d.min) + '분') + '</div></div>' +
+      '</div>';
+  }
+
+  /* ---------------- 홈 ---------------- */
+  function renderHome() {
+    P = G.P();
+    var nx = G.nextLesson();
+    var h = topbar();
+
+    var greet = P.name ? (P.name + '님') : '어머니';
+    var pct = G.goalPct();
+    var msg = pct >= 1
+      ? '오늘 목표를 다 채우셨어요. 정말 잘하셨어요!'
+      : (G.liveStreak() > 0
+        ? G.liveStreak() + '일째 이어가는 중이에요. 오늘도 20분만!'
+        : '오늘 20분, 딱 두 판만 해 볼까요?');
+
+    h += '<div class="hero"><div class="txt"><h2>' + esc(greet) + ', 안녕하세요!</h2><p>' + msg + '</p></div>' +
+      '<div class="mascot">' + (pct >= 1 ? G.MASCOT.cheer : G.MASCOT.happy) + '</div></div>';
+
+    if (canOfferInstall()) {
+      h += '<div class="notice" style="border-color:var(--brand);background:var(--brand-soft)">' +
+        '<span class="em">📱</span><div style="flex:1;min-width:0"><b>앱으로 설치하기</b>' +
+        '<span>홈 화면 아이콘으로 바로 여세요</span></div>' +
+        '<button id="btn-install" style="border-color:var(--brand);color:var(--brand-text)">' +
+        (installEvt ? '📥 지금 설치하기' : '📱 넣는 방법 보기') + '</button></div>';
+    }
+
+    if (!G.storageOK()) {
+      h += '<div class="notice" style="border-color:var(--rose);background:var(--rose-soft)">' +
+        '<span class="em">⚠️</span><div style="flex:1;min-width:0"><b>진도가 저장되지 않아요</b>' +
+        '<span>브라우저 설정에서 저장이 막혀 있습니다</span></div></div>';
+    }
+    if (!G.voiceOK()) {
+      h += '<div class="notice"><span class="em">🔇</span>' +
+        '<div style="flex:1;min-width:0"><b>영어 소리가 꺼져 있어요</b>' +
+        '<span>이 기기에 영어 음성이 없습니다</span></div>' +
+        '<button id="btn-voicehelp">🔈 소리 켜는 법 보기</button></div>';
+    }
+
+    h += '<div class="pad">';
+    if (nx) {
+      h += '<button class="btn" id="btn-continue">▶︎ ' + esc(nx.unit.t) + ' ' + (nx.n + 1) + '단계 시작하기</button>';
+    } else {
+      h += '<button class="btn" id="btn-review-now">🎉 전 과정 완료! 복습하기</button>';
+    }
+    var due = G.dueCount();
+    if (due >= 5) {
+      h += '<div style="height:12px"></div>' +
+        '<button class="btn ghost" id="btn-review2">🔁 복습할 것이 ' + due + '개 있어요</button>';
+    }
+    h += '</div>';
+
+    // 단계별 지도
+    G.CURRICULUM.forEach(function (st) {
+      var open = G.stageUnlocked(st.stage);
+      h += '<div class="stage-head' + (open ? '' : ' locked') + '">' +
+        '<div class="lv">' + st.stage + '단계 · ' + esc(st.name) + (open ? '' : ' 🔒') + '</div>' +
+        '<h3>' + esc(st.sub) + '</h3>' +
+        '<p class="desc">유닛 ' + st.units.length + '개 · 문장 ' + (st.units.length * 12) + '개</p></div>';
+
+      st.units.forEach(function (u) {
+        var done = G.unitDone(u.id), total = G.unitTotal();
+        var unlocked = open && G.unitUnlocked(u.id);
+        var isNext = nx && nx.unit.id === u.id;
+        h += '<div class="unit"' + (unlocked ? '' : ' style="opacity:.55"') + '>' +
+          '<div class="unit-top"><div class="unit-ico">' + G.picHTML(u.ic) + '</div>' +
+          '<div class="unit-title"><b>' + esc(u.t) + (unlocked ? '' : ' 🔒') + '</b>' +
+          '<span>' + Math.min(done, total) + ' / ' + total + ' 단계 완료</span></div>' +
+          (done >= total ? '<div style="font-size:1.7em">🏆</div>' : '') + '</div>' +
+          '<div class="bar"><i style="width:' + Math.round(Math.min(1, done / total) * 100) + '%"></i></div>' +
+          '<div class="nodes' + (isNext ? ' has-next' : '') + '">';
+        for (var i = 0; i < total; i++) {
+          var cls = i < done ? 'done' : (unlocked && i === done ? 'next' : (unlocked ? '' : 'locked'));
+          h += '<button class="node ' + cls + '" data-unit="' + u.id + '" data-n="' + i + '"' +
+            (unlocked ? '' : ' disabled') + ' aria-label="' + esc(u.t) + ' ' + (i + 1) + '단계">' +
+            (i < done ? '⭐' : (i + 1)) + '</button>';
+        }
+        h += '</div>';
+        if (isNext) h += '<p class="q-sub" style="margin:16px 0 0">💡 ' + esc(u.tip) + '</p>';
+        h += '</div>';
+      });
+    });
+
+    el('scr-home').innerHTML = h;
+  }
+
+  /* ---------------- 복습 탭 ---------------- */
+  function renderReview() {
+    P = G.P();
+    var due = G.dueCount(), learned = G.learnedCount(), strong = G.strongCount();
+    var h = topbar() + '<div class="pad">';
+    h += '<div class="card" style="text-align:center">' +
+      '<div class="mascot" style="margin:0 auto">' + (due ? G.MASCOT.think : G.MASCOT.sleep) + '</div>' +
+      '<h2 style="margin:10px 0 4px">복습</h2>' +
+      '<p style="margin:0 0 16px;color:var(--ink-2);font-weight:700;font-size:.86em">' +
+      (due ? '오늘 다시 볼 것이 <b>' + due + '개</b> 있어요.<br>잊어버리기 전에 한 번 더 보면 오래 남아요.'
+        : learned ? '지금은 복습할 것이 없어요.<br>새 단계를 배우면 여기에 쌓입니다.'
+          : '아직 배운 것이 없어요.<br>먼저 <b>배우기</b>에서 1단계를 시작해 보세요.') + '</p>' +
+      (due >= 4 ? '<button class="btn" id="btn-review3">🔁 복습 시작하기</button>'
+        : '<button class="btn ghost" id="btn-goto-learn">배우러 가기</button>') + '</div>';
+
+    h += '<div class="stat-row">' +
+      '<div class="stat b"><b>' + learned + '</b><span>배운 항목</span></div>' +
+      '<div class="stat g"><b>' + strong + '</b><span>확실히 외운 것</span></div>' +
+      '<div class="stat"><b>' + due + '</b><span>오늘 복습</span></div></div>';
+
+    var weak = G.weakItems(15);
+    if (weak.length) {
+      h += '<div class="card"><h3 style="margin:0 0 6px">자주 틀리는 것</h3>' +
+        '<p class="q-sub" style="margin:0 0 8px;padding:0">눌러서 소리를 들어 보세요</p>';
+      weak.forEach(function (x) {
+        var st = x.r.s >= 4 ? 2 : (x.r.s >= 2 ? 1 : 0);
+        var lbl = ['더 봐야 해요', '조금 더', '잘 외웠어요'][st];
+        h += '<div class="word-item" data-speak="' + esc(x.item.en) + '" role="button" tabindex="0">' +
+          '<div class="emo">' + (G.pic(x.item.pic) && G.pic(x.item.pic).type === 'emo' ? G.pic(x.item.pic).html : '🔊') + '</div>' +
+          '<div class="w"><b>' + esc(x.item.en) + '</b><span>' + esc(x.item.ko) + '</span></div>' +
+          '<div class="pill s' + st + '">' + lbl + '</div></div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+    el('scr-review').innerHTML = h;
+  }
+
+  /* ---------------- 기록 ---------------- */
+  function renderStats() {
+    P = G.P();
+    var h = topbar() + '<div class="pad">';
+    var d = G.today();
+    h += '<div class="card"><h3 style="margin:0 0 2px">오늘</h3>' +
+      '<div class="stat-row" style="margin:14px 0 0">' +
+      '<div class="stat g"><b>' + Math.round(d.min) + '분</b><span>공부 시간</span></div>' +
+      '<div class="stat b"><b>' + d.lessons + '</b><span>끝낸 단계</span></div>' +
+      '<div class="stat"><b>' + d.xp + '</b><span>오늘 별점</span></div></div>' +
+      '<div class="bar" style="margin-top:14px"><i style="width:' + Math.round(G.goalPct() * 100) + '%"></i></div>' +
+      '<p class="q-sub" style="padding:0;margin:8px 0 0">하루 목표 ' + P.settings.goal + '분 중 ' + Math.round(d.min) + '분</p></div>';
+
+    // 최근 28일 달력
+    h += '<div class="card"><h3 style="margin:0">지난 4주</h3>' +
+      '<div class="cal-head"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>' +
+      '<div class="cal">';
+    var now = new Date(), tk = G.todayKey();
+    var start = new Date(now);
+    start.setDate(now.getDate() - now.getDay() - 21);    // 이번 주 일요일에서 3주 전
+    for (var i = 0; i < 28; i++) {                       // 이번 주가 항상 마지막 줄
+      var dd = new Date(start); dd.setDate(start.getDate() + i);
+      if (dd > now) { h += '<div class="d" style="opacity:.25"></div>'; continue; }
+      var k = G.todayKey(dd), rec = P.days[k];
+      h += '<div class="d' + (rec && rec.lessons ? ' on' : '') + (k === tk ? ' today' : '') + '">' + dd.getDate() + '</div>';
+    }
+    h += '</div></div>';
+
+    h += '<div class="stat-row">' +
+      '<div class="stat"><b>🔥' + G.liveStreak() + '</b><span>연속 학습일</span></div>' +
+      '<div class="stat g"><b>' + P.bestStreak + '</b><span>최고 기록</span></div>' +
+      '<div class="stat b"><b>' + P.xp + '</b><span>전체 별점</span></div></div>';
+
+    h += '<div class="card"><h3 style="margin:0 0 10px">전체 진도</h3>' +
+      '<div class="bar"><i style="width:' + Math.round(G.overallPct() * 100) + '%"></i></div>' +
+      '<p class="q-sub" style="padding:0;margin:8px 0 14px">' + Math.round(G.overallPct() * 100) + '% 완료 · 총 ' +
+      (G.UNITS.length * G.LESSONS_PER_UNIT) + '단계</p>';
+    G.CURRICULUM.forEach(function (st) {
+      var us = st.units, done = 0;
+      us.forEach(function (u) { done += Math.min(G.LESSONS_PER_UNIT, G.unitDone(u.id)); });
+      var p = Math.round(done / (us.length * G.LESSONS_PER_UNIT) * 100);
+      h += '<div class="word-item"><div class="emo">' + (p === 100 ? '🏆' : p > 0 ? '📖' : '🔒') + '</div>' +
+        '<div class="w"><b>' + st.stage + '단계 · ' + esc(st.name) + '</b>' +
+        '<span>' + esc(st.sub) + '</span></div><div class="pill s' + (p === 100 ? 2 : p > 0 ? 1 : 0) + '">' + p + '%</div></div>';
+    });
+    h += '</div></div>';
+    el('scr-stats').innerHTML = h;
+  }
+
+  /* ---------------- 설정 ---------------- */
+  function renderSettings() {
+    P = G.P();
+    var h = topbar() + '<div class="pad"><div class="card">';
+    h += '<div class="set-row"><h4>이름</h4><p>화면에 표시할 이름이에요</p>' +
+      '<input class="typebox" id="set-name" style="margin:10px 0 0;width:100%" value="' + esc(P.name) + '" placeholder="예: 영자"></div>';
+
+    h += '<div class="set-row"><h4>글씨 크기</h4><p>눈이 편한 크기로 맞춰 주세요</p><div class="seg" id="seg-size">' +
+      ['normal:보통', 'large:크게', 'xlarge:아주 크게'].map(function (o) {
+        var v = o.split(':');
+        return '<button data-v="' + v[0] + '" class="' + (P.settings.size === v[0] ? 'on' : '') + '">' + v[1] + '</button>';
+      }).join('') + '</div></div>';
+
+    h += '<div class="set-row"><h4>읽어주는 속도</h4><p>천천히 들으면 따라 하기 쉬워요</p><div class="seg" id="seg-rate">' +
+      [['0.65', '아주 느리게'], ['0.82', '느리게'], ['1', '보통']].map(function (o) {
+        return '<button data-v="' + o[0] + '" class="' + (String(P.settings.rate) === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
+      }).join('') + '</div>' +
+      '<button class="btn ghost small" style="margin-top:12px" data-speak="Good morning. How are you today?">🔊 소리 들어보기</button></div>';
+
+    h += '<div class="set-row"><h4>하루 목표</h4><p>매일 이만큼만 하면 충분해요</p><div class="seg" id="seg-goal">' +
+      [['10', '10분'], ['20', '20분'], ['30', '30분']].map(function (o) {
+        return '<button data-v="' + o[0] + '" class="' + (String(P.settings.goal) === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
+      }).join('') + '</div></div>';
+
+    h += '<div class="set-row"><h4>화면 밝기</h4><p>어두운 곳에서는 어둡게가 편해요</p><div class="seg" id="seg-theme">' +
+      [['auto', '자동'], ['light', '밝게'], ['dark', '어둡게']].map(function (o) {
+        return '<button data-v="' + o[0] + '" class="' + (P.settings.theme === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
+      }).join('') + '</div></div>';
+
+    h += '<div class="set-row"><h4>문제 나오면 자동으로 읽어주기</h4><p>' +
+      '<div class="seg" id="seg-auto">' +
+      [['1', '켜기'], ['0', '끄기']].map(function (o) {
+        return '<button data-v="' + o[0] + '" class="' + ((P.settings.autoPlay ? '1' : '0') === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
+      }).join('') + '</div></p></div>';
+
+    h += '</div>';
+
+    h += '<div class="card"><div class="set-row"><h4>소리가 안 나올 때</h4>' +
+      '<p>' + (G.voiceOK()
+        ? '영어 음성이 준비되어 있어요. 소리가 작으면 기기 볼륨을 올려 주세요.'
+        : '이 기기에 <b>영어 음성이 없어서</b> 소리를 꺼 두었어요. 켜는 방법을 알려드릴게요.') + '</p>' +
+      (G.voiceOK() ? '' : '<button class="btn ghost small" id="btn-voicehelp" style="margin-top:10px">🔈 영어 소리 켜는 법 보기</button>') + '</div>' +
+      (isInstalled() ? '' :
+        '<div class="set-row"><h4>앱으로 설치</h4>' +
+        '<p>홈 화면에 아이콘을 만들어 두면 다른 앱처럼 바로 열 수 있어요</p>' +
+        '<button class="btn ghost small" id="btn-install" style="margin-top:10px">📱 홈 화면에 넣기</button></div>') +
+      '<div class="set-row"><h4>기록 지우기</h4><p>진도와 연속일수가 모두 사라집니다</p>' +
+      '<button class="btn ghost small" id="btn-reset" style="margin-top:10px">처음부터 다시 시작</button></div></div>';
+    h += '</div>';
+    el('scr-settings').innerHTML = h;
+  }
+
+  /* ============================================================
+     레슨 진행
+     ============================================================ */
+  function startLesson(unit, n) {
+    var L = unit ? G.buildLesson(unit, n) : G.buildReview();
+    if (!L) { toast('복습할 것이 아직 없어요'); return; }
+    S.lesson = L; S.queue = L.questions.slice(); S.qi = 0;
+    S.correct = 0; S.first = 0; S.asked = 0; S.total = S.queue.length;
+    S.t0 = Date.now();
+    show('lesson');
+    renderQ();
+  }
+
+  function lessonHead() {
+    var total = Math.max(S.total, S.asked + S.queue.length);
+    var pct = total ? (S.asked / total) * 100 : 0;
+    return '<div class="lesson-bar">' +
+      '<button class="x-btn" id="btn-quit" aria-label="나가기">✕</button>' +
+      '<div class="prog"><i style="width:' + pct + '%"></i></div>' +
+      '<div style="font-weight:900;font-size:.7em;color:var(--ink-2);white-space:nowrap">' +
+      S.asked + '/' + total + '</div></div>';
+  }
+
+  function picBox(key) {
+    // 큰 물음표처럼 뜻이 없는 기호는 화면만 차지하므로 아예 넣지 않습니다
+    if (!key || !G.hasPic(key) || G.isFillerPic(key)) return '';
+    return '<div class="stage-pic">' + G.picHTML(key, 'pic-anim') + '</div>';
+  }
+
+  function renderQ() {
+    var q = S.queue[0];
+    if (!q) { finish(); return; }
+    S.sel = null; S.placed = [];
+
+    var h = lessonHead();
+    h += '<div class="q-head">' + esc(q.head) + '</div>';
+    // 아래에서 말풍선으로 다시 보여주는 유형(bank/type/repeat)은 여기서 또 쓰지 않습니다
+    if (q.sub && (q.type === 'match' || (q.type === 'choice' && !q.sublarge))) {
+      h += '<div class="q-sub">' + esc(q.sub) + '</div>';
+    }
+
+    if (q.type === 'pic') {
+      h += '<div class="speak-row">' + speakerBtn(q.audio, true) +
+        '<div class="bubble">' + esc(q.item.ko) + '</div>' + speakerBtn(q.audio) + '</div>';
+      h += '<div class="choices grid2">';
+      q.options.forEach(function (o, i) {
+        h += '<button class="choice pic" data-i="' + i + '">' + G.picHTML(o.pic) +
+          '<span style="font-size:.8em">' + esc(o.label) + '</span></button>';
+      });
+      h += '</div>';
+
+    } else if (q.type === 'choice') {
+      if (q.sublarge) {
+        h += '<div class="speak-row">' + speakerBtn(q.audio || q.sub, true) +
+          '<div class="bubble">' + esc(q.sub) + '</div>' + speakerBtn(q.audio || q.sub) + '</div>';
+      } else if (q.pic) { h += picBox(q.pic); }
+      h += '<div class="choices">';
+      q.options.forEach(function (o, i) {
+        h += '<button class="choice" data-i="' + i + '"><span class="num">' + (i + 1) + '</span>' +
+          '<span>' + esc(o.label) + '</span></button>';
+      });
+      h += '</div>';
+
+    } else if (q.type === 'bank') {
+      if (q.listen) {
+        h += '<div class="speak-row" style="justify-content:center">' + speakerBtn(q.item.en, true) + speakerBtn(q.item.en) + '</div>';
+      } else {
+        if (q.pic) h += picBox(q.pic);
+        h += '<div class="speak-row"><div class="bubble" style="font-size:1.05em">' + esc(q.sub) + '</div></div>';
+      }
+      h += '<div class="answer-box" id="ansbox"></div>';
+      h += '<div class="bank" id="bank">';
+      q.bank.forEach(function (w, i) { h += '<button class="tile" data-w="' + i + '">' + esc(w) + '</button>'; });
+      h += '</div>';
+      h += '<div class="pad" style="margin-top:16px"><button class="btn ghost small" id="btn-dunno">잘 모르겠어요 (정답 보기)</button></div>';
+
+    } else if (q.type === 'match') {
+      h += '<div class="match-wrap" id="matchw">';
+      for (var i = 0; i < q.left.length; i++) {
+        h += '<button class="match-btn" data-side="L" data-id="' + q.left[i].id + '">' +
+          '<span>' + esc(q.left[i].label) + '</span></button>' +
+          '<button class="match-btn" data-side="R" data-id="' + q.right[i].id + '">' +
+          '<span>' + esc(q.right[i].label) + '</span></button>';
+      }
+      h += '</div>';
+
+    } else if (q.type === 'type') {
+      if (q.pic) h += picBox(q.pic);
+      h += '<div class="speak-row"><div class="bubble" style="font-size:1.05em">' + esc(q.sub) + '</div></div>';
+      h += '<input class="typebox" id="typein" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="영어로 적어 보세요">';
+      h += '<div class="pad" style="margin-top:16px"><button class="btn ghost small" id="btn-dunno">잘 모르겠어요 (정답 보기)</button></div>';
+
+    } else if (q.type === 'repeat') {
+      h += picBox(q.pic);
+      h += '<div class="speak-row">' + speakerBtn(q.sub, true) +
+        '<div class="bubble">' + esc(q.sub) + '<div class="ko">' + esc(q.ko) + '</div></div>' +
+        speakerBtn(q.sub) + '</div>';
+      h += '<p class="q-sub">소리를 듣고 큰 소리로 두 번 따라 읽어 보세요. 다 하셨으면 아래를 눌러 주세요.</p>';
+    }
+
+    h += '<div class="footer-cta" id="cta"></div>';
+    el('scr-lesson').innerHTML = h;
+
+    // 하단 버튼
+    var cta = el('cta');
+    if (q.type === 'repeat') {
+      cta.innerHTML = '<button class="btn" id="btn-next">따라 읽었어요 👍</button>';
+    } else if (q.type === 'match') {
+      cta.innerHTML = '<button class="btn" id="btn-check" disabled>모두 맞추면 넘어가요</button>';
+    } else {
+      cta.innerHTML = '<button class="btn" id="btn-check" disabled>확인</button>';
+    }
+
+    if (q.type === 'bank') renderBank();
+    if (q.type === 'match') { mLeft = q.left.length; mSel = null; }
+
+    // 자동 읽어주기
+    if (P.settings.autoPlay && G.voiceOK()) {
+      var t = q.type === 'bank' && q.listen ? q.item.en
+        : q.type === 'pic' ? q.audio
+          : (q.sublarge ? (q.audio || q.sub) : (q.type === 'repeat' ? q.sub : null));
+      if (t) setTimeout(function () { G.speak(t); }, 260);
+    }
+    if (q.type === 'type') setTimeout(function () { var i = el('typein'); if (i) i.focus(); }, 120);
+  }
+
+  function renderBank() {
+    var q = S.queue[0], box = el('ansbox'), bank = el('bank');
+    if (!box) return;
+    box.innerHTML = S.placed.map(function (bi, k) {
+      return '<button class="tile placed" data-rm="' + k + '">' + esc(q.bank[bi]) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(bank.children, function (b, i) {
+      b.classList.toggle('used', S.placed.indexOf(i) >= 0);
+    });
+    var btn = el('btn-check');
+    if (btn) btn.disabled = S.placed.length === 0;
+  }
+
+  /* ---- 판정 ---- */
+  function verdict(ok, answerText, note) {
+    var q = S.queue[0];
+    if (q.item) G.recordAnswer(q.item.id, ok);
+    S.asked++;
+    if (ok) { S.correct++; if (!q._retry) S.first++; }
+
+    var v = document.createElement('div');
+    v.className = 'verdict ' + (ok ? 'good' : 'bad');
+    v.innerHTML = '<h4>' + (ok ? '<span style="font-size:1.3em">🎉</span> 정답이에요!' : '<span style="font-size:1.3em">💡</span> 다시 한 번 봐요') + '</h4>' +
+      (answerText ? '<p class="ans">' + answerText + '</p>' : '') +
+      (note ? '<p class="ans"><em>' + note + '</em></p>' : '') +
+      '<button class="btn' + (ok ? '' : ' rose') + '" id="btn-next">계속하기</button>';
+    document.body.appendChild(v);
+    requestAnimationFrame(function () { v.classList.add('on'); });
+    S.verdictEl = v;
+
+    var cta = el('cta'); if (cta) cta.style.display = 'none';
+    if (ok) G.speak(q.item ? q.item.en : '');
+    else if (q.item) setTimeout(function () { G.speak(q.item.en, true); }, 150);
+  }
+
+  function clearVerdict() {
+    if (S.verdictEl) { S.verdictEl.remove(); S.verdictEl = null; }
+  }
+
+  function nextQ(wasWrong) {
+    clearVerdict();
+    var q = S.queue.shift();
+    if (q && q.type === 'repeat') S.asked++;              // 따라 읽기도 진도에 포함
+    if (wasWrong && !q._retry) { q._retry = true; S.queue.splice(Math.min(2, S.queue.length), 0, q); }
+    if (!S.queue.length) finish(); else renderQ();
+  }
+
+  function check() {
+    var q = S.queue[0];
+    if (q.type === 'pic' || q.type === 'choice') {
+      if (S.sel === null) return;
+      var ok = q.options[S.sel].ok;
+      var nodes = document.querySelectorAll('.choice');
+      q.options.forEach(function (o, i) {
+        if (o.ok) nodes[i].classList.add('right');
+        else if (i === S.sel) nodes[i].classList.add('wrong');
+        nodes[i].disabled = true;
+      });
+      var right = q.options.filter(function (o) { return o.ok; })[0].label;
+      verdict(ok, ok ? '' : '정답: <b>' + esc(right) + '</b>',
+        q.item && q.item.kind === 's' && !ok ? esc(q.item.en) + ' — ' + esc(q.item.ko) : '');
+
+    } else if (q.type === 'bank') {
+      var got = S.placed.map(function (i) { return q.bank[i]; }).join(' ');
+      var ok2 = G.normalize(got) === G.normalize(q.answer.join(' '));
+      var box = el('ansbox'); box.classList.add(ok2 ? 'right' : 'wrong');
+      verdict(ok2, ok2 ? esc(q.item.ko) : '정답: <b>' + esc(q.answer.join(' ')) + '</b>',
+        ok2 ? '' : esc(q.item.ko));
+
+    } else if (q.type === 'type') {
+      var v = (el('typein') || {}).value || '';
+      var ok3 = G.normalize(v) === G.normalize(q.answer);
+      verdict(ok3, ok3 ? '' : '정답: <b>' + esc(q.answer) + '</b>', esc(q.item.ko));
+    }
+  }
+
+  function finish() {
+    var secs = (Date.now() - S.t0) / 1000;
+    G.addMinutes(secs);
+    var L = S.lesson;
+    var xp = 10 + S.first;
+    if (L.unit) {
+      var cur = G.P().prog[L.unit.id] || 0;
+      if (L.n === cur) G.P().prog[L.unit.id] = cur + 1;
+      else if (L.n >= cur) G.P().prog[L.unit.id] = L.n + 1;
+    }
+    G.markStudied(xp);
+    P = G.P();
+
+    var acc = S.asked ? Math.round(S.first / Math.max(1, S.total) * 100) : 0;
+    var mins = Math.round(secs / 60 * 10) / 10;
+    var goalHit = G.goalPct() >= 1;
+
+    var h = '<div class="done-wrap">' +
+      '<div class="mascot">' + G.MASCOT.cheer + '</div>' +
+      '<h2>' + (acc >= 90 ? '완벽해요!' : acc >= 70 ? '아주 잘하셨어요!' : '끝까지 하셨어요!') + '</h2>' +
+      '<p style="color:var(--ink-2);font-weight:700;font-size:.88em;margin:0">' + esc(L.title) + '</p>' +
+      '<div class="stat-row">' +
+      '<div class="stat"><b>+' + xp + '</b><span>별점</span></div>' +
+      '<div class="stat g"><b>' + acc + '%</b><span>정답률</span></div>' +
+      '<div class="stat b"><b>' + mins + '분</b><span>걸린 시간</span></div></div>';
+
+    if (goalHit) {
+      h += '<div class="card" style="border-color:var(--gold);background:var(--gold-soft)">' +
+        '<h3 style="margin:0">🎯 오늘 목표 ' + P.settings.goal + '분 달성!</h3>' +
+        '<p style="margin:6px 0 0;font-size:.85em;font-weight:700">🔥 ' + G.liveStreak() + '일 연속이에요. 내일도 만나요!</p></div>';
+    } else {
+      var left = Math.max(0, P.settings.goal - G.today().min);
+      h += '<div class="card"><h3 style="margin:0">오늘 ' + Math.round(left) + '분 남았어요</h3>' +
+        '<p style="margin:6px 0 0;font-size:.85em;font-weight:700;color:var(--ink-2)">한 단계만 더 하면 오늘 목표 끝!</p></div>';
+    }
+
+    h += '<div style="height:8px"></div>' +
+      '<button class="btn" id="btn-again">▶︎ 한 단계 더 하기</button>' +
+      '<div style="height:12px"></div>' +
+      '<button class="btn ghost" id="btn-home">오늘은 여기까지</button></div>';
+
+    el('scr-done').innerHTML = h;
+    show('done');
+    if (acc >= 70 || goalHit) confetti();
+    G.speak(acc >= 90 ? 'Perfect! Well done.' : 'Good job!');
+  }
+
+  /* ---------------- 온보딩 ---------------- */
+  function renderOnboard() {
+    var h = '<div class="ob"><div class="mascot">' + G.MASCOT.happy + '</div>' +
+      '<h1>엄마의 영어</h1>' +
+      '<p>하루 20분, 그림과 소리로 배우는 영어<br>가장 쉬운 인사부터 시작합니다</p>' +
+      '<div class="card" style="text-align:left">' +
+      '<h4 style="margin:0 0 8px">먼저 글씨 크기를 골라 주세요</h4>' +
+      '<div class="seg" id="ob-size">' +
+      [['normal', '보통'], ['large', '크게'], ['xlarge', '아주 크게']].map(function (o) {
+        return '<button data-v="' + o[0] + '" class="' + (P.settings.size === o[0] ? 'on' : '') + '">' + o[1] + '</button>';
+      }).join('') + '</div>' +
+      '<h4 style="margin:22px 0 8px">이름을 알려 주세요 (선택)</h4>' +
+      '<input class="typebox" id="ob-name" style="width:100%;margin:0" placeholder="예: 영자">' +
+      '<h4 style="margin:22px 0 8px">소리가 잘 들리나요?</h4>' +
+      '<button class="btn ghost small" data-speak="Hello! Nice to meet you.">🔊 눌러서 확인하기</button>' +
+      '<p class="q-sub" style="padding:0;margin:10px 0 0">소리가 안 나도 괜찮아요. 그림과 글씨로 배울 수 있어요.</p>' +
+      '</div>' +
+      '<button class="btn" id="ob-start">시작하기</button><div style="height:40px"></div></div>';
+    el('scr-onboard').innerHTML = h;
+    show('onboard');
+  }
+
+  /* ============================================================
+     이벤트 (한 곳에서 위임 처리)
+     ============================================================ */
+  document.addEventListener('click', function (e) {
+    if (!e.target || !e.target.closest) return;
+    var t = e.target.closest('[data-speak]');
+    if (t) {
+      // 영어 음성이 없을 때는, 직접 스피커를 누르셨을 때만 안내합니다.
+      // (문제가 넘어갈 때마다 안내창이 뜨면 학습이 계속 끊깁니다)
+      if (!G.voiceOK()) {
+        if (!voiceHelpSeen) { voiceHelpSeen = true; voiceHelp(); }
+        else toast('이 기기에 영어 음성이 없어요 · 설정 → 소리가 안 나올 때');
+        return;
+      }
+      G.speak(t.getAttribute('data-speak'), t.hasAttribute('data-slow')); flashSpk(t); return;
+    }
+
+    var b = e.target.closest('button');
+    if (!b) {
+      if (e.target.classList && e.target.classList.contains('modal-bg')) closeModal();
+      return;
+    }
+    var id = b.id;
+
+    if (b.hasAttribute('data-close-modal')) { closeModal(); return; }
+    if (id === 'btn-voicehelp') { voiceHelp(); return; }
+    if (id === 'btn-install') { doInstall(); return; }
+
+    /* --- 탭 --- */
+    var tab = b.closest('.tab');
+    if (tab) {
+      var to = tab.getAttribute('data-tab');
+      S.tab = to;
+      document.querySelectorAll('.tab').forEach(function (x) { x.classList.toggle('on', x === tab); });
+      if (to === 'learn') { renderHome(); show('home'); }
+      if (to === 'review') { renderReview(); show('review'); }
+      if (to === 'stats') { renderStats(); show('stats'); }
+      if (to === 'settings') { renderSettings(); show('settings'); }
+      return;
+    }
+
+    /* --- 홈 --- */
+    if (id === 'btn-continue') { var nx = G.nextLesson(); if (nx) startLesson(nx.unit, nx.n); return; }
+    if (id === 'btn-review-now' || id === 'btn-review2' || id === 'btn-review3') { startLesson(null); return; }
+    if (id === 'btn-goto-learn') { document.querySelector('.tab[data-tab="learn"]').click(); return; }
+
+    var node = b.closest('.node');
+    if (node && !node.disabled) {
+      var u = G.UNITS.filter(function (x) { return x.id === node.getAttribute('data-unit'); })[0];
+      startLesson(u, parseInt(node.getAttribute('data-n'), 10));
+      return;
+    }
+
+    /* --- 레슨 --- */
+    if (id === 'btn-quit') {
+      G.addMinutes((Date.now() - S.t0) / 1000);
+      G.stopSpeak(); clearVerdict();
+      renderHome(); show('home'); toast('여기까지 한 것은 저장했어요');
+      return;
+    }
+    if (id === 'btn-check') { check(); return; }
+    if (id === 'btn-next') {
+      var wasWrong = S.verdictEl && S.verdictEl.classList.contains('bad');
+      G.stopSpeak();
+      nextQ(!!wasWrong);
+      return;
+    }
+    if (id === 'btn-dunno') {
+      var q = S.queue[0];
+      if (q.type === 'bank') {
+        S.placed = [];
+        var used = {};
+        q.answer.forEach(function (w) {
+          for (var i = 0; i < q.bank.length; i++) if (!used[i] && q.bank[i] === w) { used[i] = 1; S.placed.push(i); break; }
+        });
+        renderBank();
+      } else if (q.type === 'type') {
+        var inp = el('typein'); if (inp) inp.value = q.answer;
+      }
+      G.speak(q.item.en, true);
+      toast('정답을 보여드렸어요. 소리 내어 읽어 보세요');
+      var cb = el('btn-check'); if (cb) cb.disabled = false;
+      return;
+    }
+    if (id === 'btn-again') {
+      var nx2 = G.nextLesson();
+      if (nx2) startLesson(nx2.unit, nx2.n); else startLesson(null);
+      return;
+    }
+    if (id === 'btn-home') { renderHome(); show('home'); return; }
+
+    /* --- 선택지 --- */
+    var ch = b.closest('.choice');
+    if (ch && !ch.disabled) {
+      document.querySelectorAll('.choice').forEach(function (x) { x.classList.remove('sel'); });
+      ch.classList.add('sel');
+      S.sel = parseInt(ch.getAttribute('data-i'), 10);
+      var q2 = S.queue[0];
+      if (q2 && q2.type === 'pic') G.speak(q2.options[S.sel].label);
+      var cb2 = el('btn-check'); if (cb2) cb2.disabled = false;
+      return;
+    }
+
+    /* --- 단어 조립 --- */
+    var tile = b.closest('.tile');
+    if (tile) {
+      if (tile.hasAttribute('data-rm')) {
+        S.placed.splice(parseInt(tile.getAttribute('data-rm'), 10), 1);
+      } else {
+        var i2 = parseInt(tile.getAttribute('data-w'), 10);
+        if (S.placed.indexOf(i2) < 0) { S.placed.push(i2); G.speak(S.queue[0].bank[i2]); }
+      }
+      renderBank();
+      return;
+    }
+
+    /* --- 짝 맞추기 --- */
+    var mb = b.closest('.match-btn');
+    if (mb) { matchTap(mb); return; }
+
+    /* --- 설정 --- */
+    var seg = b.closest('.seg');
+    if (seg) {
+      var v = b.getAttribute('data-v');
+      seg.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      if (seg.id === 'seg-size' || seg.id === 'ob-size') P.settings.size = v;
+      if (seg.id === 'seg-rate') P.settings.rate = parseFloat(v);
+      if (seg.id === 'seg-goal') P.settings.goal = parseInt(v, 10);
+      if (seg.id === 'seg-theme') P.settings.theme = v;
+      if (seg.id === 'seg-auto') P.settings.autoPlay = v === '1';
+      G.save(); applySettings();
+      if (seg.id === 'seg-rate') G.speak('Good morning.');
+      return;
+    }
+    if (id === 'btn-reset') {
+      if (confirm('정말 처음부터 다시 시작할까요?\n지금까지의 진도와 기록이 모두 사라집니다.')) {
+        G.reset(); P = G.P(); applySettings(); renderHome(); show('home'); toast('처음으로 되돌렸어요');
+      }
+      return;
+    }
+    if (id === 'ob-start') {
+      var n = el('ob-name'); P.name = n ? n.value.trim() : '';
+      P.onboarded = true; G.save(); applySettings();
+      renderHome(); show('home');
+      return;
+    }
+  });
+
+  function flashSpk(t) {
+    if (!t.classList.contains('spk')) return;
+    t.classList.add('playing');
+    setTimeout(function () { t.classList.remove('playing'); }, 1400);
+  }
+
+  /* 짝 맞추기 로직 */
+  var mSel = null, mLeft = 0;
+  function matchTap(btn) {
+    var q = S.queue[0];
+    if (!mSel) {
+      if (btn.classList.contains('sel')) { btn.classList.remove('sel'); mSel = null; return; }
+      document.querySelectorAll('.match-btn').forEach(function (x) { x.classList.remove('sel'); });
+      btn.classList.add('sel'); mSel = btn;
+      if (btn.getAttribute('data-side') === 'L') G.speak(btn.textContent.trim());
+      return;
+    }
+    if (btn === mSel) { btn.classList.remove('sel'); mSel = null; return; }
+    if (btn.getAttribute('data-side') === mSel.getAttribute('data-side')) {
+      mSel.classList.remove('sel'); btn.classList.add('sel'); mSel = btn; return;
+    }
+    var same = btn.getAttribute('data-id') === mSel.getAttribute('data-id');
+    if (same) {
+      var it = G.ITEMS[btn.getAttribute('data-id')];
+      if (it) G.recordAnswer(it.id, true);
+      btn.classList.add('gone'); mSel.classList.add('gone'); mSel.classList.remove('sel');
+      G.speak(it ? it.en : '');
+      mSel = null; mLeft--;
+      if (mLeft <= 0) {
+        S.asked++; S.correct++; S.first++;
+        var cb = el('btn-check');
+        if (cb) { cb.disabled = false; cb.id = 'btn-next'; cb.textContent = '잘하셨어요! 계속하기 👍'; }
+      }
+    } else {
+      var a = btn, c = mSel;
+      a.classList.add('bad'); c.classList.add('bad'); c.classList.remove('sel'); mSel = null;
+      var mid = btn.getAttribute('data-id');
+      if (G.ITEMS[mid]) G.recordAnswer(mid, false);
+      setTimeout(function () { a.classList.remove('bad'); c.classList.remove('bad'); }, 420);
+    }
+  }
+
+  /* 엔터로 확인 */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    if (S.screen !== 'lesson') return;
+    var n = el('btn-next') || el('btn-check');
+    if (n && !n.disabled) { e.preventDefault(); n.click(); }
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'typein') {
+      var cb = el('btn-check'); if (cb) cb.disabled = !e.target.value.trim();
+    }
+    if (e.target.id === 'set-name') { P.name = e.target.value.trim(); G.save(); }
+  });
+
+  /* 페이지를 벗어날 때 시간 저장 */
+  window.addEventListener('pagehide', function () {
+    if (S.screen === 'lesson' && S.t0) G.addMinutes((Date.now() - S.t0) / 1000);
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { G.stopSpeak(); if (S.screen === 'lesson' && S.t0) { G.addMinutes((Date.now() - S.t0) / 1000); S.t0 = Date.now(); } }
+  });
+
+  /* ---------------- 시작 ---------------- */
+  G.boot = function () {
+    applySettings();
+    G.initVoice(function () {
+      // 음성 목록은 늦게 도착할 수 있어서, 확인되면 홈을 한 번 다시 그립니다.
+      if (S.screen === 'home') renderHome();
+    });
+    if (!P.onboarded) renderOnboard();
+    else { renderHome(); show('home'); }
+  };
+
+})(window.G = window.G || {});
+
+window.addEventListener('DOMContentLoaded', function(){ G.boot(); });
+if ('serviceWorker' in navigator &&
+    (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
