@@ -293,6 +293,25 @@ button { font: inherit; color: inherit; cursor: pointer; }
   background: var(--purple-soft); color: var(--purple);
   font-size: .68em; font-weight: 900;
 }
+.rev-tag.dlg { background: var(--blue-soft); color: var(--blue); }
+
+/* 대화 연습 — 상대방이 한 말 */
+.ask-row { display: flex; align-items: flex-start; gap: 10px; margin: 10px 18px 16px; }
+.ask-who {
+  flex: none; align-self: center;
+  font-size: .62em; font-weight: 900; color: var(--ink-2);
+  writing-mode: horizontal-tb; text-align: center; width: 42px;
+}
+.ask-bubble {
+  flex: 1; min-width: 0; position: relative;
+  background: var(--bg-soft); border: 2px solid var(--line-2);
+  border-radius: 18px 18px 18px 4px;
+  padding: 13px 15px; font-weight: 800; line-height: 1.45;
+}
+.ask-bubble .ko { font-size: .78em; color: var(--ink-2); font-weight: 700; margin-top: 4px; }
+.ask-row .spk { width: 50px; height: 50px; align-self: center; }
+.ask-row .spk svg { width: 24px; height: 24px; }
+
 .q-head { margin: 20px 18px 4px; font-size: 1.12em; font-weight: 900; }
 .q-sub  { margin: 0 18px 14px; font-size: .82em; font-weight: 700; color: var(--ink-2); }
 
@@ -1318,6 +1337,1061 @@ button { font: inherit; color: inherit; cursor: pointer; }
 })(window.G = window.G || {});
 
 /* ============================================================
+   대화 짝 — [상대방의 말(영), 내 대답(영), 상대방의 말(한), 내 대답(한)]
+
+   문장을 따로 외우는 것과, 물음에 답하는 것은 다른 능력입니다.
+   회화는 결국 주고받기라서 이 연습이 있어야 실제로 말이 오갑니다.
+   배우는 대상은 '대답' 쪽이고, 상대방의 말은 상황을 주는 역할입니다.
+   ============================================================ */
+(function (G) {
+  'use strict';
+
+  G.DIALOGS = {
+    /* ---------- 1단계 ---------- */
+    u01: [
+      ['Hello! How are you?', 'I am fine, thank you.', '안녕하세요! 어떻게 지내세요?', '잘 지내요, 고맙습니다.'],
+      ['What is your name?', 'My name is Younja.', '이름이 어떻게 되세요?', '제 이름은 영자예요.'],
+      ['Nice to meet you.', 'Nice to meet you too.', '만나서 반갑습니다.', '저도 반갑습니다.'],
+      ['Thank you very much.', 'You are welcome.', '정말 고맙습니다.', '천만에요.'],
+      ['See you tomorrow!', 'Goodbye. See you.', '내일 봐요!', '안녕히 가세요. 또 봬요.']
+    ],
+    u02: [
+      ['Are you hungry?', 'Yes, I am hungry.', '배고프세요?', '네, 배고파요.'],
+      ['Are you tired?', 'No, I am not tired.', '피곤하세요?', '아니요, 안 피곤해요.'],
+      ['Is he a doctor?', 'Yes, he is a doctor.', '그분은 의사인가요?', '네, 의사예요.'],
+      ['Are you a student?', 'No, I am a teacher.', '학생이세요?', '아니요, 저는 선생님이에요.'],
+      ['How are you today?', 'I am very happy today.', '오늘 어떠세요?', '오늘은 아주 행복해요.']
+    ],
+    u03: [
+      ['How old are you?', 'I am sixty years old.', '나이가 어떻게 되세요?', '저는 예순 살이에요.'],
+      ['How many children do you have?', 'I have two children.', '자녀가 몇 명이세요?', '저는 아이가 둘이에요.'],
+      ['What time is it?', 'It is four o\'clock.', '몇 시예요?', '네 시예요.'],
+      ['When is your birthday?', 'My birthday is in May.', '생일이 언제예요?', '제 생일은 5월이에요.'],
+      ['How many apples do you need?', 'I need five apples.', '사과가 몇 개 필요하세요?', '다섯 개 필요해요.']
+    ],
+    u04: [
+      ['Do you have children?', 'Yes, I have a son and a daughter.', '자녀가 있으세요?', '네, 아들 하나 딸 하나 있어요.'],
+      ['Is this your family?', 'Yes, this is my family.', '이분들이 가족이세요?', '네, 우리 가족이에요.'],
+      ['Where does your sister live?', 'She lives in Busan.', '언니는 어디 사세요?', '부산에 살아요.'],
+      ['What does your husband do?', 'He works at a bank.', '남편분은 무슨 일 하세요?', '은행에서 일해요.'],
+      ['Do you see your family often?', 'Yes, we eat dinner together.', '가족을 자주 보세요?', '네, 함께 저녁을 먹어요.']
+    ],
+
+    /* ---------- 2단계 ---------- */
+    u05: [
+      ['What color is your car?', 'My car is white.', '차가 무슨 색이에요?', '제 차는 하얀색이에요.'],
+      ['Do you like this bag?', 'Yes, but it is too big.', '이 가방 마음에 드세요?', '네, 그런데 너무 커요.'],
+      ['Is your phone new?', 'No, it is very old.', '전화기가 새것인가요?', '아니요, 아주 오래됐어요.'],
+      ['What color do you like?', 'I like blue.', '무슨 색을 좋아하세요?', '저는 파란색을 좋아해요.'],
+      ['Is that a big dog?', 'No, it is a small dog.', '저 개는 큰가요?', '아니요, 작은 개예요.']
+    ],
+    u06: [
+      ['Where is my key?', 'It is on the table.', '제 열쇠가 어디 있죠?', '식탁 위에 있어요.'],
+      ['Can you close the door?', 'Yes, of course.', '문 좀 닫아 주시겠어요?', '네, 그럼요.'],
+      ['Where do you live?', 'I live in a small house.', '어디 사세요?', '작은 집에 살아요.'],
+      ['Is the book on the desk?', 'No, it is on the bed.', '책이 책상 위에 있나요?', '아니요, 침대 위에 있어요.'],
+      ['What time do you go to bed?', 'I go to bed at ten.', '몇 시에 주무세요?', '열 시에 자요.']
+    ],
+    u07: [
+      ['Would you like some coffee?', 'Yes, please. With milk.', '커피 드시겠어요?', '네, 주세요. 우유 넣어서요.'],
+      ['Do you want some bread?', 'No, thank you. I am full.', '빵 좀 드시겠어요?', '아니요, 괜찮아요. 배불러요.'],
+      ['What do you eat for dinner?', 'We eat rice and soup.', '저녁에 뭘 드세요?', '밥과 국을 먹어요.'],
+      ['Do you drink coffee?', 'No, I drink tea.', '커피 드세요?', '아니요, 차를 마셔요.'],
+      ['How is the food?', 'It is very delicious.', '음식이 어때요?', '아주 맛있어요.']
+    ],
+    u08: [
+      ['What day is it today?', 'Today is Monday.', '오늘 무슨 요일이에요?', '오늘은 월요일이에요.'],
+      ['What time do you get up?', 'I get up at six.', '몇 시에 일어나세요?', '여섯 시에 일어나요.'],
+      ['When can we meet?', 'Let us meet on Sunday.', '언제 만날까요?', '일요일에 만나요.'],
+      ['Was yesterday busy?', 'Yes, it was very busy.', '어제 바쁘셨어요?', '네, 아주 바빴어요.'],
+      ['When does the class start?', 'It starts in ten minutes.', '수업이 언제 시작해요?', '10분 후에 시작해요.']
+    ],
+
+    /* ---------- 3단계 ---------- */
+    u09: [
+      ['What do you do every morning?', 'I walk in the park.', '아침마다 뭐 하세요?', '공원에서 걸어요.'],
+      ['How do you go to work?', 'I go to work by bus.', '어떻게 출근하세요?', '버스로 가요.'],
+      ['Do you watch TV in the evening?', 'Yes, I watch the news.', '저녁에 TV 보세요?', '네, 뉴스를 봐요.'],
+      ['Who cooks in your house?', 'My husband cooks breakfast.', '집에서 누가 요리하세요?', '남편이 아침을 해요.'],
+      ['Do you work on Sunday?', 'No, I rest at home.', '일요일에 일하세요?', '아니요, 집에서 쉬어요.']
+    ],
+    u10: [
+      ['What do you like to do?', 'I like gardening.', '뭐 하는 걸 좋아하세요?', '정원 가꾸기를 좋아해요.'],
+      ['Do you like Korean food?', 'Yes, I love it.', '한국 음식 좋아하세요?', '네, 아주 좋아해요.'],
+      ['Why do you study English?', 'Because I want to travel.', '왜 영어를 공부하세요?', '여행을 가고 싶어서요.'],
+      ['Do you like cold weather?', 'No, I do not like it.', '추운 날씨 좋아하세요?', '아니요, 안 좋아해요.'],
+      ['What is your hobby?', 'My hobby is walking.', '취미가 뭐예요?', '제 취미는 걷기예요.']
+    ],
+    u11: [
+      ['What is the weather like?', 'It is sunny today.', '날씨가 어때요?', '오늘은 화창해요.'],
+      ['Is it cold outside?', 'Yes, it is very cold.', '밖에 추워요?', '네, 아주 추워요.'],
+      ['Do you like summer?', 'No, I like fall better.', '여름 좋아하세요?', '아니요, 가을이 더 좋아요.'],
+      ['Is it raining?', 'Yes, take an umbrella.', '비 와요?', '네, 우산 챙기세요.'],
+      ['How is the weather tomorrow?', 'It will be warm.', '내일 날씨는 어때요?', '따뜻할 거예요.']
+    ],
+    u12: [
+      ['Where does it hurt?', 'My head hurts.', '어디가 아프세요?', '머리가 아파요.'],
+      ['Are you okay?', 'I have a cold.', '괜찮으세요?', '감기에 걸렸어요.'],
+      ['Did you take the medicine?', 'Yes, I took it this morning.', '약 드셨어요?', '네, 오늘 아침에 먹었어요.'],
+      ['How do you feel now?', 'I feel much better.', '지금 좀 어떠세요?', '훨씬 나아요.'],
+      ['You should get some rest.', 'Thank you. I will.', '좀 쉬셔야겠어요.', '고마워요. 그럴게요.']
+    ],
+
+    /* ---------- 4단계 ---------- */
+    u13: [
+      ['How much is this?', 'It is ten dollars.', '이거 얼마예요?', '10달러예요.'],
+      ['Can I help you?', 'I am just looking, thank you.', '도와드릴까요?', '그냥 둘러보는 거예요, 고마워요.'],
+      ['Do you have a bigger size?', 'Yes, here you are.', '더 큰 사이즈 있어요?', '네, 여기 있습니다.'],
+      ['How would you like to pay?', 'Can I pay by card?', '어떻게 결제하시겠어요?', '카드로 해도 되나요?'],
+      ['Do you want a bag?', 'Yes, please.', '봉투 드릴까요?', '네, 주세요.']
+    ],
+    u14: [
+      ['Excuse me, where is the station?', 'Go straight for two blocks.', '실례합니다, 역이 어디예요?', '두 블록 곧장 가세요.'],
+      ['Is it far from here?', 'No, it is very near.', '여기서 멀어요?', '아니요, 아주 가까워요.'],
+      ['How can I get to the hospital?', 'Take the number five bus.', '병원에 어떻게 가나요?', '5번 버스를 타세요.'],
+      ['How long does it take?', 'It takes about ten minutes.', '얼마나 걸려요?', '10분쯤 걸려요.'],
+      ['Are you lost?', 'Yes, can you help me?', '길을 잃으셨어요?', '네, 도와주시겠어요?']
+    ],
+    u15: [
+      ['How many people?', 'A table for two, please.', '몇 분이세요?', '두 명 자리 부탁합니다.'],
+      ['Are you ready to order?', 'Can I see the menu?', '주문하시겠어요?', '메뉴 좀 볼 수 있을까요?'],
+      ['What would you like?', 'I would like the chicken.', '뭘 드시겠어요?', '닭고기로 주세요.'],
+      ['Is everything okay?', 'Yes, it is delicious.', '다 괜찮으세요?', '네, 맛있어요.'],
+      ['Would you like anything else?', 'Just the bill, please.', '더 필요하신 거 있으세요?', '계산서만 주세요.']
+    ],
+    u16: [
+      ['What did you do yesterday?', 'I went to the market.', '어제 뭐 하셨어요?', '시장에 갔어요.'],
+      ['Did you have a good weekend?', 'Yes, it was wonderful.', '주말 잘 보내셨어요?', '네, 정말 좋았어요.'],
+      ['Where did you go?', 'We saw a good movie.', '어디 가셨어요?', '좋은 영화를 봤어요.'],
+      ['Who made this soup?', 'I made it this morning.', '이 국은 누가 끓였어요?', '제가 오늘 아침에 끓였어요.'],
+      ['How was the weather?', 'It was very nice.', '날씨는 어땠어요?', '아주 좋았어요.']
+    ],
+
+    /* ---------- 5단계 ---------- */
+    u17: [
+      ['What are your plans for tomorrow?', 'I will visit my daughter.', '내일 계획이 어떻게 되세요?', '딸을 만나러 갈 거예요.'],
+      ['When does the meeting start?', 'It starts at three.', '회의가 몇 시에 시작해요?', '세 시에 시작해요.'],
+      ['Where should we meet?', 'Let us meet at the station.', '어디서 만날까요?', '역에서 만나요.'],
+      ['Are you ready to go?', 'Yes, I am ready.', '갈 준비 되셨어요?', '네, 준비됐어요.'],
+      ['Can you finish it by Friday?', 'Yes, I will finish it.', '금요일까지 끝낼 수 있어요?', '네, 끝낼게요.']
+    ],
+    u18: [
+      ['May I see your passport?', 'Yes, here it is.', '여권 좀 보여 주시겠어요?', '네, 여기 있습니다.'],
+      ['How many bags do you have?', 'I have two suitcases.', '가방이 몇 개세요?', '두 개예요.'],
+      ['Is breakfast included?', 'Yes, it is included.', '아침 식사가 포함인가요?', '네, 포함입니다.'],
+      ['Can I help you with your bag?', 'Thank you, that is very kind.', '가방 들어 드릴까요?', '고맙습니다, 친절하시네요.'],
+      ['Is this your first time here?', 'Yes, it is my first time.', '여기 처음이세요?', '네, 처음이에요.']
+    ],
+    u19: [
+      ['What do you think about this?', 'I think it is a good idea.', '이거 어떻게 생각하세요?', '좋은 생각인 것 같아요.'],
+      ['Do you agree with me?', 'Yes, I agree with you.', '제 말에 동의하세요?', '네, 동의해요.'],
+      ['Are you sure?', 'I am not sure about that.', '확실하세요?', '그건 잘 모르겠어요.'],
+      ['How do you feel today?', 'I feel a little tired.', '오늘 기분이 어떠세요?', '좀 피곤해요.'],
+      ['Your son did very well.', 'I am so proud of him.', '아드님이 참 잘했어요.', '정말 자랑스러워요.']
+    ],
+    u20: [
+      ['Hello, may I speak to Mr. Kim?', 'This is Mr. Kim speaking.', '여보세요, 김 선생님 계신가요?', '제가 김입니다.'],
+      ['Can we meet at two o\'clock?', 'Yes, that works for me.', '두 시에 만날 수 있을까요?', '네, 괜찮아요.'],
+      ['Sorry, I am busy right now.', 'Then I will call you later.', '죄송해요, 지금 바빠요.', '그럼 나중에 전화드릴게요.'],
+      ['Could you say that again?', 'Yes, of course.', '다시 말씀해 주시겠어요?', '네, 그럼요.'],
+      ['I am sorry I am late.', 'That is okay. No problem.', '늦어서 죄송합니다.', '괜찮아요. 문제없어요.']
+    ],
+
+    /* ---------- 6단계 ---------- */
+    u21: [
+      ['Have you ever been to Japan?', 'No, I have never been there.', '일본에 가 보신 적 있어요?', '아니요, 한 번도 못 가봤어요.'],
+      ['How long have you lived here?', 'I have lived here for thirty years.', '여기 사신 지 얼마나 되셨어요?', '30년째 살고 있어요.'],
+      ['Have you eaten yet?', 'Yes, I have already eaten.', '식사는 하셨어요?', '네, 벌써 먹었어요.'],
+      ['Do you know each other?', 'Yes, we have known each other for years.', '두 분 아는 사이세요?', '네, 오래 알고 지냈어요.'],
+      ['Has he arrived?', 'Yes, he has just arrived.', '그분 도착했어요?', '네, 방금 도착했어요.']
+    ],
+    u22: [
+      ['Can you help me, please?', 'Yes, of course I can.', '좀 도와주시겠어요?', '네, 그럼요.'],
+      ['Would you like some tea?', 'Yes, please. That would be nice.', '차 드시겠어요?', '네, 주세요. 좋겠네요.'],
+      ['You must be very tired.', 'Yes, I should get some rest.', '많이 피곤하시겠어요.', '네, 좀 쉬어야겠어요.'],
+      ['Shall we take a walk?', 'Yes, let us go.', '산책할까요?', '네, 가요.'],
+      ['Do I have to come early?', 'No, you do not have to.', '일찍 와야 하나요?', '아니요, 그러실 필요 없어요.']
+    ],
+    u23: [
+      ['How is your grandson?', 'He is growing so fast.', '손자는 잘 지내요?', '정말 빨리 커요.'],
+      ['Do you see them often?', 'No, they live far away.', '자주 보세요?', '아니요, 멀리 살아요.'],
+      ['Is this your family photo?', 'Yes, look at this picture.', '이거 가족 사진이에요?', '네, 이 사진 좀 보세요.'],
+      ['You must miss them.', 'Yes, I miss them very much.', '많이 보고 싶으시겠어요.', '네, 정말 보고 싶어요.'],
+      ['What matters most to you?', 'Family is the most important thing.', '무엇이 가장 중요하세요?', '가족이 가장 중요해요.']
+    ],
+    u24: [
+      ['Did you see the news today?', 'Yes, prices are going up.', '오늘 뉴스 보셨어요?', '네, 물가가 오르고 있대요.'],
+      ['What do you think about that?', 'I do not quite agree.', '그거 어떻게 생각하세요?', '완전히 동의하지는 않아요.'],
+      ['Health or money, which is more important?', 'Health is more important than money.', '건강과 돈 중 뭐가 더 중요해요?', '건강이 돈보다 중요해요.'],
+      ['That is a difficult problem.', 'Yes, but there are good points too.', '어려운 문제네요.', '네, 그래도 좋은 점도 있어요.'],
+      ['I would like to hear your thoughts.', 'Let me explain what I mean.', '생각을 듣고 싶어요.', '제 말을 설명해 드릴게요.']
+    ],
+
+    /* ---------- 7단계 : 연결 ---------- */
+    u25: [
+      ['Why are you so tired?', 'Because I worked all day.', '왜 그렇게 피곤하세요?', '하루 종일 일해서요.'],
+      ['Why did you not buy it?', 'Because it was too expensive.', '왜 안 사셨어요?', '너무 비싸서요.'],
+      ['Did you go out yesterday?', 'No, it was raining, so I stayed home.', '어제 나가셨어요?', '아니요, 비가 와서 집에 있었어요.'],
+      ['Why do you walk every day?', 'Because it is good for my health.', '왜 매일 걸으세요?', '건강에 좋아서요.'],
+      ['Why were you late?', 'The bus was slow, so I was late.', '왜 늦으셨어요?', '버스가 느려서 늦었어요.']
+    ],
+    u26: [
+      ['How do you like this bag?', 'It is nice, but it is expensive.', '이 가방 어떠세요?', '좋은데 비싸요.'],
+      ['Is English difficult?', 'Yes, but it is fun.', '영어 어려워요?', '네, 그래도 재미있어요.'],
+      ['How is your new room?', 'It is small, but very clean.', '새 방은 어때요?', '작지만 아주 깨끗해요.'],
+      ['Did you call her?', 'I called her, but she did not answer.', '그녀에게 전화했어요?', '전화했는데 안 받았어요.'],
+      ['Are you too old to learn?', 'I am not young, but I want to learn.', '배우기에 나이가 많으세요?', '젊지는 않지만 배우고 싶어요.']
+    ],
+    u27: [
+      ['What will you do if it rains?', 'If it rains, we will stay home.', '비 오면 어떻게 하실 거예요?', '비 오면 집에 있을 거예요.'],
+      ['Are you free this afternoon?', 'If you are free, let us have coffee.', '오후에 한가하세요?', '한가하시면 커피 한잔해요.'],
+      ['When should I call you?', 'Call me when you arrive.', '언제 전화드릴까요?', '도착하면 전화 주세요.'],
+      ['Where did you live before?', 'When I was young, I lived in Seoul.', '전에는 어디 사셨어요?', '어렸을 때 서울에 살았어요.'],
+      ['Shall we go now?', 'When you are ready, we can go.', '지금 갈까요?', '준비되시면 가요.']
+    ],
+    u28: [
+      ['What do you like to drink?', 'I like coffee and tea.', '뭘 마시는 걸 좋아하세요?', '커피와 차를 좋아해요.'],
+      ['Do you want tea or coffee?', 'Tea, please.', '차 드릴까요, 커피 드릴까요?', '차 주세요.'],
+      ['I want to learn English.', 'I also want to learn English.', '저는 영어를 배우고 싶어요.', '저도 영어를 배우고 싶어요.'],
+      ['Would you like another cup?', 'Yes, please. Just a little.', '한 잔 더 드릴까요?', '네, 조금만 주세요.'],
+      ['Shall I do it alone?', 'No, let us do it together.', '제가 혼자 할까요?', '아니요, 함께 해요.']
+    ],
+
+    /* ---------- 8단계 : 생활 ---------- */
+    u29: [
+      ['Good morning! Nice day, isn\'t it?', 'Yes, it is beautiful today.', '좋은 아침이에요! 날씨 좋죠?', '네, 오늘 참 좋네요.'],
+      ['How have you been lately?', 'I have been well, thank you.', '요즘 어떻게 지내세요?', '잘 지냈어요, 고마워요.'],
+      ['Your garden looks beautiful.', 'Thank you. I work on it every day.', '정원이 참 예뻐요.', '고마워요. 매일 손봐요.'],
+      ['Where are you going?', 'I am taking my dog for a walk.', '어디 가세요?', '개 산책시키러 가요.'],
+      ['It was nice talking to you.', 'You too. See you again soon.', '이야기 즐거웠어요.', '저도요. 곧 또 봬요.']
+    ],
+    u30: [
+      ['What seems to be the problem?', 'I have a pain in my back.', '어디가 불편하세요?', '허리가 아파요.'],
+      ['How long have you had this pain?', 'I have had it for three days.', '이 통증이 얼마나 되셨어요?', '사흘 됐어요.'],
+      ['Do you have a fever?', 'Yes, and I have a cough too.', '열이 있으세요?', '네, 기침도 나요.'],
+      ['How are you feeling now?', 'It is getting better, thank you.', '지금은 좀 어떠세요?', '점점 나아지고 있어요, 고마워요.'],
+      ['Take this twice a day.', 'Okay. Thank you, doctor.', '하루에 두 번 드세요.', '네. 고맙습니다, 선생님.']
+    ],
+    u31: [
+      ['How can I help you today?', 'I would like to open an account.', '무엇을 도와드릴까요?', '계좌를 만들고 싶어요.'],
+      ['Could you fill out this form?', 'Yes, where do I sign?', '이 서류를 작성해 주시겠어요?', '네, 어디에 서명하나요?'],
+      ['Where are you sending this?', 'I want to send it to Korea.', '어디로 보내시나요?', '한국으로 보내고 싶어요.'],
+      ['That will be five dollars.', 'Here you are. Thank you.', '5달러입니다.', '여기 있습니다. 고맙습니다.'],
+      ['Do you need anything else?', 'No, that is all. Thank you.', '더 필요하신 게 있으세요?', '아니요, 그게 다예요. 고맙습니다.']
+    ],
+    u32: [
+      ['Where would you like to go?', 'Please take me to this address.', '어디로 모실까요?', '이 주소로 가 주세요.'],
+      ['Do I need to transfer?', 'Yes, transfer at the next station.', '갈아타야 하나요?', '네, 다음 역에서 갈아타세요.'],
+      ['Is this seat free?', 'Yes, please sit down.', '이 자리 비었나요?', '네, 앉으세요.'],
+      ['We are almost there.', 'Please stop here, thank you.', '거의 다 왔습니다.', '여기서 세워 주세요, 고맙습니다.'],
+      ['Which line goes downtown?', 'Take line two.', '시내 가려면 몇 호선이에요?', '2호선 타세요.']
+    ],
+
+    /* ---------- 9단계 : 마음 ---------- */
+    u33: [
+      ['Could you do me a favor?', 'Yes, of course. What is it?', '부탁 하나 드려도 될까요?', '네, 그럼요. 뭔데요?'],
+      ['Can I borrow your pen?', 'Sure, here you are.', '펜 좀 빌릴 수 있을까요?', '그럼요, 여기요.'],
+      ['Can you help me tomorrow?', 'I am afraid I cannot tomorrow.', '내일 저 좀 도와주실 수 있어요?', '죄송하지만 내일은 안 되겠어요.'],
+      ['Would you mind waiting?', 'Not at all. Take your time.', '잠시 기다려 주시겠어요?', '괜찮아요. 천천히 하세요.'],
+      ['Thank you so much.', 'You are welcome. Any time.', '정말 고맙습니다.', '천만에요. 언제든지요.']
+    ],
+    u34: [
+      ['I am sorry I am late.', 'That is okay. No problem.', '늦어서 죄송해요.', '괜찮아요. 문제없어요.'],
+      ['It was my mistake.', 'Please do not worry about it.', '제 실수였어요.', '걱정하지 마세요.'],
+      ['Thank you for your help.', 'I was glad to help.', '도와주셔서 고맙습니다.', '도움이 되어 기뻤어요.'],
+      ['Sorry to trouble you.', 'It is no trouble at all.', '번거롭게 해서 죄송해요.', '전혀 번거롭지 않아요.'],
+      ['I forgot to call you.', 'It is okay. I understand.', '전화하는 걸 잊었어요.', '괜찮아요. 이해해요.']
+    ],
+    u35: [
+      ['My son got a new job.', 'That is wonderful! Congratulations!', '아들이 새 직장을 구했어요.', '정말 멋져요! 축하해요!'],
+      ['I finished the whole book.', 'You did a great job.', '책을 다 읽었어요.', '정말 잘하셨어요.'],
+      ['I have been feeling sad lately.', 'I am sorry to hear that.', '요즘 마음이 좀 그래요.', '그런 일이 있었다니 안타깝네요.'],
+      ['I am not sure I can do it.', 'You are stronger than you think.', '제가 할 수 있을지 모르겠어요.', '생각보다 강한 분이세요.'],
+      ['My mother is in the hospital.', 'I hope she feels better soon.', '어머니가 병원에 계세요.', '곧 나아지시길 바라요.']
+    ],
+    u36: [
+      ['I am worried about my son.', 'Do not worry. He will be fine.', '아들이 걱정돼요.', '걱정 마세요. 괜찮을 거예요.'],
+      ['I am a little nervous.', 'You will be fine, I am sure.', '조금 긴장돼요.', '괜찮으실 거예요, 확실해요.'],
+      ['I have to do this alone.', 'You are not alone. I will help.', '이걸 혼자 해야 해요.', '혼자가 아니에요. 제가 도울게요.'],
+      ['I am driving home now.', 'Please be careful on the road.', '지금 집에 운전해서 가요.', '길 조심하세요.'],
+      ['I arrived home safely.', 'I am glad you are safe.', '집에 잘 도착했어요.', '무사하셔서 다행이에요.']
+    ],
+
+    /* ---------- 10단계 : 일상 ---------- */
+    u37: [
+      ['Could you take out the trash?', 'Yes, I will do it right away.', '쓰레기 좀 버려 주시겠어요?', '네, 바로 할게요.'],
+      ['The washing machine is broken.', 'Can you fix it for me?', '세탁기가 고장 났어요.', '고쳐 주실 수 있어요?'],
+      ['When do you do the laundry?', 'I do the laundry on Saturday.', '빨래는 언제 하세요?', '토요일에 해요.'],
+      ['The room is very messy.', 'I will clean it this afternoon.', '방이 너무 어질러졌어요.', '오후에 치울게요.'],
+      ['Where are the clean towels?', 'They are in the bathroom.', '깨끗한 수건이 어디 있어요?', '화장실에 있어요.']
+    ],
+    u38: [
+      ['What should I do first?', 'First, cut the onion.', '뭐부터 할까요?', '먼저 양파를 자르세요.'],
+      ['How does it taste?', 'It needs a little more salt.', '맛이 어때요?', '소금이 조금 더 필요해요.'],
+      ['Do we have enough rice?', 'No, I need to buy some.', '쌀이 충분한가요?', '아니요, 좀 사야 해요.'],
+      ['How much do you need?', 'I need two kilos of potatoes.', '얼마나 필요하세요?', '감자 2킬로가 필요해요.'],
+      ['Who taught you this recipe?', 'My mother taught me.', '이 요리법 누가 알려 주셨어요?', '어머니가 알려 주셨어요.']
+    ],
+    u39: [
+      ['Do you exercise every day?', 'I usually walk for an hour.', '매일 운동하세요?', '보통 한 시간씩 걸어요.'],
+      ['Did you sleep well last night?', 'Yes, I slept very well.', '어젯밤 잘 주무셨어요?', '네, 아주 잘 잤어요.'],
+      ['How is your blood pressure?', 'It is fine, thank you.', '혈압은 어떠세요?', '괜찮아요, 고마워요.'],
+      ['You look healthy these days.', 'Thank you. I walk every morning.', '요즘 건강해 보이세요.', '고마워요. 매일 아침 걸어요.'],
+      ['Do you smoke?', 'No, I never smoke.', '담배 피우세요?', '아니요, 전혀 안 피워요.']
+    ],
+    u40: [
+      ['What is your hobby?', 'I enjoy knitting in the evening.', '취미가 뭐예요?', '저녁에 뜨개질하는 걸 즐겨요.'],
+      ['How long have you done that?', 'I have done it for ten years.', '그거 하신 지 얼마나 되셨어요?', '10년 됐어요.'],
+      ['Would you like to join us?', 'Yes, I would love to.', '같이 하실래요?', '네, 좋아요.'],
+      ['What do you do in your free time?', 'I watch movies and read.', '여가 시간에 뭐 하세요?', '영화 보고 책 읽어요.'],
+      ['Does it help you relax?', 'Yes, it helps me a lot.', '그게 도움이 되세요?', '네, 많이 도움돼요.']
+    ],
+
+    /* ---------- 11단계 : 이야기 ---------- */
+    u41: [
+      ['Who did you meet yesterday?', 'I met my old friend.', '어제 누구를 만나셨어요?', '옛 친구를 만났어요.'],
+      ['What did you do after dinner?', 'We had dinner and then we walked.', '저녁 먹고 뭐 하셨어요?', '저녁 먹고 나서 걸었어요.'],
+      ['Did you find your key?', 'Yes, I finally found it.', '열쇠 찾으셨어요?', '네, 결국 찾았어요.'],
+      ['How was the trip?', 'It was one of the best days.', '여행 어땠어요?', '가장 좋은 날 중 하루였어요.'],
+      ['Why do you look tired?', 'I could not sleep last night.', '왜 피곤해 보이세요?', '어젯밤에 잠을 못 잤어요.']
+    ],
+    u42: [
+      ['What are you going to do this weekend?', 'I am going to visit my son.', '이번 주말에 뭐 하실 거예요?', '아들을 보러 갈 거예요.'],
+      ['Have you decided yet?', 'No, I have not decided yet.', '정하셨어요?', '아니요, 아직 안 정했어요.'],
+      ['When are you moving?', 'We are going to move in the spring.', '언제 이사하세요?', '봄에 이사할 거예요.'],
+      ['Will you call me?', 'I will call you as soon as I arrive.', '전화 주실 거예요?', '도착하자마자 전화할게요.'],
+      ['Do you have any dreams?', 'Someday I want to travel abroad.', '꿈이 있으세요?', '언젠가 해외여행을 가고 싶어요.']
+    ],
+    u43: [
+      ['Have you ever been abroad?', 'No, I have never been abroad.', '해외에 가 보신 적 있어요?', '아니요, 한 번도 없어요.'],
+      ['Have you seen that movie yet?', 'Yes, I have already seen it.', '그 영화 보셨어요?', '네, 벌써 봤어요.'],
+      ['How was your trip to Seoul?', 'It was an amazing experience.', '서울 여행 어땠어요?', '놀라운 경험이었어요.'],
+      ['Have you tried Italian food?', 'Yes, and I really liked it.', '이탈리아 음식 드셔 보셨어요?', '네, 정말 좋았어요.'],
+      ['Will you forget that day?', 'I will never forget it.', '그날을 잊으실까요?', '절대 잊지 못할 거예요.']
+    ],
+    u44: [
+      ['What do you think about this?', 'In my opinion, it is a good idea.', '이거 어떻게 생각하세요?', '제 생각엔 좋은 생각이에요.'],
+      ['Do you agree with me?', 'I see your point, but I disagree.', '제 말에 동의하세요?', '무슨 말씀인지 알지만 저는 달라요.'],
+      ['Everyone should do the same.', 'It depends on the person.', '모두 똑같이 해야 해요.', '사람마다 다르죠.'],
+      ['Why do you think so?', 'Let me explain my reason.', '왜 그렇게 생각하세요?', '제 이유를 설명해 드릴게요.'],
+      ['We think differently.', 'We can agree to disagree.', '우리는 생각이 다르네요.', '생각이 달라도 괜찮아요.']
+    ],
+
+    /* ---------- 12단계 : 자유 ---------- */
+    u45: [
+      ['Can we do a video call tonight?', 'Yes, call me at seven.', '오늘 밤 영상통화할까요?', '네, 일곱 시에 전화 주세요.'],
+      ['Did you get my message?', 'No, I did not receive it.', '제 메시지 받으셨어요?', '아니요, 못 받았어요.'],
+      ['Your phone is almost dead.', 'I need to charge it.', '전화기 배터리가 거의 없네요.', '충전해야겠어요.'],
+      ['Can you show me how to use this?', 'Sure, just click the blue button.', '이거 쓰는 법 좀 알려 주시겠어요?', '그럼요, 파란 버튼만 누르세요.'],
+      ['Please send me the photos.', 'I will send them tonight.', '사진 좀 보내 주세요.', '오늘 밤에 보낼게요.']
+    ],
+    u46: [
+      ['Do you have a reservation?', 'Yes, I have a reservation under Kim.', '예약하셨나요?', '네, 김으로 예약했어요.'],
+      ['What time is check out?', 'Check out is at eleven.', '체크아웃이 몇 시예요?', '열한 시입니다.'],
+      ['Could you recommend a restaurant?', 'Yes, there is a good one nearby.', '식당 좀 추천해 주시겠어요?', '네, 근처에 좋은 곳이 있어요.'],
+      ['Your flight is delayed two hours.', 'Oh no. Thank you for telling me.', '항공편이 두 시간 지연됐습니다.', '이런. 알려 주셔서 고맙습니다.'],
+      ['How was your stay?', 'We had a wonderful time.', '지내시기 어떠셨어요?', '정말 즐거웠어요.']
+    ],
+    u47: [
+      ['How is your grandson?', 'He is graduating this year.', '손자는 잘 지내요?', '올해 졸업해요.'],
+      ['We are having a party on Sunday.', 'That sounds lovely. I will come.', '일요일에 잔치를 해요.', '좋네요. 갈게요.'],
+      ['Do you see them often?', 'I take care of them on weekends.', '자주 보세요?', '주말마다 돌봐요.'],
+      ['He looks just like his father.', 'Yes, everyone says that.', '아빠를 꼭 닮았네요.', '네, 다들 그렇게 말해요.'],
+      ['You must miss them.', 'I miss them when they go home.', '많이 보고 싶으시겠어요.', '집에 가면 보고 싶어요.']
+    ],
+    u48: [
+      ['Prices have gone up a lot.', 'Yes, everything is expensive now.', '물가가 많이 올랐어요.', '네, 요즘 다 비싸요.'],
+      ['What do you think about the future?', 'I believe things will get better.', '미래에 대해 어떻게 생각하세요?', '나아질 거라고 믿어요.'],
+      ['Is technology difficult for you?', 'It is difficult, but I am learning.', '기술이 어려우세요?', '어렵지만 배우고 있어요.'],
+      ['Life has changed so much.', 'It was simpler when I was young.', '삶이 정말 많이 변했어요.', '제가 젊었을 땐 더 단순했어요.'],
+      ['Thank you for talking with me.', 'Thank you for listening to me.', '이야기 나눠 주셔서 고맙습니다.', '들어 주셔서 고맙습니다.']
+    ]
+  };
+
+})(window.G = window.G || {});
+
+/* ============================================================
+   확장 커리큘럼 — 7~12단계 (유닛 25~48)
+
+   1~6단계가 '문장 외우기'였다면, 여기부터는 '말을 잇고 주고받기'입니다.
+   특히 7단계(접속사)는 because / but / so / if 가 없어서
+   "비싸서 안 샀어요" 같은 말을 아예 못 만들던 문제를 풉니다.
+   ============================================================ */
+(function (G) {
+  'use strict';
+
+  G.CURRICULUM_EXTRA = [
+    /* ================= 7단계 : 말을 이어서 하기 ================= */
+    {
+      stage: 7, name: '연결', sub: '한 마디를 두 마디로 잇기', ic: 'idea',
+      units: [
+        {
+          id: 'u25', t: '이유 말하기 (because, so)', ic: 'idea',
+          tip: 'because 뒤에는 이유가, so 뒤에는 결과가 옵니다. 이 둘만 알아도 말이 두 배로 길어져요.',
+          w: [
+            ['because', '왜냐하면', 'idea'], ['so', '그래서', 'right'],
+            ['why', '왜', 'question2'], ['reason', '이유', 'idea'],
+            ['tired', '피곤한', 'tired'], ['busy', '바쁜', 'work'],
+            ['late', '늦은', 'slow'], ['sick', '아픈', 'sick'],
+            ['expensive', '비싼', 'money'], ['far', '먼', 'far'],
+            ['early', '이른', 'fast'], ['need', '필요하다', 'help']
+          ],
+          s: [
+            ['I am tired because I worked all day.', '하루 종일 일해서 피곤해요.', 'tired'],
+            ['I did not buy it because it was expensive.', '비싸서 안 샀어요.', 'money'],
+            ['It was raining, so I stayed home.', '비가 와서 집에 있었어요.', 'rain'],
+            ['I am late because the bus was slow.', '버스가 느려서 늦었어요.', 'bus'],
+            ['She is happy because her son called.', '아들이 전화해서 그녀는 기뻐요.', 'phone'],
+            ['I go to bed early because I get up at six.', '여섯 시에 일어나서 일찍 자요.', 'bed'],
+            ['He was sick, so he did not come.', '아파서 그는 못 왔어요.', 'sick'],
+            ['Why are you tired?', '왜 피곤하세요?', 'question2'],
+            ['I walk every day because it is good for me.', '몸에 좋아서 매일 걸어요.', 'walk'],
+            ['The store was closed, so I came back.', '가게가 닫아서 돌아왔어요.', 'store'],
+            ['I like this because it is not expensive.', '비싸지 않아서 이게 좋아요.', 'good'],
+            ['It is far, so let us take a taxi.', '머니까 택시를 타요.', 'car']
+          ]
+        },
+        {
+          id: 'u26', t: '반대로 말하기 (but)', ic: 'maybe',
+          tip: 'but 은 앞말을 뒤집습니다. "좋은데 비싸요" 처럼 솔직한 말을 할 수 있게 해 줍니다.',
+          w: [
+            ['but', '그러나', 'maybe'], ['however', '하지만', 'maybe'],
+            ['still', '그래도', 'again'], ['though', '~인데도', 'maybe'],
+            ['cheap', '싼', 'sale'], ['difficult', '어려운', 'problem'],
+            ['easy', '쉬운', 'good'], ['delicious', '맛있는', 'food'],
+            ['spicy', '매운', 'hot'], ['small', '작은', 'small'],
+            ['heavy', '무거운', 'luggage'], ['quiet', '조용한', 'rest']
+          ],
+          s: [
+            ['It is good, but it is expensive.', '좋은데 비싸요.', 'money'],
+            ['I like it, but it is too spicy.', '맛있는데 너무 매워요.', 'hot'],
+            ['English is difficult, but it is fun.', '영어는 어렵지만 재미있어요.', 'book'],
+            ['The room is small, but it is very clean.', '방이 작지만 아주 깨끗해요.', 'hotel'],
+            ['I am tired, but I am happy.', '피곤하지만 행복해요.', 'happy'],
+            ['I wanted to go, but I was busy.', '가고 싶었는데 바빴어요.', 'work'],
+            ['The bag is nice, but it is heavy.', '가방은 좋은데 무거워요.', 'bag'],
+            ['He is old, but he walks every day.', '연세가 있으신데도 매일 걸으세요.', 'walk'],
+            ['I called her, but she did not answer.', '전화했는데 안 받았어요.', 'phone'],
+            ['It was cold, but the sun was out.', '추웠지만 해가 났어요.', 'sun'],
+            ['I am not young, but I want to learn.', '젊지는 않지만 배우고 싶어요.', 'student'],
+            ['It looks difficult, however I will try.', '어려워 보이지만 해 볼게요.', 'idea']
+          ]
+        },
+        {
+          id: 'u27', t: '조건과 때 (if, when)', ic: 'calendar',
+          tip: 'if 는 "만약 ~라면", when 은 "~할 때". 약속을 잡거나 상황을 설명할 때 꼭 필요합니다.',
+          w: [
+            ['if', '만약 ~라면', 'maybe'], ['when', '~할 때', 'clock'],
+            ['before', '~하기 전에', 'left'], ['after', '~한 후에', 'right'],
+            ['while', '~하는 동안', 'hour'], ['until', '~까지', 'end'],
+            ['then', '그때, 그러면', 'again'], ['maybe', '아마도', 'maybe'],
+            ['ready', '준비된', 'check'], ['free', '한가한', 'rest'],
+            ['possible', '가능한', 'good'], ['sure', '확실한', 'check']
+          ],
+          s: [
+            ['If it rains, we will stay home.', '비가 오면 집에 있을 거예요.', 'rain'],
+            ['Call me when you arrive.', '도착하면 전화 주세요.', 'phone'],
+            ['I wash my hands before I eat.', '먹기 전에 손을 씻어요.', 'wash'],
+            ['After dinner, we watch TV.', '저녁 먹은 후에 TV를 봐요.', 'tv'],
+            ['If you are free, let us have coffee.', '한가하시면 커피 한잔해요.', 'coffee'],
+            ['When I was young, I lived in Seoul.', '어렸을 때 서울에 살았어요.', 'city'],
+            ['Wait here until I come back.', '제가 돌아올 때까지 여기서 기다리세요.', 'hour'],
+            ['If it is expensive, I will not buy it.', '비싸면 안 살 거예요.', 'money'],
+            ['I read the newspaper while I drink tea.', '차를 마시면서 신문을 읽어요.', 'news'],
+            ['When you are ready, we can go.', '준비되시면 가요.', 'check'],
+            ['If you need help, please tell me.', '도움이 필요하면 말씀해 주세요.', 'help'],
+            ['Let us meet after lunch.', '점심 먹고 만나요.', 'clock']
+          ]
+        },
+        {
+          id: 'u28', t: '덧붙이기 (and, also, too)', ic: 'together',
+          tip: 'and 로 이어 붙이고, also·too 로 덧붙입니다. 말을 짧게 끊지 않고 이어가는 연습입니다.',
+          w: [
+            ['and', '그리고', 'together'], ['also', '또한', 'again'],
+            ['too', '~도', 'together'], ['or', '또는', 'maybe'],
+            ['both', '둘 다', 'people'], ['other', '다른', 'maybe'],
+            ['another', '또 하나의', 'again'], ['same', '같은', 'check'],
+            ['together', '함께', 'together'], ['only', '오직', 'one'],
+            ['every', '모든', 'all'], ['some', '약간의', 'maybe']
+          ],
+          s: [
+            ['I like coffee and tea.', '커피와 차를 좋아해요.', 'coffee'],
+            ['She is kind and very smart.', '그녀는 친절하고 아주 똑똑해요.', 'woman'],
+            ['I also want to learn English.', '저도 영어를 배우고 싶어요.', 'book'],
+            ['My husband likes it too.', '제 남편도 좋아해요.', 'man'],
+            ['Do you want tea or coffee?', '차 드릴까요, 커피 드릴까요?', 'tea'],
+            ['We both like walking.', '우리 둘 다 걷기를 좋아해요.', 'walk'],
+            ['Would you like another cup?', '한 잔 더 드릴까요?', 'coffee'],
+            ['I go there every Monday.', '매주 월요일에 거기 가요.', 'monday'],
+            ['Let us do it together.', '함께 해요.', 'together'],
+            ['I have only one question.', '질문이 하나만 있어요.', 'question2'],
+            ['She cooks and cleans every day.', '그녀는 매일 요리하고 청소해요.', 'cook'],
+            ['I want some water, please.', '물 좀 주세요.', 'water']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 8단계 : 이웃과 생활 ================= */
+    {
+      stage: 8, name: '생활', sub: '동네에서 오가는 말', ic: 'neighbor',
+      units: [
+        {
+          id: 'u29', t: '이웃과 인사·잡담', ic: 'neighbor',
+          tip: '가볍게 주고받는 인사가 대화의 시작입니다. 날씨 이야기는 어디서나 통합니다.',
+          w: [
+            ['neighbor', '이웃', 'neighbor'], ['nice', '좋은', 'good'],
+            ['weekend', '주말', 'calendar'], ['garden', '정원', 'garden'],
+            ['walk', '산책', 'walk'], ['dog', '개', 'dog'],
+            ['sunny', '화창한', 'sun'], ['warm', '따뜻한', 'sun'],
+            ['lately', '요즘', 'clock'], ['fine', '괜찮은', 'good'],
+            ['well', '잘', 'good'], ['again', '다시', 'again']
+          ],
+          s: [
+            ['Good morning! Nice day, isn\'t it?', '좋은 아침이에요! 날씨 좋죠?', 'sun'],
+            ['How have you been lately?', '요즘 어떻게 지내세요?', 'smile'],
+            ['I have been well, thank you.', '잘 지냈어요, 고마워요.', 'good'],
+            ['Your garden looks beautiful.', '정원이 참 예뻐요.', 'garden'],
+            ['I am taking my dog for a walk.', '개를 산책시키는 중이에요.', 'dog'],
+            ['Did you have a nice weekend?', '주말 잘 보내셨어요?', 'calendar'],
+            ['It is warm today, isn\'t it?', '오늘 따뜻하네요, 그렇죠?', 'sun'],
+            ['Please say hello to your husband.', '남편분께 안부 전해 주세요.', 'man'],
+            ['It was nice talking to you.', '이야기 즐거웠어요.', 'smile'],
+            ['See you again soon.', '곧 또 봬요.', 'again'],
+            ['Let us have tea sometime.', '언제 차 한잔해요.', 'tea'],
+            ['Take care of yourself.', '건강하세요.', 'heart']
+          ]
+        },
+        {
+          id: 'u30', t: '병원에서 자세히', ic: 'hospital',
+          tip: '아픈 곳과 언제부터인지를 말할 수 있으면 진료가 됩니다. since / for 를 함께 익히세요.',
+          w: [
+            ['pain', '통증', 'hurt'], ['fever', '열', 'sick'],
+            ['cough', '기침', 'sick'], ['stomach', '배', 'medicine'],
+            ['back', '허리, 등', 'hurt'], ['knee', '무릎', 'leg'],
+            ['appointment', '진료 예약', 'calendar'], ['nurse', '간호사', 'nurse'],
+            ['prescription', '처방전', 'medicine'], ['pharmacy', '약국', 'medicine'],
+            ['better', '더 나은', 'good'], ['worse', '더 나쁜', 'sad']
+          ],
+          s: [
+            ['I have a pain in my back.', '허리가 아파요.', 'hurt'],
+            ['I have had this pain for three days.', '사흘째 이렇게 아파요.', 'calendar'],
+            ['I have a fever and a cough.', '열이 나고 기침이 나요.', 'sick'],
+            ['My knee hurts when I walk.', '걸을 때 무릎이 아파요.', 'leg'],
+            ['I would like to make an appointment.', '진료 예약을 하고 싶어요.', 'calendar'],
+            ['Do I need a prescription?', '처방전이 필요한가요?', 'medicine'],
+            ['Where is the pharmacy?', '약국이 어디예요?', 'medicine'],
+            ['It is getting better.', '점점 나아지고 있어요.', 'good'],
+            ['It was worse yesterday.', '어제가 더 심했어요.', 'sad'],
+            ['How often should I take this?', '이걸 얼마나 자주 먹어야 하나요?', 'clock'],
+            ['Take this twice a day.', '하루에 두 번 드세요.', 'medicine'],
+            ['Thank you, doctor.', '고맙습니다, 선생님.', 'doctor']
+          ]
+        },
+        {
+          id: 'u31', t: '은행·우체국', ic: 'bank',
+          tip: '창구에서 쓰는 말은 정해져 있습니다. "I would like to ~" 하나면 대부분 통합니다.',
+          w: [
+            ['bank', '은행', 'bank'], ['account', '계좌', 'card'],
+            ['cash', '현금', 'cash'], ['change', '거스름돈', 'money'],
+            ['sign', '서명하다', 'pen'], ['form', '서류', 'letter'],
+            ['post office', '우체국', 'post'], ['send', '보내다', 'letter'],
+            ['stamp', '우표', 'letter'], ['package', '소포', 'gift'],
+            ['fee', '수수료', 'money'], ['wait', '기다리다', 'hour']
+          ],
+          s: [
+            ['I would like to open an account.', '계좌를 만들고 싶어요.', 'bank'],
+            ['Can I get some cash, please?', '현금을 좀 찾을 수 있을까요?', 'cash'],
+            ['Please sign here.', '여기에 서명해 주세요.', 'pen'],
+            ['Could you fill out this form?', '이 서류를 작성해 주시겠어요?', 'letter'],
+            ['I want to send this package to Korea.', '이 소포를 한국으로 보내고 싶어요.', 'gift'],
+            ['How much is the fee?', '수수료가 얼마예요?', 'money'],
+            ['I need three stamps, please.', '우표 세 장 주세요.', 'letter'],
+            ['How long will it take?', '얼마나 걸릴까요?', 'clock'],
+            ['Here is your change.', '거스름돈 여기 있습니다.', 'money'],
+            ['Please wait a moment.', '잠시만 기다려 주세요.', 'hour'],
+            ['Do I need my passport?', '여권이 필요한가요?', 'passport'],
+            ['Thank you for your help.', '도와주셔서 고맙습니다.', 'thank']
+          ]
+        },
+        {
+          id: 'u32', t: '대중교통과 택시', ic: 'bus',
+          tip: '"~로 가 주세요"는 Please take me to ~. 목적지만 바꾸면 어디서나 씁니다.',
+          w: [
+            ['subway', '지하철', 'station'], ['taxi', '택시', 'car'],
+            ['ticket', '표', 'ticket'], ['seat', '자리', 'chair'],
+            ['transfer', '갈아타다', 'again'], ['line', '노선', 'station'],
+            ['exit', '출구', 'door'], ['platform', '승강장', 'station'],
+            ['driver', '기사님', 'driver'], ['stop', '멈추다', 'bus'],
+            ['next', '다음', 'right'], ['direction', '방향', 'map']
+          ],
+          s: [
+            ['Please take me to this address.', '이 주소로 가 주세요.', 'map'],
+            ['How much is the fare?', '요금이 얼마예요?', 'money'],
+            ['Where can I buy a ticket?', '표를 어디서 사나요?', 'ticket'],
+            ['Which line goes to the airport?', '공항에 가려면 몇 호선이에요?', 'station'],
+            ['Do I need to transfer?', '갈아타야 하나요?', 'again'],
+            ['Please stop here.', '여기서 세워 주세요.', 'bus'],
+            ['Is this seat free?', '이 자리 비었나요?', 'chair'],
+            ['Which exit should I take?', '몇 번 출구로 나가야 하나요?', 'door'],
+            ['The next stop is my stop.', '다음이 제가 내릴 곳이에요.', 'bus'],
+            ['Am I going in the right direction?', '이 방향이 맞나요?', 'map'],
+            ['Could you tell me when to get off?', '언제 내리는지 알려 주시겠어요?', 'help'],
+            ['Keep the change.', '거스름돈은 괜찮아요.', 'money']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 9단계 : 마음 전하기 ================= */
+    {
+      stage: 9, name: '마음', sub: '부탁·사과·위로하기', ic: 'heart',
+      units: [
+        {
+          id: 'u33', t: '부탁과 거절', ic: 'please',
+          tip: '부탁은 Could you ~?, 거절은 I am sorry, but ~ 로 부드럽게. 딱 잘라 No 라고 하지 않습니다.',
+          w: [
+            ['favor', '부탁', 'please'], ['borrow', '빌리다', 'hand'],
+            ['lend', '빌려주다', 'hand'], ['mind', '꺼리다', 'idea'],
+            ['possible', '가능한', 'check'], ['afraid', '유감이지만', 'worried'],
+            ['busy', '바쁜', 'work'], ['later', '나중에', 'clock'],
+            ['instead', '대신에', 'again'], ['problem', '문제', 'problem'],
+            ['course', '물론', 'yes'], ['welcome', '천만에', 'smile']
+          ],
+          s: [
+            ['Could you do me a favor?', '부탁 하나 드려도 될까요?', 'please'],
+            ['Would you mind helping me?', '저를 도와주실 수 있을까요?', 'help'],
+            ['Can I borrow your pen?', '펜 좀 빌릴 수 있을까요?', 'pen'],
+            ['Yes, of course. No problem.', '네, 물론이죠. 문제없어요.', 'yes'],
+            ['I am afraid I cannot today.', '죄송하지만 오늘은 안 되겠어요.', 'worried'],
+            ['I am sorry, but I am busy now.', '미안하지만 지금 바빠요.', 'work'],
+            ['Can we do it later instead?', '대신 나중에 하면 어떨까요?', 'clock'],
+            ['Would that be possible?', '그게 가능할까요?', 'question2'],
+            ['Thank you, you are very kind.', '고맙습니다, 정말 친절하시네요.', 'thank'],
+            ['You are welcome. Any time.', '천만에요. 언제든지요.', 'smile'],
+            ['Please let me know if you need help.', '도움이 필요하면 알려 주세요.', 'help'],
+            ['I will do it right away.', '바로 하겠습니다.', 'fast']
+          ]
+        },
+        {
+          id: 'u34', t: '사과와 감사', ic: 'thank',
+          tip: '고마움과 미안함을 구체적으로 말하면 마음이 훨씬 잘 전해집니다.',
+          w: [
+            ['sorry', '미안한', 'sorry'], ['apologize', '사과하다', 'sorry'],
+            ['mistake', '실수', 'problem'], ['forgive', '용서하다', 'heart'],
+            ['grateful', '고마운', 'thank'], ['appreciate', '감사하다', 'thank'],
+            ['trouble', '폐, 수고', 'problem'], ['fault', '잘못', 'problem'],
+            ['worry', '걱정하다', 'worried'], ['okay', '괜찮은', 'good'],
+            ['forget', '잊다', 'idea'], ['remember', '기억하다', 'remember']
+          ],
+          s: [
+            ['I am so sorry. It was my mistake.', '정말 죄송해요. 제 실수였어요.', 'sorry'],
+            ['I apologize for being late.', '늦어서 사과드립니다.', 'clock'],
+            ['Please do not worry about it.', '걱정하지 마세요.', 'calm'],
+            ['It is okay. It happens.', '괜찮아요. 그럴 수 있죠.', 'good'],
+            ['Thank you for everything.', '여러 가지로 고맙습니다.', 'thank'],
+            ['I really appreciate your help.', '도와주셔서 정말 감사합니다.', 'help'],
+            ['I am very grateful to you.', '당신께 정말 고맙습니다.', 'heart'],
+            ['Sorry to trouble you.', '번거롭게 해서 죄송해요.', 'sorry'],
+            ['It was not your fault.', '당신 잘못이 아니에요.', 'calm'],
+            ['I forgot to call you. I am sorry.', '전화하는 걸 잊었어요. 죄송해요.', 'phone'],
+            ['I will remember next time.', '다음에는 기억할게요.', 'remember'],
+            ['That is very kind of you.', '정말 친절하시네요.', 'smile']
+          ]
+        },
+        {
+          id: 'u35', t: '칭찬과 위로', ic: 'smile',
+          tip: '칭찬은 구체적으로, 위로는 짧고 따뜻하게. 길게 말하지 않아도 마음은 전해집니다.',
+          w: [
+            ['great', '훌륭한', 'star'], ['wonderful', '멋진', 'star'],
+            ['beautiful', '아름다운', 'flower'], ['clever', '똑똑한', 'brain'],
+            ['proud', '자랑스러운', 'proud'], ['congratulations', '축하해요', 'party'],
+            ['sad', '슬픈', 'cry'], ['difficult', '힘든', 'problem'],
+            ['hope', '바라다', 'hope'], ['soon', '곧', 'fast'],
+            ['strong', '강한', 'exercise'], ['understand', '이해하다', 'idea']
+          ],
+          s: [
+            ['That is wonderful! Congratulations!', '정말 멋져요! 축하해요!', 'party'],
+            ['You did a great job.', '정말 잘하셨어요.', 'star'],
+            ['Your daughter is very clever.', '따님이 아주 똑똑하네요.', 'girl'],
+            ['You must be proud of him.', '그가 자랑스러우시겠어요.', 'proud'],
+            ['That dress looks beautiful on you.', '그 옷이 참 잘 어울려요.', 'shirt'],
+            ['I am sorry to hear that.', '그런 일이 있었다니 안타깝네요.', 'sad'],
+            ['I know it is difficult.', '힘드신 거 알아요.', 'worried'],
+            ['I hope you feel better soon.', '곧 나아지시길 바라요.', 'hope'],
+            ['Please take care of yourself.', '몸 조심하세요.', 'heart'],
+            ['You are stronger than you think.', '생각보다 강한 분이세요.', 'exercise'],
+            ['I understand how you feel.', '어떤 기분인지 알아요.', 'idea'],
+            ['I am always here for you.', '저는 늘 당신 편이에요.', 'together']
+          ]
+        },
+        {
+          id: 'u36', t: '걱정과 안심', ic: 'worried',
+          tip: '걱정을 말하고 상대를 안심시키는 표현입니다. 가족과 통화할 때 가장 많이 씁니다.',
+          w: [
+            ['worried', '걱정하는', 'worried'], ['nervous', '긴장한', 'nervous'],
+            ['safe', '안전한', 'safe'], ['careful', '조심하는', 'danger'],
+            ['danger', '위험', 'danger'], ['calm', '차분한', 'calm'],
+            ['alone', '혼자', 'alone'], ['help', '도움', 'help'],
+            ['fine', '괜찮은', 'good'], ['sure', '확실한', 'check'],
+            ['try', '해 보다', 'start'], ['able', '할 수 있는', 'good']
+          ],
+          s: [
+            ['I am worried about my son.', '아들이 걱정돼요.', 'worried'],
+            ['Do not worry. He will be fine.', '걱정 마세요. 괜찮을 거예요.', 'calm'],
+            ['Please be careful on the road.', '길 조심하세요.', 'danger'],
+            ['Call me when you get home safely.', '집에 잘 도착하면 전화 주세요.', 'phone'],
+            ['I am a little nervous.', '조금 긴장돼요.', 'nervous'],
+            ['You will be fine, I am sure.', '괜찮으실 거예요, 확실해요.', 'check'],
+            ['You are not alone.', '혼자가 아니에요.', 'together'],
+            ['Everything will be okay.', '다 잘될 거예요.', 'hope'],
+            ['Just try your best.', '최선을 다하시면 돼요.', 'start'],
+            ['Let me know if you need anything.', '뭐든 필요하면 알려 주세요.', 'help'],
+            ['I am glad you are safe.', '무사하셔서 다행이에요.', 'safe'],
+            ['Take your time. There is no hurry.', '천천히 하세요. 급하지 않아요.', 'slow']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 10단계 : 하루를 자세히 ================= */
+    {
+      stage: 10, name: '일상', sub: '살림과 건강을 말하기', ic: 'house',
+      units: [
+        {
+          id: 'u37', t: '집안일', ic: 'clean',
+          tip: '집안일 표현은 매일 쓰는 말입니다. do the dishes 처럼 do 와 짝을 이루는 말이 많아요.',
+          w: [
+            ['dishes', '설거지', 'food'], ['laundry', '빨래', 'shirt'],
+            ['sweep', '쓸다', 'clean'], ['dust', '먼지를 털다', 'clean'],
+            ['fix', '고치다', 'key'], ['broken', '고장 난', 'problem'],
+            ['throw away', '버리다', 'problem'], ['tidy', '정돈된', 'good'],
+            ['messy', '어질러진', 'problem'], ['towel', '수건', 'shirt'],
+            ['soap', '비누', 'wash'], ['trash', '쓰레기', 'problem']
+          ],
+          s: [
+            ['I do the dishes after dinner.', '저녁 먹고 설거지를 해요.', 'food'],
+            ['I do the laundry on Saturday.', '토요일에 빨래를 해요.', 'shirt'],
+            ['Could you take out the trash?', '쓰레기 좀 버려 주시겠어요?', 'problem'],
+            ['The washing machine is broken.', '세탁기가 고장 났어요.', 'problem'],
+            ['Can you fix it for me?', '고쳐 주실 수 있어요?', 'key'],
+            ['The room is very messy today.', '오늘 방이 너무 어질러졌어요.', 'house'],
+            ['I clean the house every morning.', '아침마다 집을 청소해요.', 'clean'],
+            ['Where are the clean towels?', '깨끗한 수건이 어디 있어요?', 'shirt'],
+            ['I need to buy some soap.', '비누를 좀 사야 해요.', 'wash'],
+            ['Please put it on the table.', '식탁 위에 놓아 주세요.', 'table'],
+            ['I will throw this away.', '이건 버릴게요.', 'problem'],
+            ['The kitchen is nice and tidy now.', '부엌이 이제 깔끔해요.', 'good']
+          ]
+        },
+        {
+          id: 'u38', t: '요리와 장보기', ic: 'cook',
+          tip: '요리 동사(cut, boil, fry)와 장보기 표현입니다. 손주에게 밥해 줄 때 쓰는 말들이에요.',
+          w: [
+            ['cut', '자르다', 'cook'], ['boil', '끓이다', 'soup'],
+            ['fry', '볶다, 튀기다', 'cook'], ['mix', '섞다', 'cook'],
+            ['taste', '맛보다', 'mouth'], ['fresh', '신선한', 'salad'],
+            ['recipe', '조리법', 'book'], ['ingredient', '재료', 'carrot'],
+            ['list', '목록', 'letter'], ['cheap', '싼', 'sale'],
+            ['kilo', '킬로', 'size'], ['enough', '충분한', 'check']
+          ],
+          s: [
+            ['First, cut the onion.', '먼저 양파를 자르세요.', 'onion'],
+            ['Boil the water for ten minutes.', '물을 10분간 끓이세요.', 'water'],
+            ['Please taste the soup.', '국 맛 좀 봐 주세요.', 'soup'],
+            ['These vegetables are very fresh.', '이 채소들 아주 신선해요.', 'carrot'],
+            ['Do we have enough rice?', '쌀이 충분히 있나요?', 'rice'],
+            ['I need two kilos of potatoes.', '감자 2킬로가 필요해요.', 'potato'],
+            ['Where can I find the milk?', '우유는 어디 있나요?', 'milk'],
+            ['This is cheaper than that one.', '이게 저것보다 싸요.', 'sale'],
+            ['I made a shopping list.', '장보기 목록을 만들었어요.', 'letter'],
+            ['My mother taught me this recipe.', '어머니가 이 요리법을 알려 주셨어요.', 'mother'],
+            ['It needs a little more salt.', '소금이 조금 더 필요해요.', 'salt'],
+            ['Dinner is ready. Come and eat.', '저녁 다 됐어요. 와서 드세요.', 'dinner']
+          ]
+        },
+        {
+          id: 'u39', t: '건강과 운동 습관', ic: 'exercise',
+          tip: '나이 들수록 자주 하게 되는 이야기입니다. 빈도 표현(usually, sometimes)을 함께 익히세요.',
+          w: [
+            ['usually', '보통', 'clock'], ['sometimes', '가끔', 'maybe'],
+            ['always', '항상', 'again'], ['never', '전혀 안', 'no'],
+            ['stretch', '스트레칭하다', 'exercise'], ['breathe', '숨쉬다', 'calm'],
+            ['weight', '체중', 'size'], ['sleep well', '잘 자다', 'sleep'],
+            ['blood pressure', '혈압', 'medicine'], ['checkup', '건강검진', 'hospital'],
+            ['smoke', '담배 피우다', 'danger'], ['diet', '식단', 'salad']
+          ],
+          s: [
+            ['I usually walk for an hour.', '보통 한 시간씩 걸어요.', 'walk'],
+            ['I sometimes swim on Sunday.', '가끔 일요일에 수영해요.', 'swim'],
+            ['I always stretch in the morning.', '아침마다 항상 스트레칭을 해요.', 'exercise'],
+            ['I never smoke.', '저는 담배를 전혀 안 피워요.', 'danger'],
+            ['Did you sleep well last night?', '어젯밤 잘 주무셨어요?', 'sleep'],
+            ['I have a checkup every year.', '해마다 건강검진을 받아요.', 'hospital'],
+            ['My blood pressure is fine.', '혈압은 괜찮아요.', 'medicine'],
+            ['I try to eat more vegetables.', '채소를 더 먹으려고 해요.', 'salad'],
+            ['Walking is the best exercise for me.', '걷기가 저에겐 최고의 운동이에요.', 'walk'],
+            ['I lost a little weight.', '살이 조금 빠졌어요.', 'size'],
+            ['You look healthy these days.', '요즘 건강해 보이세요.', 'good'],
+            ['Take a deep breath and relax.', '숨을 깊이 쉬고 편히 계세요.', 'calm']
+          ]
+        },
+        {
+          id: 'u40', t: '취미와 여가', ic: 'garden',
+          tip: '취미 이야기는 대화를 길게 이어 줍니다. "How long have you ~?" 로 물어보세요.',
+          w: [
+            ['hobby', '취미', 'idea'], ['knit', '뜨개질하다', 'knit'],
+            ['paint', '그림 그리다', 'photo'], ['collect', '모으다', 'gift'],
+            ['grow', '기르다', 'garden'], ['plant', '식물', 'garden'],
+            ['club', '동호회', 'people'], ['join', '가입하다', 'together'],
+            ['enjoy', '즐기다', 'happy'], ['relax', '쉬다', 'rest'],
+            ['interesting', '흥미로운', 'idea'], ['boring', '지루한', 'bored']
+          ],
+          s: [
+            ['I enjoy knitting in the evening.', '저녁에 뜨개질하는 걸 즐겨요.', 'knit'],
+            ['How long have you done that?', '그거 하신 지 얼마나 되셨어요?', 'clock'],
+            ['I have grown flowers for ten years.', '10년째 꽃을 기르고 있어요.', 'flower'],
+            ['I joined a walking club last year.', '작년에 걷기 동호회에 들었어요.', 'people'],
+            ['It helps me relax.', '그게 저를 편안하게 해 줘요.', 'rest'],
+            ['That sounds very interesting.', '아주 흥미롭네요.', 'idea'],
+            ['I watch movies when I have time.', '시간 있을 때 영화를 봐요.', 'movie'],
+            ['Would you like to join us?', '같이 하실래요?', 'together'],
+            ['I collect old photographs.', '옛날 사진을 모아요.', 'photo'],
+            ['My plants need water every day.', '제 화분은 매일 물이 필요해요.', 'garden'],
+            ['I never get bored at home.', '집에서 전혀 심심하지 않아요.', 'house'],
+            ['What do you do in your free time?', '여가 시간에 뭐 하세요?', 'question2']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 11단계 : 이야기 나누기 ================= */
+    {
+      stage: 11, name: '이야기', sub: '겪은 일과 앞일을 말하기', ic: 'book',
+      units: [
+        {
+          id: 'u41', t: '지난 이야기 자세히', ic: 'calendar',
+          tip: '과거형을 이어 붙이면 이야기가 됩니다. then, after that 으로 순서를 나타내세요.',
+          w: [
+            ['ago', '~전에', 'left'], ['last night', '어젯밤', 'night'],
+            ['then', '그다음에', 'right'], ['finally', '마침내', 'end'],
+            ['found', '찾았다', 'eye'], ['lost', '잃어버렸다', 'problem'],
+            ['met', '만났다', 'meeting'], ['stayed', '머물렀다', 'hotel'],
+            ['left', '떠났다', 'walk2'], ['arrived', '도착했다', 'door'],
+            ['told', '말했다', 'message'], ['heard', '들었다', 'ear']
+          ],
+          s: [
+            ['I met my old friend two days ago.', '이틀 전에 옛 친구를 만났어요.', 'friend'],
+            ['We had dinner and then we walked.', '저녁을 먹고 나서 걸었어요.', 'dinner'],
+            ['I lost my key, but I finally found it.', '열쇠를 잃어버렸는데 결국 찾았어요.', 'key'],
+            ['She told me about her grandson.', '그녀가 손자 이야기를 해 줬어요.', 'baby'],
+            ['We stayed there for three days.', '거기서 사흘 묵었어요.', 'hotel'],
+            ['The train arrived very late.', '기차가 아주 늦게 도착했어요.', 'train'],
+            ['I heard about it on the news.', '뉴스에서 그 이야기를 들었어요.', 'news'],
+            ['It rained all day yesterday.', '어제는 하루 종일 비가 왔어요.', 'rain'],
+            ['We left the house at seven.', '일곱 시에 집을 나섰어요.', 'house'],
+            ['I could not sleep last night.', '어젯밤에 잠을 못 잤어요.', 'sleep'],
+            ['That was a long time ago.', '그건 아주 오래전 일이에요.', 'clock'],
+            ['It was one of the best days.', '가장 좋은 날 중 하루였어요.', 'star']
+          ]
+        },
+        {
+          id: 'u42', t: '앞으로의 계획', ic: 'plan',
+          tip: 'be going to 는 이미 정한 일, will 은 지금 정한 일. 계획을 말할 땐 going to 가 자연스럽습니다.',
+          w: [
+            ['plan', '계획', 'plan'], ['soon', '곧', 'fast'],
+            ['next week', '다음 주', 'week'], ['someday', '언젠가', 'dream'],
+            ['hope', '바라다', 'hope'], ['decide', '결정하다', 'check'],
+            ['prepare', '준비하다', 'plan'], ['save', '모으다', 'money'],
+            ['move', '이사하다', 'house'], ['retire', '은퇴하다', 'rest'],
+            ['visit', '방문하다', 'door'], ['learn', '배우다', 'book']
+          ],
+          s: [
+            ['I am going to visit my son next week.', '다음 주에 아들을 보러 갈 거예요.', 'boy'],
+            ['We are going to move in the spring.', '봄에 이사할 거예요.', 'house'],
+            ['I hope to learn English well.', '영어를 잘 배우고 싶어요.', 'book'],
+            ['What are you going to do this weekend?', '이번 주말에 뭐 하실 거예요?', 'calendar'],
+            ['I have not decided yet.', '아직 정하지 않았어요.', 'maybe'],
+            ['Someday I want to travel abroad.', '언젠가 해외여행을 가고 싶어요.', 'plane'],
+            ['I am saving money for a trip.', '여행 가려고 돈을 모으고 있어요.', 'money'],
+            ['My husband will retire next year.', '남편이 내년에 은퇴해요.', 'rest'],
+            ['I will call you as soon as I arrive.', '도착하자마자 전화할게요.', 'phone'],
+            ['We are preparing for the holiday.', '명절 준비를 하고 있어요.', 'party'],
+            ['Let us plan it together.', '함께 계획해요.', 'together'],
+            ['I will try my best.', '최선을 다할게요.', 'start']
+          ]
+        },
+        {
+          id: 'u43', t: '경험과 소감', ic: 'trophy',
+          tip: '현재완료는 "지금까지의 경험"입니다. ever / never / before 와 함께 익히세요.',
+          w: [
+            ['experience', '경험', 'idea'], ['already', '이미', 'check'],
+            ['yet', '아직', 'hour'], ['recently', '최근에', 'clock'],
+            ['abroad', '해외에', 'plane'], ['amazing', '놀라운', 'surprised'],
+            ['favorite', '가장 좋아하는', 'heart'], ['special', '특별한', 'star'],
+            ['first time', '처음', 'new'], ['taste', '맛보다', 'mouth'],
+            ['unforgettable', '잊지 못할', 'remember'], ['worth', '가치 있는', 'good']
+          ],
+          s: [
+            ['Have you ever tried Italian food?', '이탈리아 음식 드셔 보셨어요?', 'pizza'],
+            ['I have never been abroad.', '해외에 가 본 적이 없어요.', 'plane'],
+            ['I have already finished my work.', '일을 벌써 끝냈어요.', 'end'],
+            ['Have you seen that movie yet?', '그 영화 보셨어요?', 'movie'],
+            ['I have visited Seoul many times.', '서울에 여러 번 가 봤어요.', 'city'],
+            ['It was an amazing experience.', '놀라운 경험이었어요.', 'surprised'],
+            ['This is my favorite place.', '여기가 제가 제일 좋아하는 곳이에요.', 'heart'],
+            ['I have not seen her recently.', '최근에 그녀를 못 봤어요.', 'woman'],
+            ['That day was really special.', '그날은 정말 특별했어요.', 'star'],
+            ['It was worth the wait.', '기다린 보람이 있었어요.', 'good'],
+            ['I will never forget that trip.', '그 여행은 절대 잊지 못할 거예요.', 'remember'],
+            ['It was my first time on a plane.', '비행기는 그때가 처음이었어요.', 'plane']
+          ]
+        },
+        {
+          id: 'u44', t: '의견 주고받기', ic: 'people',
+          tip: '동의·반대를 부드럽게 하는 표현들입니다. 바로 반대하지 않고 한 번 받아 준 뒤 말합니다.',
+          w: [
+            ['opinion', '의견', 'idea'], ['agree', '동의하다', 'yes'],
+            ['disagree', '반대하다', 'no'], ['point', '요점', 'idea'],
+            ['perhaps', '아마도', 'maybe'], ['actually', '사실은', 'check'],
+            ['certainly', '분명히', 'check'], ['depends', '~에 달려 있다', 'rule'],
+            ['example', '예', 'book'], ['important', '중요한', 'star'],
+            ['true', '사실인', 'check'], ['reason', '이유', 'idea']
+          ],
+          s: [
+            ['In my opinion, that is a good idea.', '제 생각엔 좋은 생각이에요.', 'idea'],
+            ['I see your point, but I disagree.', '무슨 말씀인지 알지만 저는 달라요.', 'maybe'],
+            ['That is true, but there is another side.', '맞는 말인데 다른 면도 있어요.', 'people'],
+            ['Perhaps you are right.', '아마 당신이 맞을 거예요.', 'maybe'],
+            ['Actually, I think the opposite.', '사실 저는 반대로 생각해요.', 'no'],
+            ['It depends on the person.', '사람마다 다르죠.', 'people'],
+            ['For example, my son does it too.', '예를 들면 제 아들도 그래요.', 'book'],
+            ['What is your reason for that?', '그렇게 생각하시는 이유가 뭐예요?', 'question2'],
+            ['I certainly agree with you.', '분명히 동의해요.', 'yes'],
+            ['That is an important point.', '중요한 지적이에요.', 'star'],
+            ['Let us hear what she thinks.', '그녀 생각도 들어 봐요.', 'ear'],
+            ['We can agree to disagree.', '생각이 달라도 괜찮아요.', 'together']
+          ]
+        }
+      ]
+    },
+
+    /* ================= 12단계 : 넓게 이야기하기 ================= */
+    {
+      stage: 12, name: '자유', sub: '어떤 자리에서도 말하기', ic: 'trophy',
+      units: [
+        {
+          id: 'u45', t: '전화·문자·인터넷', ic: 'phone',
+          tip: '요즘은 통화보다 문자·영상통화가 많습니다. 손주와 연락할 때 쓰는 말입니다.',
+          w: [
+            ['text', '문자', 'message'], ['video call', '영상통화', 'phone'],
+            ['photo', '사진', 'photo'], ['send', '보내다', 'letter'],
+            ['receive', '받다', 'hand'], ['internet', '인터넷', 'computer'],
+            ['password', '비밀번호', 'key'], ['screen', '화면', 'computer'],
+            ['battery', '배터리', 'phone'], ['charge', '충전하다', 'phone'],
+            ['app', '앱', 'phone'], ['click', '누르다', 'hand']
+          ],
+          s: [
+            ['I will send you a text message.', '문자 보낼게요.', 'message'],
+            ['Can we do a video call tonight?', '오늘 밤 영상통화할까요?', 'phone'],
+            ['Please send me the photos.', '사진 좀 보내 주세요.', 'photo'],
+            ['I did not receive your message.', '메시지를 못 받았어요.', 'message'],
+            ['My battery is almost dead.', '배터리가 거의 없어요.', 'phone'],
+            ['I need to charge my phone.', '전화기를 충전해야 해요.', 'phone'],
+            ['The internet is very slow today.', '오늘 인터넷이 아주 느려요.', 'computer'],
+            ['I forgot my password.', '비밀번호를 잊어버렸어요.', 'key'],
+            ['Click the blue button.', '파란 버튼을 누르세요.', 'blue'],
+            ['Can you show me how to use this app?', '이 앱 쓰는 법 좀 알려 주시겠어요?', 'help'],
+            ['The screen is too small for me.', '화면이 저에겐 너무 작아요.', 'computer'],
+            ['Thank you for calling me.', '전화 주셔서 고마워요.', 'thank']
+          ]
+        },
+        {
+          id: 'u46', t: '여행 자세히', ic: 'plane',
+          tip: '여행에서 가장 많이 쓰는 건 부탁과 질문입니다. 앞서 배운 Could you ~ 를 여기서 씁니다.',
+          w: [
+            ['reservation', '예약', 'calendar'], ['check in', '체크인', 'hotel'],
+            ['check out', '체크아웃', 'hotel'], ['guide', '안내인', 'map'],
+            ['tour', '관광', 'camera'], ['souvenir', '기념품', 'gift'],
+            ['currency', '화폐', 'money'], ['exchange', '환전하다', 'money'],
+            ['delay', '지연', 'clock'], ['cancel', '취소하다', 'no'],
+            ['recommend', '추천하다', 'star'], ['view', '경치', 'mountain']
+          ],
+          s: [
+            ['I have a reservation under Kim.', '김으로 예약했어요.', 'calendar'],
+            ['What time is check out?', '체크아웃이 몇 시예요?', 'hotel'],
+            ['Where can I exchange money?', '환전은 어디서 하나요?', 'money'],
+            ['Could you recommend a good restaurant?', '좋은 식당 좀 추천해 주시겠어요?', 'restaurant'],
+            ['The flight was delayed two hours.', '비행기가 두 시간 지연됐어요.', 'plane'],
+            ['I would like to cancel my reservation.', '예약을 취소하고 싶어요.', 'no'],
+            ['Is there a tour in the morning?', '오전에 관광이 있나요?', 'camera'],
+            ['I want to buy a souvenir for my grandson.', '손자에게 줄 기념품을 사고 싶어요.', 'gift'],
+            ['The view from here is wonderful.', '여기서 보는 경치가 멋져요.', 'mountain'],
+            ['Could you take a photo of us?', '저희 사진 좀 찍어 주시겠어요?', 'camera'],
+            ['How far is it from the hotel?', '호텔에서 얼마나 먼가요?', 'far'],
+            ['We had a wonderful time. Thank you.', '정말 즐거웠어요. 고맙습니다.', 'happy']
+          ]
+        },
+        {
+          id: 'u47', t: '손주와 가족 행사', ic: 'baby',
+          tip: '가족 이야기는 가장 오래 하게 되는 대화입니다. 감정 표현을 아끼지 마세요.',
+          w: [
+            ['grandchild', '손주', 'baby'], ['wedding', '결혼식', 'party'],
+            ['birthday party', '생일잔치', 'party'], ['graduate', '졸업하다', 'student'],
+            ['invite', '초대하다', 'letter'], ['celebrate', '축하하다', 'party'],
+            ['gift', '선물', 'gift'], ['grow up', '자라다', 'boy'],
+            ['take care', '돌보다', 'heart'], ['miss', '그리워하다', 'cry'],
+            ['pictures', '사진들', 'photo'], ['holiday', '명절', 'party']
+          ],
+          s: [
+            ['My grandson is graduating this year.', '손자가 올해 졸업해요.', 'student'],
+            ['We are having a birthday party on Sunday.', '일요일에 생일잔치를 해요.', 'party'],
+            ['Would you like to come?', '오시겠어요?', 'question2'],
+            ['I take care of my grandchildren on weekends.', '주말에 손주들을 돌봐요.', 'baby'],
+            ['They grow up so quickly.', '아이들이 참 빨리 커요.', 'boy'],
+            ['I bought a gift for her wedding.', '그녀 결혼식 선물을 샀어요.', 'gift'],
+            ['We celebrate every holiday together.', '명절마다 다 같이 모여요.', 'party'],
+            ['Let me show you some pictures.', '사진 몇 장 보여 드릴게요.', 'photo'],
+            ['I miss them when they go home.', '아이들이 집에 가면 보고 싶어요.', 'cry'],
+            ['My daughter invited us for dinner.', '딸이 저녁에 초대했어요.', 'dinner'],
+            ['He looks just like his father.', '아빠를 꼭 닮았어요.', 'father'],
+            ['Family time is the best time.', '가족과 있는 시간이 제일 좋아요.', 'heart']
+          ]
+        },
+        {
+          id: 'u48', t: '세상 이야기', ic: 'news',
+          tip: '마지막 유닛입니다. 지금까지 배운 접속사와 의견 표현을 모두 써서 길게 말해 보세요.',
+          w: [
+            ['news', '뉴스', 'news'], ['world', '세계', 'map'],
+            ['price', '물가', 'price'], ['weather', '날씨', 'weather'],
+            ['change', '변하다', 'again'], ['future', '미래', 'dream'],
+            ['society', '사회', 'people'], ['young people', '젊은 사람들', 'student'],
+            ['technology', '기술', 'computer'],
+            ['environment', '환경', 'tree'], ['peace', '평화', 'heart'],
+            ['believe', '믿다', 'pray']
+          ],
+          s: [
+            ['Prices have gone up a lot lately.', '요즘 물가가 많이 올랐어요.', 'price'],
+            ['The weather has changed so much.', '날씨가 정말 많이 변했어요.', 'weather'],
+            ['Young people work very hard these days.', '요즘 젊은 사람들은 정말 열심히 일해요.', 'student'],
+            ['Technology is difficult, but I am learning.', '기술은 어렵지만 배우고 있어요.', 'computer'],
+            ['I read the news every morning.', '매일 아침 뉴스를 읽어요.', 'news'],
+            ['We should take care of the environment.', '환경을 돌봐야 해요.', 'tree'],
+            ['I hope the world becomes peaceful.', '세상이 평화로워지길 바라요.', 'heart'],
+            ['What do you think about the future?', '미래에 대해 어떻게 생각하세요?', 'dream'],
+            ['Life was simpler when I was young.', '제가 젊었을 땐 삶이 더 단순했어요.', 'clock'],
+            ['But I believe things will get better.', '그래도 나아질 거라고 믿어요.', 'hope'],
+            ['Everyone has a different opinion.', '사람마다 생각이 달라요.', 'people'],
+            ['Thank you for listening to me.', '들어 주셔서 고맙습니다.', 'thank']
+          ]
+        }
+      ]
+    }
+  ];
+
+})(window.G = window.G || {});
+
+/* ============================================================
    커리큘럼 — 6단계 24유닛
    w: 단어  [영어, 한국어, 그림키]
    s: 문장  [영어, 한국어, 그림키]
@@ -1954,6 +3028,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
     }
   ];
 
+  /* 뒤에 이어지는 확장 커리큘럼(content2.js)을 붙입니다 */
+  if (G.CURRICULUM_EXTRA) G.CURRICULUM = G.CURRICULUM.concat(G.CURRICULUM_EXTRA);
+
   /* 유닛 빠른 조회 + 전체 항목 인덱스 */
   G.UNITS = [];
   G.ITEMS = {};
@@ -1963,6 +3040,17 @@ button { font: inherit; color: inherit; cursor: pointer; }
       G.UNITS.push(u);
       u.w.forEach(function (a, k) { G.ITEMS[u.id + ':w' + k] = { id: u.id + ':w' + k, kind: 'w', en: a[0], ko: a[1], pic: a[2], unit: u.id }; });
       u.s.forEach(function (a, k) { G.ITEMS[u.id + ':s' + k] = { id: u.id + ':s' + k, kind: 's', en: a[0], ko: a[1], pic: a[2], unit: u.id }; });
+      /* 대화 짝: [질문(영), 대답(영), 질문(한), 대답(한)]
+         배우는 대상은 '대답' 입니다. 질문은 상황을 주는 역할만 합니다. */
+      var d = (G.DIALOGS && G.DIALOGS[u.id]) || [];
+      u.d = d;
+      d.forEach(function (a, k) {
+        G.ITEMS[u.id + ':d' + k] = {
+          id: u.id + ':d' + k, kind: 'd',
+          ask: a[0], en: a[1], askKo: a[2], ko: a[3],
+          pic: '', unit: u.id
+        };
+      });
     });
   });
 
@@ -1971,10 +3059,23 @@ button { font: inherit; color: inherit; cursor: pointer; }
     if (!u) return out;
     u.w.forEach(function (_, k) { out.push(G.ITEMS[uid + ':w' + k]); });
     u.s.forEach(function (_, k) { out.push(G.ITEMS[uid + ':s' + k]); });
+    (u.d || []).forEach(function (_, k) { out.push(G.ITEMS[uid + ':d' + k]); });
     return out;
   };
 
-  /* 유닛당 레슨 수: 항목 24개 × 노출 3회 ÷ 문항 10개 ≈ 7 */
+  G.unitDialogs = function (uid) {
+    var u = G.UNITS.filter(function (x) { return x.id === uid; })[0];
+    if (!u || !u.d) return [];
+    return u.d.map(function (_, k) { return G.ITEMS[uid + ':d' + k]; });
+  };
+
+  G.allDialogs = function () {
+    var out = [];
+    G.UNITS.forEach(function (u) { out = out.concat(G.unitDialogs(u.id)); });
+    return out;
+  };
+
+  /* 유닛당 레슨 수 */
   G.LESSONS_PER_UNIT = 7;
   G.QUESTIONS_PER_LESSON = 10;
 
@@ -2191,7 +3292,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
       function () { return shuffle(S, rnd).slice(0, 6).concat(shuffle(W, rnd).slice(0, 4)); }
     ];
     var f = plans[n % plans.length];
-    return shuffle(f(), rnd);
+    // 대화 연습 2문항이 들어가므로 새 항목은 8개로 (레슨이 너무 길어지지 않게)
+    return shuffle(f(), rnd).slice(0, 8);
   }
 
   /* 자주 쓰는 목록은 한 번만 만들어 두기 */
@@ -2407,6 +3509,45 @@ button { font: inherit; color: inherit; cursor: pointer; }
     };
   }
 
+  /* ---------- 대화: 질문을 듣고 뭐라고 답할지 ----------
+     문장을 따로따로 외우는 것과, 물음에 답하는 것은 다른 능력입니다.
+     회화는 결국 주고받기라서 이 연습이 없으면 실제로 말이 오가지 않습니다. */
+  function makeReply(item, rnd, mode) {
+    var others = allItems().filter(function (x) {
+      return x.kind === 'd' && x.id !== item.id && x.en !== item.en;
+    });
+    if (mode === 'build') {
+      var ws = words(item.en);
+      if (ws.length >= 2 && ws.length <= 9) {
+        var extra = shuffle(others, rnd).slice(0, 2)
+          .reduce(function (acc, d) { return acc.concat(words(d.en)); }, [])
+          .filter(function (w) { return ws.indexOf(w) < 0; });
+        return {
+          type: 'bank', item: item, isReply: true,
+          head: '뭐라고 답할까요?',
+          ask: item.ask, askKo: item.askKo,
+          sub: item.ko, answer: ws,
+          bank: shuffle(ws.concat(shuffle(extra, rnd).slice(0, 3)), rnd)
+        };
+      }
+    }
+    // 고르기
+    var ds = [];
+    var seen = {};
+    seen[item.en] = 1;
+    shuffle(others, rnd).forEach(function (d) {
+      if (ds.length >= 3 || seen[d.en]) return;
+      seen[d.en] = 1; ds.push(d);
+    });
+    return {
+      type: 'choice', item: item, isReply: true,
+      head: '뭐라고 답할까요?',
+      ask: item.ask, askKo: item.askKo,
+      options: shuffle([{ label: item.en, ok: true }].concat(
+        ds.map(function (d) { return { label: d.en, ok: false }; })), rnd)
+    };
+  }
+
   /* 따라 읽기 (발음 연습, 정답/오답 없음) */
   function makeRepeat(item) {
     return {
@@ -2491,11 +3632,28 @@ button { font: inherit; color: inherit; cursor: pointer; }
     var rep = sent.length ? sent[Math.floor(rnd() * sent.length)] : items[0];
     if (rep) qs.push(makeRepeat(rep));
 
+    // 대화 연습 — 유닛마다 있는 질문↔대답 짝에서 2개
+    var dlg = G.unitDialogs(unit.id);
+    if (dlg.length) {
+      var pickD = shuffle(dlg, rnd).slice(0, 2);
+      pickD.forEach(function (it, i) {
+        // 앞 레슨에서는 고르기, 뒤로 갈수록 직접 만들기
+        var mode = (n >= 3 || i === 1) ? 'build' : 'choose';
+        var q = makeReply(it, rnd, mode);
+        qs.splice(Math.min(qs.length, 5 + i * 5), 0, q);
+      });
+    }
+
     // 지난 유닛 복습을 사이사이에 끼워 넣습니다 (몰아서 넣으면 지루하니 흩어서)
     var rev = reviewPicks(unit, G.REVIEW_PER_LESSON);
     rev.forEach(function (it, i) {
-      var table = typeTable(it.kind, 6);          // 복습은 어렵게 물어도 됩니다
-      var q = makeQ(it, table[i % table.length], rnd, 6, null);
+      var q;
+      if (it.kind === 'd') {
+        q = makeReply(it, rnd, i % 2 ? 'build' : 'choose');
+      } else {
+        var table = typeTable(it.kind, 6);        // 복습은 어렵게 물어도 됩니다
+        q = makeQ(it, table[i % table.length], rnd, 6, null);
+      }
       q.isReview = true;
       var at = Math.min(qs.length, 2 + i * 3);
       qs.splice(at, 0, q);
@@ -3215,7 +4373,17 @@ button { font: inherit; color: inherit; cursor: pointer; }
     var h = lessonHead();
     // 지난 유닛에서 배운 것을 다시 물을 때는 미리 알려드립니다 (갑자기 모르는 게 나온 줄 아시지 않게)
     if (q.isReview) h += '<div class="rev-tag">🔁 전에 배운 것 다시 보기</div>';
+    if (q.isReply) h += '<div class="rev-tag dlg">💬 대화 연습</div>';
     h += '<div class="q-head">' + esc(q.head) + '</div>';
+
+    // 대화 문제는 '상대가 한 말'을 먼저 보여 줍니다
+    if (q.isReply && q.ask) {
+      h += '<div class="ask-row">' +
+        '<div class="ask-who">상대방</div>' +
+        '<div class="ask-bubble">' + esc(q.ask) +
+        '<div class="ko">' + esc(q.askKo || '') + '</div></div>' +
+        speakerBtn(q.ask, true) + '</div>';
+    }
     // 아래에서 말풍선으로 다시 보여주는 유형(bank/type/repeat)은 여기서 또 쓰지 않습니다
     if (q.sub && (q.type === 'match' || (q.type === 'choice' && !q.sublarge))) {
       h += '<div class="q-sub">' + esc(q.sub) + '</div>';
@@ -3298,9 +4466,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
     // 자동 읽어주기
     if (P.settings.autoPlay && G.voiceOK()) {
-      var t = q.type === 'bank' && q.listen ? q.item.en
-        : q.type === 'pic' ? q.audio
-          : (q.sublarge ? (q.audio || q.sub) : (q.type === 'repeat' ? q.sub : null));
+      var t = q.isReply ? q.ask                       // 대화는 상대방 말을 먼저 들려줍니다
+        : q.type === 'bank' && q.listen ? q.item.en
+          : q.type === 'pic' ? q.audio
+            : (q.sublarge ? (q.audio || q.sub) : (q.type === 'repeat' ? q.sub : null));
       if (t) setTimeout(function () { G.speak(t); }, 260);
     }
     if (q.type === 'type') setTimeout(function () { var i = el('typein'); if (i) i.focus(); }, 120);
@@ -3597,7 +4766,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
       ch.classList.add('sel');
       S.sel = parseInt(ch.getAttribute('data-i'), 10);
       var q2 = S.queue[0];
-      if (q2 && q2.type === 'pic') G.speak(q2.options[S.sel].label);
+      // 그림 고르기·대화 고르기는 누른 보기를 소리로 들려줍니다
+      if (q2 && (q2.type === 'pic' || q2.isReply)) G.speak(q2.options[S.sel].label);
       var cb2 = el('btn-check'); if (cb2) cb2.disabled = false;
       return;
     }
