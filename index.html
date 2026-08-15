@@ -1355,7 +1355,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
           id: 'u02', t: '나와 너 (be동사)', ic: 'man',
           tip: 'I 뒤에는 am, You/We/They 뒤에는 are, He/She 뒤에는 is 를 씁니다.',
           w: [
-            ['I', '나, 저', 'man'], ['you', '당신, 너', 'woman'],
+            // I / you 는 사진으로 나타낼 수 없습니다 (남자 사진이 'I' 의 뜻이 아니므로 그림 없이 갑니다)
+            ['I', '나, 저', ''], ['you', '당신, 너', ''],
             ['he', '그 (남자)', 'man'], ['she', '그녀 (여자)', 'woman'],
             ['we', '우리', 'people'], ['they', '그들', 'people'],
             ['happy', '행복한', 'happy'], ['tired', '피곤한', 'tired'],
@@ -2317,7 +2318,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
           return {
             type: 'choice', item: item,
             head: '빈칸에 알맞은 말을 고르세요',
-            sub: shown.join(' '), pic: item.pic, audio: item.en, sublarge: true,
+            // 정답이 들어간 문장을 읽어 주면 답을 알려주는 셈이라, 빈칸은 빈칸인 채로 읽습니다
+            sub: shown.join(' '), pic: item.pic, sublarge: true,
             options: shuffle([target].concat(uniq), rnd).map(function (o) { return { label: o, ok: o === target }; })
           };
         }
@@ -2339,8 +2341,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
         type: 'choice', item: item,
         head: '알맞은 영어를 고르세요',
         sub: item.ko, pic: item.pic,
-        options: shuffle([{ label: item.en, ok: true }].concat(
-          distract(item, 3, rnd, pool).map(function (d) { return { label: d.en, ok: false }; })), rnd)
+        options: buildOptions(item.en, item, function (d) { return d.en; }, rnd, pool)
       };
     }
 
@@ -2349,9 +2350,24 @@ button { font: inherit; color: inherit; cursor: pointer; }
       type: 'choice', item: item,
       head: '무슨 뜻일까요?',
       sub: item.en, audio: item.en, sublarge: true, pic: null,
-      options: shuffle([{ label: item.ko, ok: true }].concat(
-        distract(item, 3, rnd, pool).map(function (d) { return { label: d.ko, ok: false }; })), rnd)
+      options: buildOptions(item.ko, item, function (d) { return d.ko; }, rnd, pool)
     };
+  }
+
+  /* 선택지 만들기 — 같은 글자가 두 번 나오지 않게 합니다.
+     (old=오래된 처럼 뜻이 겹치는 항목이 있어서, 그냥 3개를 뽑으면
+      똑같은 보기가 두 개 생기고 그 중 하나만 정답이 되는 일이 생깁니다) */
+  function buildOptions(correct, item, labelOf, rnd, pool) {
+    var seen = {}, list = [{ label: correct, ok: true }];
+    seen[correct] = 1;
+    distract(item, 8, rnd, pool).forEach(function (d) {
+      if (list.length >= 4) return;
+      var l = labelOf(d);
+      if (!l || seen[l]) return;
+      seen[l] = 1;
+      list.push({ label: l, ok: false });
+    });
+    return shuffle(list, rnd);
   }
 
   /* 짝 맞추기 (한 레슨에 한 번) — 짧은 항목 위주라야 화면이 편합니다 */
@@ -2360,14 +2376,21 @@ button { font: inherit; color: inherit; cursor: pointer; }
       return a.filter(function (x, i, arr) { return arr.findIndex(function (y) { return y.id === x.id; }) === i; });
     }
     var short = function (x) { return x.en.split(' ').length <= 3; };
-    var cand = uniq(shuffle(items, rnd)).filter(short);
-    if (cand.length < 5 && pool) {
-      var ids = {}; cand.forEach(function (x) { ids[x.id] = 1; });
-      shuffle(pool, rnd).forEach(function (x) {
-        if (cand.length < 5 && !ids[x.id] && short(x)) { ids[x.id] = 1; cand.push(x); }
+    /* 같은 영어(table=식탁/테이블)나 같은 한국어(눈=snow/eye)를 가진 항목이 한 판에 같이 나오면
+       어느 쪽으로 이어도 맞는데 한쪽은 오답 처리됩니다. 그래서 겹치는 것은 빼고 고릅니다. */
+    var seenEn = {}, seenKo = {};
+    function take(list, out) {
+      shuffle(list, rnd).forEach(function (x) {
+        if (out.length >= 5) return;
+        var e = x.en.toLowerCase(), k = x.ko;
+        if (seenEn[e] || seenKo[k]) return;
+        if (out.some(function (y) { return y.id === x.id; })) return;
+        seenEn[e] = 1; seenKo[k] = 1; out.push(x);
       });
     }
-    var pick = cand.slice(0, 5);
+    var pick = [];
+    take(uniq(items).filter(short), pick);
+    if (pick.length < 5 && pool) take(pool.filter(short), pick);
     if (pick.length < 4) return null;
     return {
       type: 'match', items: pick,
@@ -2579,9 +2602,35 @@ button { font: inherit; color: inherit; cursor: pointer; }
   G.onNoVoice = null;
   var seq = 0;                     // 새 말이 시작되면 이전 순서는 버립니다
 
+  /* ---------- 읽어주기 전 다듬기 ----------
+     TTS 는 한 글자만 따로 주면 '알파벳 이름'으로 읽어 버립니다.
+     예) "I" → "capital I" (대문자 아이). 1인칭 주어로 들려야 하므로 소리나는 대로 넘깁니다. */
+  var SAY_ALONE = {
+    'i': 'eye',      // 나, 저
+    'a': 'uh',       // 관사
+    'o': 'oh'
+  };
+  var DIGIT = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+
+  function forSpeech(text) {
+    var t = String(text).replace(/____/g, '   ').trim();
+    var bare = t.replace(/[.?!,]/g, '').trim();
+    if (bare.indexOf(' ') < 0 && SAY_ALONE[bare.toLowerCase()]) {
+      return SAY_ALONE[bare.toLowerCase()];
+    }
+    // 전화번호처럼 이어 붙은 숫자는 한 자리씩 (010-1234 → oh one oh, one two three four)
+    t = t.replace(/\d[\d-]*\d/g, function (m) {
+      return m.split('').map(function (ch) {
+        return ch === '-' ? ',' : DIGIT[+ch];
+      }).join(' ');
+    });
+    return t;
+  }
+  G.forSpeech = forSpeech;
+
   function utter(v, text, rate, onEnd) {
     try {
-      var u = new SpeechSynthesisUtterance(String(text).replace(/____/g, '   '));
+      var u = new SpeechSynthesisUtterance(forSpeech(text));
       u.voice = v; u.lang = v.lang;
       u.rate = rate; u.pitch = 1;
       var done = false;
@@ -2589,7 +2638,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
       window.speechSynthesis.speak(u);
       // 브라우저가 onend 를 안 주는 경우가 있어 넉넉한 예비 타이머를 둡니다
       setTimeout(function () { if (!done) { done = true; if (onEnd) onEnd(); } },
-        1200 + String(text).length * 90);
+        1200 + forSpeech(text).length * 90);
     } catch (e) { if (onEnd) onEnd(); }
   }
 
