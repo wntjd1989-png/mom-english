@@ -1,6 +1,6 @@
 /* 서비스 워커 — 한 번 열어두면 인터넷 없이도 앱이 돌아갑니다.
    앱 전체가 index.html 한 파일이라 캐시 전략도 단순합니다. */
-var CACHE = 'mom-english-20260815-212241';
+var CACHE = 'mom-english-20260815-213941';
 var ASSETS = [
   './',
   './index.html',
