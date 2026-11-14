@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Hotspot Configuration: 특정 SSID 로 전환하는 핵심 권한.
+	  Xcode > Signing & Capabilities > + Capability > "Hotspot Configuration"
+	  무료(개인) 개발자 계정에서는 제공되지 않을 수 있습니다.
+	-->
+	<key>com.apple.developer.networking.HotspotConfiguration</key>
+	<true/>
+
+	<!--
+	  Access WiFi Information: 현재 연결된 SSID 를 읽는 권한.
+	  위치 권한("앱을 사용하는 동안")과 함께 있어야 동작합니다.
+	-->
+	<key>com.apple.developer.networking.wifi-info</key>
+	<true/>
+
+	<!--
+	  App Group: 앱 ↔ 위젯/컨트롤 사이의 네트워크 목록·비밀번호 공유 통로.
+	  Sources/Shared/AppGroup.swift 의 identifier 와 반드시 일치해야 합니다.
+	-->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.example.wifiswitcher</string>
+	</array>
+</dict>
+</plist>

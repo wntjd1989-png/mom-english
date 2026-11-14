@@ -1,0 +1,12 @@
+# XcodeGen 이 생성하므로 커밋하지 않습니다. `xcodegen generate` 로 언제든 다시 만듭니다.
+*.xcodeproj/
+*.xcworkspace/
+
+# Xcode 사용자별 상태
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+
+# macOS
+.DS_Store

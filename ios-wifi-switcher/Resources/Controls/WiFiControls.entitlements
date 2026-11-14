@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  위젯/컨트롤은 네트워크 목록을 "읽기"만 합니다.
+	  실제 Wi-Fi 전환은 앱 프로세스에서 일어나므로
+	  Hotspot Configuration 권한은 여기 필요하지 않습니다.
+	  (ConnectToNetworkIntent 의 openAppWhenRun = true 참고)
+	-->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.example.wifiswitcher</string>
+	</array>
+</dict>
+</plist>

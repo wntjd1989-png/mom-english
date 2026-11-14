@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>ko_KR</string>
+	<key>CFBundleDisplayName</key>
+	<string>Wi-Fi 전환</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+
+	<!-- 현재 연결된 Wi-Fi 이름을 읽고(iOS 요구사항), 위치 기반 정렬에 씁니다. -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>현재 연결된 Wi-Fi 이름을 확인하고, 지금 있는 장소에서 쓰는 Wi-Fi 를 목록 위로 올리기 위해 사용합니다. 위치는 기기 안에만 저장되며 외부로 전송하지 않습니다.</string>
+
+	<!-- 공유기에 붙은 Wi-Fi QR 코드 스캔 -->
+	<key>NSCameraUsageDescription</key>
+	<string>공유기에 붙은 Wi-Fi QR 코드를 읽어 네트워크를 등록하기 위해 사용합니다. 사진이나 영상을 저장하지 않습니다.</string>
+
+	<!-- 전환 실패 시 설정 > Wi-Fi 로 이동 시도. 비공개 스킴이라 실패할 수 있어 폴백이 있습니다. -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>App-Prefs</string>
+	</array>
+
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+</dict>
+</plist>
